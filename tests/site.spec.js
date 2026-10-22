@@ -69,6 +69,62 @@ test('both timeline lines follow scrolling in both directions', async ({ page })
   }
 });
 
+test('the immersion still changes only the laptop display', async ({ page }) => {
+  const figure = page.locator('.immersion-photo');
+  await figure.scrollIntoViewIfNeeded();
+  await figure.locator('img').evaluate(img => img.decode());
+  await figure.locator('svg image').evaluate(async el => {
+    const image = new Image();
+    image.src = el.href.baseVal;
+    await image.decode();
+  });
+  const polygon = await figure.evaluate(el => {
+    const bounds = el.getBoundingClientRect();
+    const svg = el.querySelector('svg');
+    return [...el.querySelector('polygon').points].map(point => {
+      const transformed = new DOMPoint(point.x, point.y).matrixTransform(svg.getScreenCTM());
+      return [transformed.x - bounds.x, transformed.y - bounds.y];
+    });
+  });
+  const edited = (await figure.screenshot()).toString('base64');
+  await figure.locator('svg').evaluate(el => { el.style.visibility = 'hidden'; });
+  const original = (await figure.screenshot()).toString('base64');
+  await figure.locator('svg').evaluate(el => { el.style.visibility = ''; });
+  const differences = await page.evaluate(async ({ edited, original, polygon }) => {
+    async function pixels(data) {
+      const image = new Image();
+      image.src = `data:image/png;base64,${data}`;
+      await image.decode();
+      const canvas = document.createElement('canvas');
+      canvas.width = image.width;
+      canvas.height = image.height;
+      const context = canvas.getContext('2d');
+      context.drawImage(image, 0, 0);
+      return context.getImageData(0, 0, canvas.width, canvas.height);
+    }
+    const before = await pixels(original);
+    const after = await pixels(edited);
+    let changedInside = 0;
+    let changedOutside = 0;
+    for (let y = 0; y < before.height; y++) {
+      for (let x = 0; x < before.width; x++) {
+        const offset = (y * before.width + x) * 4;
+        if (before.data.slice(offset, offset + 4).every((v, i) => v === after.data[offset + i])) continue;
+        // Allow two pixels along the screen edge for clipping and screenshot rounding.
+        const inside = polygon.every(([ax, ay], i) => {
+          const [bx, by] = polygon[(i + 1) % polygon.length];
+          return (bx - ax) * (y - ay) - (by - ay) * (x - ax) >= -2 * Math.hypot(bx - ax, by - ay);
+        });
+        if (inside) changedInside++;
+        else changedOutside++;
+      }
+    }
+    return { changedInside, changedOutside };
+  }, { edited, original, polygon });
+  expect(differences.changedInside).toBeGreaterThan(100);
+  expect(differences.changedOutside).toBe(0);
+});
+
 test('protocol buttons select the matching step and phase', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.locator('#protocol-07 > button').click();

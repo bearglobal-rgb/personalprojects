@@ -37,7 +37,8 @@ https://github.com/bearglobal-rgb/personalprojects/settings/pages:
    shown by GitHub. Publication is not confirmed until that deployment succeeds.
 
 GitHub Pages serves the compiled site independently of the Codex environment.
-The photograph URLs still point to the original site. Browser image loading
+Most photograph URLs still point to the original site; the Origin immersion
+photograph and its screen replacement are bundled locally. Browser image loading
 and the remaining fidelity checks below must be verified on the published page.
 
 ## Validation
@@ -87,3 +88,12 @@ areas and the scroll timing, then repeat browser and image-readiness checks.
 The four `Swan-Academy-*-Master.svg` assets are the supplied originals. Photographs
 retain the supplied Swan Academy URLs until downloaded. Inter and Playfair
 Display are installed from Fontsource with their original font licenses.
+
+The Origin immersion photograph is preserved byte-for-byte in
+`public/assets/origin-immersion-original.jpg`. The generated
+`origin-immersion-screen.png` uses the supplied woman-in-red-cardigan still.
+An SVG overlay in `index.html` clips that edit to the laptop display, keeping
+the rest of the original photo and its responsive crop unchanged. The decorative
+offer collage continues to use the original remote photograph. Browser tests
+compare the photo with and without the overlay to check that pixels outside
+the laptop display stay unchanged.

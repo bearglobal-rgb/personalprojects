@@ -207,7 +207,14 @@
                             </div>
                         </article>
                         <article class="grid items-center gap-10 lg:grid-cols-2 lg:gap-24">
-                            <figure><img decoding="async" loading="lazy" src="https://swanacademy.whop.site/origin-immersion.png" alt="Night desk — laptop, headphones, English on the screen" class="aspect-[4/5] w-full rounded-2xl object-cover "></figure>
+                            <figure class="immersion-photo relative">
+                                <img decoding="async" loading="lazy" src="/assets/origin-immersion-original.jpg" alt="Night desk — laptop, headphones, English on the screen" class="aspect-[4/5] w-full rounded-2xl object-cover ">
+                                <!-- Preserve the original photograph; show the edited still only inside its laptop screen. -->
+                                <svg aria-hidden="true" focusable="false" class="pointer-events-none absolute inset-0 h-full w-full overflow-hidden" viewBox="0 0 1200 896" preserveAspectRatio="xMidYMid slice">
+                                    <defs><clipPath id="immersion-screen"><polygon points="237,349 462,345 495,516 272,549" /></clipPath></defs>
+                                    <image href="/assets/origin-immersion-screen.png" width="1200" height="896" preserveAspectRatio="none" clip-path="url(#immersion-screen)" />
+                                </svg>
+                            </figure>
                             <div class="lg:px-2">
                                 <h3 class="font-serif text-3xl leading-snug sm:text-[2rem]">I stopped studying English. I started living inside it.</h3>
                                 <div class="mt-6 space-y-4 text-base leading-relaxed text-mute sm:text-lg">
