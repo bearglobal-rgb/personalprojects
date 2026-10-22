@@ -103,7 +103,8 @@ test('checkout destinations and internal links are intact', async ({ page }) => 
 test('footer preserves the original proportions and links to the social profiles', async ({ page }, testInfo) => {
   const footer = page.locator('footer');
   await footer.scrollIntoViewIfNeeded();
-  await expect(footer.getByText('English mastery', { exact: true })).toBeVisible();
+  await expect(footer.getByText('English mastery', { exact: true })).toHaveCount(0);
+  await expect(footer.getByRole('link', { name: 'Swan Academy — back to top' })).toHaveText('Swan Academy');
   await expect(footer.getByText('© 2026 Swan Academy', { exact: true })).toBeVisible();
   expect(await footer.locator('nav a').evaluateAll(links => links.map(link => ({ text: link.textContent, href: link.href })))).toEqual([
     { text: 'X', href: 'https://x.com/jotaswan' },
@@ -119,7 +120,6 @@ test('footer preserves the original proportions and links to the social profiles
       padding: [style.paddingTop, style.paddingBottom],
       logo: [brand.querySelector('img').width, brand.querySelector('img').height],
       name: getComputedStyle(brand.querySelector('.font-serif')).fontSize,
-      subtitle: getComputedStyle(brand.querySelector('.uppercase')).fontSize,
       social: getComputedStyle(el.querySelector('nav')).fontSize,
       copyright: getComputedStyle(el.querySelector('p')).fontSize,
       direction: style.flexDirection,
@@ -128,7 +128,6 @@ test('footer preserves the original proportions and links to the social profiles
   expect(dimensions.padding).toEqual(['48px', '48px']);
   expect(dimensions.logo).toEqual([32, 32]);
   expect(dimensions.name).toBe('18px');
-  expect(dimensions.subtitle).toBe('11px');
   expect(dimensions.social).toBe('12px');
   expect(dimensions.copyright).toBe('12px');
   if (testInfo.project.name === 'desktop') {
@@ -136,6 +135,8 @@ test('footer preserves the original proportions and links to the social profiles
     expect(dimensions.height).toBeLessThanOrEqual(144);
     expect(dimensions.direction).toBe('row');
   } else {
+    expect(dimensions.height).toBeGreaterThanOrEqual(240);
+    expect(dimensions.height).toBeLessThanOrEqual(244);
     expect(dimensions.direction).toBe('column');
   }
 });
