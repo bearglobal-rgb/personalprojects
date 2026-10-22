@@ -74,19 +74,24 @@ test('the immersion still changes only the laptop display', async ({ page }) => 
   await figure.scrollIntoViewIfNeeded();
   await figure.locator(':scope > img').evaluate(img => img.decode());
   await figure.locator('.immersion-screen-content').evaluate(img => img.decode());
-  const polygon = await figure.evaluate(el => {
+  const { polygon, frame } = await figure.evaluate(el => {
     const bounds = el.getBoundingClientRect();
     const svg = el.querySelector('svg');
-    return [...el.querySelector('polygon').points].map(point => {
-      const transformed = new DOMPoint(point.x, point.y).matrixTransform(svg.getScreenCTM());
+    const project = ({ x, y }) => {
+      const transformed = new DOMPoint(x, y).matrixTransform(svg.getScreenCTM());
       return [transformed.x - bounds.x, transformed.y - bounds.y];
-    });
+    };
+    return {
+      polygon: [...el.querySelector('polygon').points].map(project),
+      // Fixed points on the real left/bottom frame, independent of the overlay mask.
+      frame: [[249, 440], [260, 510], [268, 550], [320, 559], [400, 548], [470, 537]].map(([x, y]) => project({ x, y })),
+    };
   });
   const edited = (await figure.screenshot()).toString('base64');
   await figure.locator('svg').evaluate(el => { el.style.visibility = 'hidden'; });
   const original = (await figure.screenshot()).toString('base64');
   await figure.locator('svg').evaluate(el => { el.style.visibility = ''; });
-  const differences = await page.evaluate(async ({ edited, original, polygon }) => {
+  const differences = await page.evaluate(async ({ edited, original, polygon, frame }) => {
     async function pixels(data) {
       const image = new Image();
       image.src = `data:image/png;base64,${data}`;
@@ -126,11 +131,16 @@ test('the immersion still changes only the laptop display', async ({ page }) => 
         filledEdges.push([0, 1, 2].some(channel => Math.abs(before.data[offset + channel] - after.data[offset + channel]) > 8));
       }
     }
-    return { changedInside, changedOutside, filledEdges };
-  }, { edited, original, polygon });
+    const preservedFrame = frame.map(([x, y]) => {
+      const offset = (Math.round(y) * before.width + Math.round(x)) * 4;
+      return [0, 1, 2, 3].every(channel => before.data[offset + channel] === after.data[offset + channel]);
+    });
+    return { changedInside, changedOutside, filledEdges, preservedFrame };
+  }, { edited, original, polygon, frame });
   expect(differences.changedInside).toBeGreaterThan(100);
   expect(differences.changedOutside).toBe(0);
   expect(differences.filledEdges).toEqual(Array(6).fill(true));
+  expect(differences.preservedFrame).toEqual(Array(6).fill(true));
 });
 
 test('protocol buttons select the matching step and phase', async ({ page }) => {
