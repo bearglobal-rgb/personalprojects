@@ -95,9 +95,10 @@ The Origin immersion photograph is preserved byte-for-byte in
 An SVG overlay in `index.html` maps the still's inner corners
 `(290,424), (556,420), (593,625), (331,649)` to the glass panel corners
 `(232,329), (460,328), (500,538), (264,572)` using a perspective transform.
-The final mask follows `(232,329), (460,328), (498.095238,528), (276,560)`:
-the top edge and right-edge angle stay fixed, while the left and bottom edges
-are inset to expose the original laptop frame. The source PNG and perspective
+The final mask follows `(231.000835,329.004382), (460,328),
+(498.744097,531.406511), (275.675570,563.546745)`. Relative to the frame-restoration
+mask, its left edge expands 1 original-photo pixel left and its bottom edge
+expands 3.5 pixels down; the top and right edge lines stay fixed. The source PNG and perspective
 transform stay unchanged, preserving image detail without another resampling
 or generation step. The rest of the photo and its responsive crop are
 unchanged. The decorative

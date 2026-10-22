@@ -83,8 +83,8 @@ test('the immersion still changes only the laptop display', async ({ page }) => 
     };
     return {
       polygon: [...el.querySelector('polygon').points].map(project),
-      // Fixed points on the real left/bottom frame, independent of the overlay mask.
-      frame: [[249, 440], [260, 510], [268, 550], [320, 559], [400, 548], [470, 537]].map(([x, y]) => project({ x, y })),
+      // Fixed frame points clear of the antialiased edge at mobile resolution.
+      frame: [[247, 440], [260, 510], [268, 550], [320, 562], [400, 551], [470, 540]].map(([x, y]) => project({ x, y })),
     };
   });
   const edited = (await figure.screenshot()).toString('base64');
