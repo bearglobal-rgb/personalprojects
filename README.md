@@ -92,8 +92,12 @@ Display are installed from Fontsource with their original font licenses.
 The Origin immersion photograph is preserved byte-for-byte in
 `public/assets/origin-immersion-original.jpg`. The generated
 `origin-immersion-screen.png` uses the supplied woman-in-red-cardigan still.
-An SVG overlay in `index.html` clips that edit to the laptop display, keeping
-the rest of the original photo and its responsive crop unchanged. The decorative
+An SVG overlay in `index.html` maps the still's inner corners
+`(290,424), (556,420), (593,625), (331,649)` to the glass panel corners
+`(232,329), (460,328), (500,538), (264,572)` using a perspective transform.
+The matching clip removes the generated frame and fills the panel without
+top or bottom bands, keeping the rest of the photo and its responsive crop
+unchanged. The decorative
 offer collage continues to use the original remote photograph. Browser tests
 compare the photo with and without the overlay to check that pixels outside
 the laptop display stay unchanged.

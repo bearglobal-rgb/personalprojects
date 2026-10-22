@@ -72,12 +72,8 @@ test('both timeline lines follow scrolling in both directions', async ({ page })
 test('the immersion still changes only the laptop display', async ({ page }) => {
   const figure = page.locator('.immersion-photo');
   await figure.scrollIntoViewIfNeeded();
-  await figure.locator('img').evaluate(img => img.decode());
-  await figure.locator('svg image').evaluate(async el => {
-    const image = new Image();
-    image.src = el.href.baseVal;
-    await image.decode();
-  });
+  await figure.locator(':scope > img').evaluate(img => img.decode());
+  await figure.locator('.immersion-screen-content').evaluate(img => img.decode());
   const polygon = await figure.evaluate(el => {
     const bounds = el.getBoundingClientRect();
     const svg = el.querySelector('svg');
@@ -119,10 +115,22 @@ test('the immersion still changes only the laptop display', async ({ page }) => 
         else changedOutside++;
       }
     }
-    return { changedInside, changedOutside };
+    // The top and bottom must contain the scene, rather than untouched letterbox bands.
+    const filledEdges = [];
+    for (const v of [.025, .975]) {
+      for (const u of [.25, .5, .75]) {
+        const weights = [(1 - u) * (1 - v), u * (1 - v), u * v, (1 - u) * v];
+        const x = Math.round(polygon.reduce((sum, point, i) => sum + point[0] * weights[i], 0));
+        const y = Math.round(polygon.reduce((sum, point, i) => sum + point[1] * weights[i], 0));
+        const offset = (y * before.width + x) * 4;
+        filledEdges.push([0, 1, 2].some(channel => Math.abs(before.data[offset + channel] - after.data[offset + channel]) > 8));
+      }
+    }
+    return { changedInside, changedOutside, filledEdges };
   }, { edited, original, polygon });
   expect(differences.changedInside).toBeGreaterThan(100);
   expect(differences.changedOutside).toBe(0);
+  expect(differences.filledEdges).toEqual(Array(6).fill(true));
 });
 
 test('protocol buttons select the matching step and phase', async ({ page }) => {
