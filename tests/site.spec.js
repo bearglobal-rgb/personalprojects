@@ -19,15 +19,32 @@ test('preserves every word of the supplied main page', async ({ page }) => {
   expect(result.actual).toBe(result.expected);
 });
 
-test('all UI corners are square and the layout fits the viewport', async ({ page }) => {
-  const result = await page.evaluate(() => ({
-    rounded: Array.from(document.querySelectorAll('*')).filter((el) => {
-      const s = getComputedStyle(el);
-      return ['borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomRightRadius', 'borderBottomLeftRadius'].some((key) => parseFloat(s[key]) !== 0);
-    }).map((el) => el.tagName),
-    overflow: document.documentElement.scrollWidth > window.innerWidth,
-  }));
-  expect(result.rounded).toEqual([]);
+test('corner treatments match the original and the layout fits the viewport', async ({ page }) => {
+  const result = await page.evaluate((html) => {
+    const source = new DOMParser().parseFromString(html, 'text/html');
+    const signature = (el) => ({ tag: el.tagName, radius: Array.from(el.classList).find(c => c.startsWith('rounded-')) });
+    const elements = Array.from(document.querySelectorAll('main [class*="rounded-"]'));
+    const incorrectRadii = elements.filter((el) => {
+      const style = getComputedStyle(el);
+      const radius = signature(el).radius;
+      return ['borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomRightRadius', 'borderBottomLeftRadius'].some(key => {
+        const value = parseFloat(style[key]);
+        if (radius === 'rounded-full') return value < Math.min(el.offsetWidth, el.offsetHeight) / 2 || value === 0;
+        return value !== ({ 'rounded-2xl': 16, 'rounded-xl': 12 })[radius];
+      });
+    });
+    return {
+      expected: Array.from(source.querySelectorAll('[class*="rounded-"]')).map(signature),
+      actual: elements.map(signature),
+      incorrectRadii: incorrectRadii.map(signature),
+      expectedIcons: Array.from(source.querySelectorAll('rect[rx]')).map(el => el.getAttribute('rx')),
+      actualIcons: Array.from(document.querySelectorAll('main rect[rx]')).map(el => el.getAttribute('rx')),
+      overflow: document.documentElement.scrollWidth > window.innerWidth,
+    };
+  }, original);
+  expect(result.actual).toEqual(result.expected);
+  expect(result.incorrectRadii).toEqual([]);
+  expect(result.actualIcons).toEqual(result.expectedIcons);
   expect(result.overflow).toBe(false);
 });
 

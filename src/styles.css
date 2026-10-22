@@ -19,7 +19,6 @@
 @layer base {
   html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
   body { margin: 0; -webkit-font-smoothing: antialiased; }
-  *, *::before, *::after { border-radius: 0 !important; }
   button, summary, a { -webkit-tap-highlight-color: transparent; }
   button { cursor: pointer; }
   a, button, summary { touch-action: manipulation; }
@@ -73,7 +72,7 @@
   html { scrollbar-gutter: stable; }
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: var(--color-void); }
-  ::-webkit-scrollbar-thumb { background: #34332f; }
+  ::-webkit-scrollbar-thumb { background: #34332f; border-radius: 9999px; }
 }
 @media (max-width: 639px) {
   .brand { gap: .5rem; }

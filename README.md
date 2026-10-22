@@ -2,8 +2,9 @@
 
 Static Vite + Tailwind site built from the supplied Swan Academy HTML export,
 brand specifications, SVGs, and screenshots. All supplied main-page wording and
-checkout destinations are preserved. Containers, photographs, avatars, buttons,
-and badges have square corners. Both original timeline structures have
+checkout destinations are preserved. Original corner treatments are restored:
+rounded cards and photographs, smaller rounded inner frames, and circular avatars
+and badges. Buttons retain their original rectangular shape. Both timeline structures have
 scroll-linked progress; the system's active protocol and phase follow scrolling
 in either direction. Includes native FAQ disclosures and mobile navigation.
 
@@ -47,7 +48,7 @@ npm test
 ```
 
 The Playwright suite uses `/usr/bin/chromium`. Set `CHROMIUM_PATH` if your browser
-is installed elsewhere. Checks cover source-text parity, all four corner radii,
+is installed elsewhere. Checks cover source-text parity, original corner treatments,
 responsive width, both timelines in both scroll directions, protocol/phase
 selection, FAQs, navigation, checkout URLs, local SVGs, and font loading.
 
