@@ -91,13 +91,85 @@ test('FAQ opens and closes with keyboard input', async ({ page }) => {
 });
 
 test('checkout destinations and internal links are intact', async ({ page }) => {
-  const external = await page.locator('a[href^="https:"]').evaluateAll((links) => links.map((a) => a.href));
+  const external = await page.locator('header a[href^="https:"], main a[href^="https:"]').evaluateAll((links) => links.map((a) => a.href));
   expect(new Set(external)).toEqual(new Set([
     'https://whop.com/checkout/plan_kIUSXT7V4Lkag',
     'https://whop.com/checkout/plan_DB7DJLmJ0TIf4',
   ]));
   const missing = await page.locator('a[href^="#"]').evaluateAll((links) => links.filter((a) => !document.getElementById(a.hash.slice(1))).map((a) => a.hash));
   expect(missing).toEqual([]);
+});
+
+test('footer preserves the original proportions and links to the social profiles', async ({ page }, testInfo) => {
+  const footer = page.locator('footer');
+  await footer.scrollIntoViewIfNeeded();
+  await expect(footer.getByText('English mastery', { exact: true })).toBeVisible();
+  await expect(footer.getByText('© 2026 Swan Academy', { exact: true })).toBeVisible();
+  expect(await footer.locator('nav a').evaluateAll(links => links.map(link => ({ text: link.textContent, href: link.href })))).toEqual([
+    { text: 'X', href: 'https://x.com/jotaswan' },
+    { text: 'Instagram', href: 'https://www.instagram.com/jotaswan/' },
+    { text: 'YouTube', href: 'https://www.youtube.com/@JotaSwan' },
+  ]);
+  const dimensions = await footer.evaluate(el => {
+    const row = el.firstElementChild;
+    const brand = row.firstElementChild;
+    const style = getComputedStyle(row);
+    return {
+      height: el.getBoundingClientRect().height,
+      padding: [style.paddingTop, style.paddingBottom],
+      logo: [brand.querySelector('img').width, brand.querySelector('img').height],
+      name: getComputedStyle(brand.querySelector('.font-serif')).fontSize,
+      subtitle: getComputedStyle(brand.querySelector('.uppercase')).fontSize,
+      social: getComputedStyle(el.querySelector('nav')).fontSize,
+      copyright: getComputedStyle(el.querySelector('p')).fontSize,
+      direction: style.flexDirection,
+    };
+  });
+  expect(dimensions.padding).toEqual(['48px', '48px']);
+  expect(dimensions.logo).toEqual([32, 32]);
+  expect(dimensions.name).toBe('18px');
+  expect(dimensions.subtitle).toBe('11px');
+  expect(dimensions.social).toBe('12px');
+  expect(dimensions.copyright).toBe('12px');
+  if (testInfo.project.name === 'desktop') {
+    expect(dimensions.height).toBeGreaterThanOrEqual(140);
+    expect(dimensions.height).toBeLessThanOrEqual(144);
+    expect(dimensions.direction).toBe('row');
+  } else {
+    expect(dimensions.direction).toBe('column');
+  }
+});
+
+test('header stays readable and sticky with subtle transparency and blur', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.evaluate(() => window.scrollTo(0, 900));
+  const header = page.locator('.site-header');
+  await expect(header.getByRole('link', { name: 'Swan Academy — home' })).toBeVisible();
+  const style = await header.evaluate(el => {
+    const css = getComputedStyle(el);
+    const context = document.createElement('canvas').getContext('2d');
+    context.fillStyle = css.backgroundColor;
+    context.fillRect(0, 0, 1, 1);
+    return { top: el.getBoundingClientRect().top, position: css.position, alpha: context.getImageData(0, 0, 1, 1).data[3] / 255, blur: css.backdropFilter, opacity: css.opacity };
+  });
+  expect(style.top).toBe(0);
+  expect(style.position).toBe('sticky');
+  expect(style.alpha).toBeGreaterThanOrEqual(.85);
+  expect(style.alpha).toBeLessThan(.98);
+  expect(style.blur).toMatch(/blur\([1-9][\d.]*px\)/);
+  expect(style.opacity).toBe('1');
+});
+
+test('tab uses the black monogram while the site keeps white logos', async ({ page, request }) => {
+  const favicon = await page.locator('link[rel="icon"]').getAttribute('href');
+  expect(favicon).toMatch(/Swan-Academy-Monogram-Black-Master\.svg$/);
+  const response = await request.get(favicon);
+  expect(response.ok()).toBe(true);
+  expect(await response.text()).toBe(readFileSync(new URL('../public/assets/Swan-Academy-Monogram-Black-Master.svg', import.meta.url), 'utf8'));
+  for (const selector of ['.brand img', 'footer img']) {
+    await expect(page.locator(selector)).toHaveAttribute('src', /Swan-Academy-Monogram-White-Master\.svg$/);
+    expect(await page.locator(selector).evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+  }
 });
 
 test('mobile menu opens, navigates, and closes', async ({ page }, testInfo) => {
