@@ -211,8 +211,13 @@
                                 <img decoding="async" loading="lazy" src="./assets/origin-immersion-original.jpg" alt="Night desk — laptop, headphones, English on the screen" class="aspect-[4/5] w-full rounded-2xl object-cover ">
                                 <!-- Preserve the original photograph; show the edited still only inside its laptop screen. -->
                                 <svg aria-hidden="true" focusable="false" class="pointer-events-none absolute inset-0 h-full w-full overflow-hidden" viewBox="0 0 1200 896" preserveAspectRatio="xMidYMid slice">
-                                    <defs><clipPath id="immersion-screen"><polygon points="237,349 462,345 495,516 272,549" /></clipPath></defs>
-                                    <image href="./assets/origin-immersion-screen.png" width="1200" height="896" preserveAspectRatio="none" clip-path="url(#immersion-screen)" />
+                                    <defs><clipPath id="immersion-screen"><polygon points="232,329 460,328 500,538 264,572" /></clipPath></defs>
+                                    <g clip-path="url(#immersion-screen)">
+                                        <foreignObject width="1451" height="1084">
+                                            <!-- Map the still's four inner corners to the full glass panel, excluding the generated frame. -->
+                                            <img xmlns="http://www.w3.org/1999/xhtml" src="./assets/origin-immersion-screen.png" alt="" width="1451" height="1084" class="immersion-screen-content" style="width:1451px;height:1084px;max-width:none;transform-origin:0 0;transform:matrix3d(0.866435091561,0.0612258932775,0,0.000154241949801,-0.0915916949807,0.848321407452,0,-0.000276630478778,0,0,1,0,2.73451356536,-72.3164066472,0,1)">
+                                        </foreignObject>
+                                    </g>
                                 </svg>
                             </figure>
                             <div class="lg:px-2">
