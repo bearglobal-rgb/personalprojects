@@ -49,6 +49,34 @@ test('corner treatments match the original and the layout fits the viewport', as
   expect(result.overflow).toBe(false);
 });
 
+test('permanent step labels sit below the copy on mobile and stay in the desktop header', async ({ page }, testInfo) => {
+  const mobile = testInfo.project.name === 'mobile';
+  for (const width of mobile ? [320, 375, 390, 414, 430, 639] : [1280, 1920]) {
+    await page.setViewportSize({ width, height: 896 });
+    const labels = await page.locator('.step-permanence').evaluateAll(elements => elements.map(label => {
+      const card = label.closest('article');
+      const bounds = el => {
+        const r = el.getBoundingClientRect();
+        return { top: r.top, right: r.right, bottom: r.bottom };
+      };
+      return { id: card.parentElement.id, label: bounds(label), card: bounds(card), copy: bounds(card.querySelector('p')), header: bounds(label.parentElement) };
+    }));
+    expect(labels.map(item => item.id)).toEqual(['protocol-02', 'protocol-03', 'protocol-04', 'protocol-06', 'protocol-09']);
+    for (const item of labels) {
+      if (mobile) {
+        expect(item.label.top - item.copy.bottom).toBeGreaterThanOrEqual(24);
+        expect(item.card.right - item.label.right).toBeCloseTo(25, 0);
+        expect(item.card.bottom - item.label.bottom).toBeCloseTo(25, 0);
+      } else {
+        expect(item.label.top).toBeGreaterThanOrEqual(item.header.top);
+        expect(item.label.bottom).toBeLessThanOrEqual(item.header.bottom);
+        expect(item.label.bottom).toBeLessThan(item.copy.top);
+      }
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  }
+});
+
 test('both timeline lines follow scrolling in both directions', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   for (const name of ['system', 'origin']) {

@@ -75,6 +75,16 @@
   ::-webkit-scrollbar-thumb { background: #34332f; border-radius: 9999px; }
 }
 @media (max-width: 639px) {
+  /* Reserve a separate bottom row for the status without changing desktop markup. */
+  .system-timeline .step-card-permanent {
+    position: relative;
+    padding-bottom: 4rem;
+  }
+  .system-timeline .step-permanence {
+    position: absolute;
+    right: 1.5rem;
+    bottom: 1.5rem;
+  }
   .brand { gap: .5rem; }
   .brand img { width: 2rem; height: 2rem; }
   .brand span { font-size: 1.1rem; }
