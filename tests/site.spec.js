@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 const original = readFileSync(new URL('../reference/original.html', import.meta.url), 'utf8');
+const immersionGeometry = JSON.parse(readFileSync(new URL('../reference/immersion-screen.json', import.meta.url), 'utf8'));
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
@@ -72,49 +73,36 @@ test('both timeline lines follow scrolling in both directions', async ({ page })
 test('the immersion still changes only the laptop display', async ({ page }) => {
   const figure = page.locator('.immersion-photo');
   await figure.scrollIntoViewIfNeeded();
-  await figure.locator(':scope > img').evaluate(img => img.decode());
-  await figure.locator('.immersion-screen-content').evaluate(img => img.decode());
-  const { polygon, frame } = await figure.evaluate(el => {
-    const bounds = el.getBoundingClientRect();
-    const svg = el.querySelector('svg');
-    const project = ({ x, y }) => {
-      const transformed = new DOMPoint(x, y).matrixTransform(svg.getScreenCTM());
-      return [transformed.x - bounds.x, transformed.y - bounds.y];
-    };
-    return {
-      polygon: [...el.querySelector('polygon').points].map(project),
-      // Fixed frame points clear of the antialiased edge at mobile resolution.
-      frame: [[247, 440], [260, 510], [268, 550], [320, 562], [400, 551], [470, 540]].map(([x, y]) => project({ x, y })),
-    };
-  });
-  const edited = (await figure.screenshot()).toString('base64');
-  await figure.locator('svg').evaluate(el => { el.style.visibility = 'hidden'; });
-  const original = (await figure.screenshot()).toString('base64');
-  await figure.locator('svg').evaluate(el => { el.style.visibility = ''; });
-  const differences = await page.evaluate(async ({ edited, original, polygon, frame }) => {
-    async function pixels(data) {
+  const photo = figure.locator('img');
+  await photo.evaluate(img => img.decode());
+  const source = await photo.getAttribute('src');
+  const differences = await page.evaluate(async ({ source, geometry }) => {
+    const { polygon, width, height } = geometry;
+    const frame = [[247, 440], [260, 510], [268, 550], [320, 562], [400, 551], [470, 540]];
+    // Compare at native resolution, avoiding browser-specific JPEG/PNG downsampling.
+    async function pixels(src) {
       const image = new Image();
-      image.src = `data:image/png;base64,${data}`;
+      image.src = src;
       await image.decode();
       const canvas = document.createElement('canvas');
-      canvas.width = image.width;
-      canvas.height = image.height;
+      canvas.width = width;
+      canvas.height = height;
       const context = canvas.getContext('2d');
       context.drawImage(image, 0, 0);
       return context.getImageData(0, 0, canvas.width, canvas.height);
     }
-    const before = await pixels(original);
-    const after = await pixels(edited);
+    const before = await pixels(new URL('./assets/origin-immersion-original.jpg', location.href).href);
+    const after = await pixels(source);
     let changedInside = 0;
     let changedOutside = 0;
     for (let y = 0; y < before.height; y++) {
       for (let x = 0; x < before.width; x++) {
         const offset = (y * before.width + x) * 4;
         if (before.data.slice(offset, offset + 4).every((v, i) => v === after.data[offset + i])) continue;
-        // Allow two pixels along the screen edge for clipping and screenshot rounding.
+        // Allow one native pixel for antialiasing along the screen edge.
         const inside = polygon.every(([ax, ay], i) => {
           const [bx, by] = polygon[(i + 1) % polygon.length];
-          return (bx - ax) * (y - ay) - (by - ay) * (x - ax) >= -2 * Math.hypot(bx - ax, by - ay);
+          return (bx - ax) * (y - ay) - (by - ay) * (x - ax) >= -Math.hypot(bx - ax, by - ay);
         });
         if (inside) changedInside++;
         else changedOutside++;
@@ -136,11 +124,50 @@ test('the immersion still changes only the laptop display', async ({ page }) => 
       return [0, 1, 2, 3].every(channel => before.data[offset + channel] === after.data[offset + channel]);
     });
     return { changedInside, changedOutside, filledEdges, preservedFrame };
-  }, { edited, original, polygon, frame });
+  }, { source, geometry: immersionGeometry });
   expect(differences.changedInside).toBeGreaterThan(100);
   expect(differences.changedOutside).toBe(0);
   expect(differences.filledEdges).toEqual(Array(6).fill(true));
   expect(differences.preservedFrame).toEqual(Array(6).fill(true));
+});
+
+test('immersion photo matches neighboring images and keeps its text unobscured', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const figure = page.locator('.immersion-photo');
+  const copy = figure.locator('..').locator('h3, p');
+  await expect(copy).toHaveText([
+    'I stopped studying English. I started living inside it.',
+    'Devices. Media. Thought. Switched. Mimicry until the mouth owned the sound. Reading out loud. Sparring until easy vocabulary died.',
+    'No drills. If I did not enjoy it, I would not have stuck. That became the law.',
+  ]);
+  for (const width of [320, 390, 430, 768, 1024]) {
+    await page.setViewportSize({ width, height: 844 });
+    await figure.scrollIntoViewIfNeeded();
+    await figure.locator('img').evaluate(img => img.decode());
+    const layout = await figure.evaluate(el => {
+      const photo = el.querySelector('img').getBoundingClientRect();
+      const article = el.parentElement;
+      const neighbor = article.previousElementSibling.querySelector('figure img').getBoundingClientRect();
+      return {
+        width: photo.width, height: photo.height, neighborWidth: neighbor.width,
+        bottom: photo.bottom, textTop: article.querySelector('h3').getBoundingClientRect().top,
+        overflow: document.documentElement.scrollWidth > innerWidth,
+      };
+    });
+    expect(layout.width).toBeLessThanOrEqual(width);
+    expect(Math.abs(layout.width - layout.neighborWidth)).toBeLessThan(1);
+    expect(layout.width / layout.height).toBeCloseTo(.8, 2);
+    expect(layout.overflow).toBe(false);
+    if (width < 1024) expect(layout.textTop).toBeGreaterThan(layout.bottom);
+    for (const text of await copy.all()) {
+      await text.scrollIntoViewIfNeeded();
+      await expect(text).toBeInViewport({ ratio: .95 });
+      expect(await text.evaluate(el => {
+        const r = el.getBoundingClientRect();
+        return el.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2));
+      })).toBe(true);
+    }
+  }
 });
 
 test('protocol buttons select the matching step and phase', async ({ page }) => {

@@ -92,16 +92,18 @@ Display are installed from Fontsource with their original font licenses.
 The Origin immersion photograph is preserved byte-for-byte in
 `public/assets/origin-immersion-original.jpg`. The generated
 `origin-immersion-screen.png` uses the supplied woman-in-red-cardigan still.
-An SVG overlay in `index.html` maps the still's inner corners
-`(290,424), (556,420), (593,625), (331,649)` to the glass panel corners
-`(232,329), (460,328), (500,538), (264,572)` using a perspective transform.
-The final mask follows `(230.601169,329.006135), (460,328),
-(498.873869,532.087813), (275.416026,564.284141)`. Relative to the frame-restoration
-mask, its left edge expands 1.4 original-photo pixels left and its bottom edge
-expands 4.2 pixels down; the top and right edge lines stay fixed. The source PNG and perspective
-transform stay unchanged, preserving image detail without another resampling
-or generation step. The rest of the photo and its responsive crop are
-unchanged. The decorative
-offer collage continues to use the original remote photograph. Browser tests
-compare the photo with and without the overlay to check that pixels outside
-the laptop display stay unchanged.
+The approved perspective transform and final mask are saved in
+`reference/immersion-screen.json`, including the final 0.1-pixel downward
+expansion of the bottom edge. Run `node scripts/render_immersion_photo.mjs`
+to export `origin-immersion-composite.png` at the original 1200×896 resolution
+as a lossless PNG. This is a deterministic browser render of the existing
+assets, not a new generated scene.
+
+The website displays that PNG as a single responsive image with the same
+4:5 crop, rounded corners, and layout classes as the neighboring Origin photos.
+The former SVG/foreignObject overlay is deliberately absent from the page:
+its fixed-size transformed image was removed after the reported overflow and
+covered text in iPhone Safari. The decorative offer collage still uses the original remote photo.
+Tests compare native photo pixels outside the screen, check the laptop frame,
+and verify that the full heading and both paragraphs remain unobscured at
+320, 390, 430, 768, and 1024 pixels wide.
