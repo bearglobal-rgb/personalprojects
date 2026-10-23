@@ -274,6 +274,52 @@ test('Origin markers align with the rail and fill in both scroll directions', as
   }
 });
 
+test('rooms carousel exposes every card without overflowing the mobile page', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const track = page.locator('.rooms-carousel');
+  const cards = track.locator(':scope > article');
+  const dots = page.locator('[data-rooms-slide]');
+  await expect(cards.locator('h3')).toHaveText(['The map', 'Live walkthroughs', 'The sequence', 'The hub', 'English Mastery']);
+  for (const width of [320, 390, 414, 768, 1023]) {
+    await page.setViewportSize({ width, height: 896 });
+    await track.scrollIntoViewIfNeeded();
+    await dots.first().click();
+    await expect(dots.first()).toHaveAttribute('aria-current', 'true');
+    await expect(page.getByRole('button', { name: 'Previous room', exact: true })).toBeDisabled();
+    const layout = await track.evaluate(el => {
+      const box = el.getBoundingClientRect();
+      return { scrollable: el.scrollWidth > el.clientWidth, right: box.right, cards: [...el.children].map(card => { const r = card.getBoundingClientRect(); return { top: r.top, left: r.left, right: r.right }; }) };
+    });
+    expect(layout.scrollable).toBe(true);
+    expect(layout.cards.every(card => card.top === layout.cards[0].top)).toBe(true);
+    expect(layout.cards[1].left).toBeLessThan(layout.right);
+    expect(layout.cards[1].right).toBeGreaterThan(layout.right);
+    for (let index = 1; index < 5; index++) {
+      await page.getByRole('button', { name: 'Next room', exact: true }).click();
+      await expect(dots.nth(index)).toHaveAttribute('aria-current', 'true');
+      await expect(cards.nth(index)).toBeInViewport({ ratio: .99 });
+    }
+    await expect(page.getByRole('button', { name: 'Next room', exact: true })).toBeDisabled();
+    await page.getByRole('button', { name: 'Previous room', exact: true }).click();
+    await expect(dots.nth(3)).toHaveAttribute('aria-current', 'true');
+    await dots.nth(1).click();
+    await expect(dots.nth(1)).toHaveAttribute('aria-current', 'true');
+    await track.focus();
+    await page.keyboard.press('End');
+    await expect(dots.last()).toHaveAttribute('aria-current', 'true');
+    await page.keyboard.press('Home');
+    await expect(dots.first()).toHaveAttribute('aria-current', 'true');
+    await page.keyboard.press('ArrowRight');
+    await expect(dots.nth(1)).toHaveAttribute('aria-current', 'true');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+  await page.setViewportSize({ width: 1440, height: 1080 });
+  await expect(page.locator('.rooms-controls')).toBeHidden();
+  await expect(track).not.toHaveAttribute('tabindex');
+  expect(await track.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+  expect(await track.evaluate(el => getComputedStyle(el).display)).toBe('grid');
+});
+
 test('protocol buttons select the matching step and phase', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.locator('#protocol-07 > button').click();

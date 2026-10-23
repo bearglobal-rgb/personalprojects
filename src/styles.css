@@ -88,6 +88,53 @@
 }
 
 @media (max-width: 1023px) {
+  .rooms-carousel {
+    display: flex;
+    gap: 1rem;
+    max-width: 38rem;
+    margin-top: 2rem;
+    margin-inline: auto;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .rooms-carousel::-webkit-scrollbar { display: none; }
+  .rooms-carousel > article {
+    flex: 0 0 88%;
+    min-width: 0;
+    max-width: 22rem;
+    scroll-snap-align: start;
+  }
+  .rooms-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    margin-top: 1rem;
+  }
+  .rooms-arrow, .rooms-dots button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    color: var(--color-ink);
+  }
+  .rooms-arrow { width: 44px; }
+  .rooms-arrow:disabled { opacity: .25; cursor: default; }
+  .rooms-dots { display: flex; }
+  .rooms-dots button { width: 32px; }
+  .rooms-dots button::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--color-mute);
+    border-radius: 50%;
+  }
+  .rooms-dots button[aria-current="true"]::before {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+  }
   .origin-timeline {
     max-width: 38rem;
     margin: 3rem auto 0;

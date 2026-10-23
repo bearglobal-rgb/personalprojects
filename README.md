@@ -117,3 +117,10 @@ two-column layout, with matching chapter circles on the central line. On both
 layouts, the circles fill as their chapter reaches the middle of the viewport
 and empty again when scrolling back. Responsive tests cover the compact layout from 320 to 1023
 pixels and verify forward and reverse timeline progression.
+
+The Rooms section keeps its original desktop grid. Below 1024 pixels, its five
+cards form a native horizontal scroll-snap carousel with a preview of the next
+card. Readers can swipe, use the arrow/dot buttons, or focus the carousel and
+use Left/Right, Home, and End. It does not advance automatically. Reduced-motion
+preferences disable animated navigation, and the mobile controls disappear when
+the desktop grid returns.
