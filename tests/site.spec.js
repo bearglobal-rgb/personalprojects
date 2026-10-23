@@ -224,6 +224,10 @@ test('footer preserves the original proportions and links to the social profiles
       social: getComputedStyle(el.querySelector('nav')).fontSize,
       copyright: getComputedStyle(el.querySelector('p')).fontSize,
       direction: style.flexDirection,
+      centerOffsets: [...row.children].map(child => {
+        const bounds = child.getBoundingClientRect();
+        return bounds.x + bounds.width / 2 - window.innerWidth / 2;
+      }),
     };
   });
   expect(dimensions.padding).toEqual(['48px', '48px']);
@@ -239,6 +243,7 @@ test('footer preserves the original proportions and links to the social profiles
     expect(dimensions.height).toBeGreaterThanOrEqual(240);
     expect(dimensions.height).toBeLessThanOrEqual(244);
     expect(dimensions.direction).toBe('column');
+    for (const offset of dimensions.centerOffsets) expect(Math.abs(offset)).toBeLessThan(1);
   }
 });
 
