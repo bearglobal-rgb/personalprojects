@@ -2,6 +2,8 @@ const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const system = document.querySelector('[data-timeline="system"]');
 const origin = document.querySelector('[data-timeline="origin"]');
+const originChapters = Array.from(origin.querySelectorAll('.origin-chapter'));
+const compactOrigin = window.matchMedia('(max-width: 1023px)');
 const protocols = Array.from(system.querySelectorAll(':scope > ol > li'));
 const phaseLinks = Array.from(document.querySelectorAll('.phase-link'));
 const phases = [0, 3, 5, 6, 8];
@@ -36,7 +38,10 @@ function update() {
   framePending = false;
   const activationY = window.innerHeight * .5;
   updateTimeline(system, 16, activationY);
-  updateTimeline(origin, 32, activationY);
+  updateTimeline(origin, compactOrigin.matches ? 16 : 32, activationY);
+  originChapters.forEach(chapter => {
+    chapter.dataset.reached = String(chapter.getBoundingClientRect().top + 16 <= activationY);
+  });
 
   let nearest = 0;
   let shortest = Infinity;

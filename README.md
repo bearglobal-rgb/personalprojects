@@ -100,10 +100,18 @@ as a lossless PNG. This is a deterministic browser render of the existing
 assets, not a new generated scene.
 
 The website displays that PNG as a single responsive image with the same
-4:5 crop, rounded corners, and layout classes as the neighboring Origin photos.
+crop and rounded corners as the neighboring Origin photos: 4:5 on desktop,
+and a compact 4:3 frame below 1024 pixels wide.
 The former SVG/foreignObject overlay is deliberately absent from the page:
 its fixed-size transformed image was removed after the reported overflow and
 covered text in iPhone Safari. The decorative offer collage still uses the original remote photo.
 Tests compare native photo pixels outside the screen, check the laptop frame,
 and verify that the full heading and both paragraphs remain unobscured at
 320, 390, 430, 768, and 1024 pixels wide.
+
+Below the desktop breakpoint, the Origin section uses a left-side scroll-driven
+line and chapter markers. Photos alternate left and right at 88% of the available
+content width (up to 320 pixels), with consistently aligned text and tighter
+chapter spacing. Desktop retains its original central line and alternating
+two-column layout. Responsive tests cover the compact layout from 320 to 1023
+pixels and verify forward and reverse timeline progression.

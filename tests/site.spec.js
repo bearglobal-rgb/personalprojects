@@ -184,7 +184,7 @@ test('immersion photo matches neighboring images and keeps its text unobscured',
     });
     expect(layout.width).toBeLessThanOrEqual(width);
     expect(Math.abs(layout.width - layout.neighborWidth)).toBeLessThan(1);
-    expect(layout.width / layout.height).toBeCloseTo(.8, 2);
+    expect(layout.width / layout.height).toBeCloseTo(width < 1024 ? 4 / 3 : .8, 2);
     expect(layout.overflow).toBe(false);
     if (width < 1024) expect(layout.textTop).toBeGreaterThan(layout.bottom);
     for (const text of await copy.all()) {
@@ -196,6 +196,46 @@ test('immersion photo matches neighboring images and keeps its text unobscured',
       })).toBe(true);
     }
   }
+});
+
+test('compact Origin alternates smaller photos beside a continuous scroll-driven timeline', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const timeline = page.locator('.origin-timeline');
+  const chapters = timeline.locator('.origin-chapter');
+  for (const width of [320, 375, 390, 414, 430, 768, 1023]) {
+    await page.setViewportSize({ width, height: 896 });
+    await expect(timeline.locator('.origin-rail')).toBeVisible();
+    const layout = await chapters.evaluateAll(elements => elements.map(el => {
+      const box = node => {
+        const r = node.getBoundingClientRect();
+        return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
+      };
+      return { card: box(el), image: box(el.querySelector('img')), heading: box(el.querySelector('h3')), copy: box(el.querySelector('h3 + div')) };
+    }));
+    expect(layout).toHaveLength(5);
+    layout.forEach((item, index) => {
+      expect(item.image.height).toBeLessThanOrEqual(240);
+      expect(item.image.width / item.image.height).toBeCloseTo(4 / 3, 2);
+      expect(item.heading.left - item.card.left).toBeCloseTo(28, 0);
+      expect(item.heading.top - item.image.bottom).toBeCloseTo(20, 0);
+      expect(item.copy.top).toBeGreaterThan(item.heading.bottom);
+      if (index % 2 === 0) expect(item.image.left).toBeCloseTo(item.heading.left, 0);
+      else expect(item.image.right).toBeCloseTo(item.card.right, 0);
+      if (index > 0) expect(item.card.top - layout[index - 1].card.bottom).toBeCloseTo(56, 0);
+    });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+  await page.setViewportSize({ width: 414, height: 896 });
+  const scrollPastChapter = async index => {
+    await chapters.nth(index).evaluate(el => window.scrollTo({ top: scrollY + el.getBoundingClientRect().top + 32 - innerHeight / 2, behavior: 'instant' }));
+    await expect(chapters.nth(index)).toHaveAttribute('data-reached', 'true');
+    await expect(chapters.nth(index + 1)).toHaveAttribute('data-reached', 'false');
+    return Number(await timeline.getAttribute('data-progress'));
+  };
+  const start = await scrollPastChapter(0);
+  const later = await scrollPastChapter(3);
+  expect(later).toBeGreaterThan(start);
+  expect(await scrollPastChapter(0)).toBeLessThan(later);
 });
 
 test('protocol buttons select the matching step and phase', async ({ page }) => {
