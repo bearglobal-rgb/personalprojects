@@ -238,6 +238,42 @@ test('compact Origin alternates smaller photos beside a continuous scroll-driven
   expect(await scrollPastChapter(0)).toBeLessThan(later);
 });
 
+test('Origin markers align with the rail and fill in both scroll directions', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const mobile = testInfo.project.name === 'mobile';
+  const chapters = page.locator('.origin-chapter');
+  for (const width of mobile ? [390, 414] : [1024, 1440, 1920]) {
+    await page.setViewportSize({ width, height: 896 });
+    const geometry = await chapters.evaluateAll(elements => elements.map(el => {
+      const css = getComputedStyle(el, '::before');
+      const rect = el.getBoundingClientRect();
+      const rail = document.querySelector('.origin-rail').getBoundingClientRect();
+      const transform = new DOMMatrixReadOnly(css.transform);
+      return {
+        content: css.content, width: css.width, height: css.height,
+        center: rect.left + parseFloat(css.left) + transform.m41 + parseFloat(css.width) / 2,
+        railCenter: rail.left + rail.width / 2,
+        inset: parseFloat(css.top),
+      };
+    }));
+    for (const marker of geometry) {
+      expect(marker.content).toBe('""');
+      expect([marker.width, marker.height]).toEqual(['9px', '9px']);
+      expect(Math.abs(marker.center - marker.railCenter)).toBeLessThan(.6);
+      expect(marker.inset).toBe(mobile ? 16 : 32);
+    }
+    const chapter = chapters.nth(2);
+    for (const reached of [false, true, false]) {
+      await chapter.evaluate((el, { inset, reached }) => window.scrollTo({
+        top: scrollY + el.getBoundingClientRect().top + inset - innerHeight / 2 + (reached ? 12 : -12),
+        behavior: 'instant',
+      }), { inset: mobile ? 16 : 32, reached });
+      await expect(chapter).toHaveAttribute('data-reached', String(reached));
+      await expect.poll(() => chapter.evaluate(el => getComputedStyle(el, '::before').backgroundColor)).toBe(reached ? 'rgb(244, 239, 230)' : 'rgb(5, 5, 5)');
+    }
+  }
+});
+
 test('protocol buttons select the matching step and phase', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.locator('#protocol-07 > button').click();

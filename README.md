@@ -113,5 +113,7 @@ Below the desktop breakpoint, the Origin section uses a left-side scroll-driven
 line and chapter markers. Photos alternate left and right at 88% of the available
 content width (up to 320 pixels), with consistently aligned text and tighter
 chapter spacing. Desktop retains its original central line and alternating
-two-column layout. Responsive tests cover the compact layout from 320 to 1023
+two-column layout, with matching chapter circles on the central line. On both
+layouts, the circles fill as their chapter reaches the middle of the viewport
+and empty again when scrolling back. Responsive tests cover the compact layout from 320 to 1023
 pixels and verify forward and reverse timeline progression.
