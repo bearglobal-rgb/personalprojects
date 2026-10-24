@@ -489,6 +489,18 @@ test('mobile menu opens, navigates, and closes', async ({ page }, testInfo) => {
   const toggle = page.getByRole('button', { name: 'Open navigation' });
   await toggle.click();
   await expect(page.locator('#mobile-menu')).toBeVisible();
+  const typography = await page.locator('#mobile-menu').evaluate(menu => {
+    const read = element => {
+      const style = getComputedStyle(element);
+      return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'textTransform'].map(property => [property, style[property]]));
+    };
+    return {
+      free: read(menu.querySelector('[data-free-system]')),
+      black: read(menu.querySelector('a[href*="plan_DB7DJLmJ0TIf4"]')),
+    };
+  });
+  expect(typography.free).toEqual(typography.black);
+  expect(typography.free.textTransform).toBe('uppercase');
   await page.locator('#mobile-menu a[href="#inside"]').click();
   await expect(page.locator('#mobile-menu')).toBeHidden();
   await expect(page).toHaveURL(/#inside$/);
