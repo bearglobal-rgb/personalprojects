@@ -1,3 +1,5 @@
+import { initFreeSystemSignup } from './free-system-signup.js';
+
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const system = document.querySelector('[data-timeline="system"]');
@@ -170,3 +172,4 @@ rooms.addEventListener('keydown', event => {
 compactRooms.addEventListener('change', syncRoomLayout);
 new ResizeObserver(scheduleRoomUpdate).observe(rooms);
 syncRoomLayout();
+initFreeSystemSignup({ beforeOpen: () => closeMenu() });

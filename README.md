@@ -1,14 +1,26 @@
 # Swan Academy reconstruction
 
 Static Vite + Tailwind site built from the supplied Swan Academy HTML export,
-brand specifications, SVGs, and screenshots. All supplied main-page wording and
-checkout destinations are preserved. Original corner treatments are restored:
+brand specifications, SVGs, and screenshots. Main-page wording is preserved except
+for the free-system offer revisions recorded in `reference/free-system-copy-changes.json`.
+Black checkout destinations are preserved. Original corner treatments are restored:
 rounded cards and photographs, smaller rounded inner frames, and circular avatars
 and badges. Buttons retain their original rectangular shape. Both timeline structures have
 scroll-linked progress; the system's active protocol and phase follow scrolling
 in either direction. Includes native FAQ disclosures and mobile navigation.
 
 ## Run
+
+This branch contains an **unpublished signup draft**. All free-offer buttons open
+a branded on-site dialog; the offer cards and FAQ now describe an emailed system
+instead of free academy membership. Submission is deliberately disabled, with no
+email storage or delivery claim. The live site has not been replaced by this draft.
+
+Before publishing, connect the user's actual public Brevo signup form (or their
+chosen provider), configure the system-delivery automation and resource link,
+and verify a real signup through inbox delivery. Use the provider's documented
+confirmation/error responses; do not assume that a successful HTTP request means
+an email was sent. API keys must never be included in this static repository.
 
 Node 24 was used for validation. From this directory:
 

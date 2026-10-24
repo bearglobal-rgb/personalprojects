@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 const original = readFileSync(new URL('../reference/original.html', import.meta.url), 'utf8');
+const offerCopyChanges = JSON.parse(readFileSync(new URL('../reference/free-system-copy-changes.json', import.meta.url), 'utf8'));
 const immersionGeometry = JSON.parse(readFileSync(new URL('../reference/immersion-screen.json', import.meta.url), 'utf8'));
 
 test.beforeEach(async ({ page }) => {
@@ -9,14 +10,14 @@ test.beforeEach(async ({ page }) => {
   await page.evaluate(() => document.fonts.ready);
 });
 
-test('preserves every word of the supplied main page', async ({ page }) => {
+test('preserves the original content apart from the free-system offer copy', async ({ page }) => {
   const result = await page.evaluate((html) => {
     const original = new DOMParser().parseFromString(html, 'text/html');
     const rebuilt = document.querySelector('main').cloneNode(true);
     rebuilt.querySelector('.system-intro').remove();
     const normalize = (text) => text.replace(/\s+/g, ' ').trim();
     return { expected: normalize(original.body.textContent), actual: normalize(rebuilt.textContent) };
-  }, original);
+  }, offerCopyChanges.reduce((html, [before, after]) => html.replaceAll(before, after), original));
   expect(result.actual).toBe(result.expected);
 });
 
@@ -341,14 +342,68 @@ test('FAQ opens and closes with keyboard input', async ({ page }) => {
   await expect(question).not.toHaveAttribute('open', '');
 });
 
-test('checkout destinations and internal links are intact', async ({ page }) => {
+test('Black checkout remains intact and every free CTA opens the signup form', async ({ page }) => {
   const external = await page.locator('header a[href^="https:"], main a[href^="https:"]').evaluateAll((links) => links.map((a) => a.href));
   expect(new Set(external)).toEqual(new Set([
-    'https://whop.com/checkout/plan_kIUSXT7V4Lkag',
     'https://whop.com/checkout/plan_DB7DJLmJ0TIf4',
   ]));
   const missing = await page.locator('a[href^="#"]').evaluateAll((links) => links.filter((a) => !document.getElementById(a.hash.slice(1))).map((a) => a.hash));
   expect(missing).toEqual([]);
+  await expect(page.locator('[data-free-system]')).toHaveCount(6);
+  await expect(page.locator('a[href*="plan_kIUSXT7V4Lkag"]')).toHaveCount(0);
+  for (const button of await page.locator('main [data-free-system]').all()) {
+    await button.click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await page.getByRole('button', { name: 'Close signup form' }).click();
+    await expect(button).toBeFocused();
+  }
+});
+
+test('signup draft fits phones, traps focus, and preserves the page position', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const trigger = page.locator('#top [data-free-system]');
+  const dialog = page.getByRole('dialog');
+  for (const width of [320, 390, 414, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    await trigger.scrollIntoViewIfNeeded();
+    const scrollY = await page.evaluate(() => window.scrollY);
+    await trigger.click();
+    await expect(page.getByLabel('Email address', { exact: true })).toBeFocused();
+    const bounds = await dialog.boundingBox();
+    expect(bounds.x).toBeGreaterThanOrEqual(0);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
+    expect(bounds.height).toBeLessThanOrEqual(812);
+    await page.keyboard.press('Shift+Tab');
+    await expect(page.getByRole('button', { name: 'Close signup form' })).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(page.getByLabel('Email address', { exact: true })).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    await expect(trigger).toBeFocused();
+    expect(await page.evaluate(() => window.scrollY)).toBeCloseTo(scrollY, 0);
+  }
+});
+
+test('signup does not collect or claim to deliver email before the provider is connected', async ({ page }) => {
+  const posts = [];
+  page.on('request', request => { if (request.method() === 'POST') posts.push(request.url()); });
+  await page.locator('#top [data-free-system]').click();
+  await page.getByLabel('Email address', { exact: true }).fill('preview@example.test');
+  await expect(page.getByRole('button', { name: 'Send me the system' })).toBeDisabled();
+  await page.locator('#free-system-form').evaluate(form => form.requestSubmit());
+  await expect(page.getByRole('status')).toHaveText('Email delivery is being set up. Please check back soon.');
+  await expect(page.getByRole('dialog')).toBeVisible();
+  expect(posts).toEqual([]);
+});
+
+test('mobile-menu signup closes the menu and returns focus to its toggle', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: 'Open navigation' }).click();
+  await page.locator('#mobile-menu [data-free-system]').click();
+  await expect(page.locator('#mobile-menu')).toBeHidden();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.getByRole('button', { name: 'Close signup form' }).click();
+  await expect(page.getByRole('button', { name: 'Open navigation' })).toBeFocused();
 });
 
 test('footer preserves the original proportions and links to the social profiles', async ({ page }, testInfo) => {
