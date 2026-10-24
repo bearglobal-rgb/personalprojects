@@ -45,6 +45,12 @@
   min-height: calc(100svh - 74px);
   justify-content: flex-start;
 }
+@media (min-width: 1024px) {
+  .hero-content {
+    padding-top: 152px;
+    padding-bottom: 88px;
+  }
+}
 .site-header nav a { transition: color 180ms ease; }
 .site-header nav a:hover, .phase-link:hover { color: var(--color-ink); }
 .system-timeline > ol > li { scroll-margin-top: 8rem; }

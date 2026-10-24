@@ -59,7 +59,7 @@ test('corner treatments match the original and the layout fits the viewport', as
 test('hero fills the opening viewport and the next section starts below the fold', async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   const sizes = testInfo.project.name === 'mobile'
-    ? [[320, 568], [390, 844], [414, 896]]
+    ? [[320, 568], [390, 844], [414, 896], [768, 1024], [1023, 768]]
     : [[1366, 768], [1440, 900], [1920, 991], [1920, 1080], [2560, 1440]];
   for (const [width, height] of sizes) {
     await page.setViewportSize({ width, height });
@@ -73,7 +73,7 @@ test('hero fills the opening viewport and the next section starts below the fold
       labelTop: hero.nextElementSibling.querySelector('p').getBoundingClientRect().top,
     }));
     expect(layout.heroBottom).toBeGreaterThanOrEqual(height - 1);
-    expect(layout.contentInset).toBe(width >= 640 ? 112 : 80);
+    expect(layout.contentInset).toBe(width >= 1024 ? 152 : width >= 640 ? 112 : 80);
     expect(layout.dividerWidth).toBe('1px');
     expect(layout.dividerStyle).toBe('solid');
     expect(layout.nextTag).toBe('SECTION');
