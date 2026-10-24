@@ -11,12 +11,14 @@ in either direction. Includes native FAQ disclosures and mobile navigation.
 
 ## Run
 
-This branch contains an **unpublished signup draft**. All free-offer buttons open
+The site includes a **visual preview of the email signup**. All free-offer buttons open
 a branded on-site dialog; the offer cards and FAQ now describe an emailed system
 instead of free academy membership. Submission is deliberately disabled, with no
-email storage or delivery claim. The live site has not been replaced by this draft.
+email storage or delivery claim. The user requested this preview be published
+before Brevo and the finished resource are available; the form displays a
+clear coming-soon message.
 
-Before publishing, connect the user's actual public Brevo signup form (or their
+Before enabling submission, connect the user's actual public Brevo signup form (or their
 chosen provider), configure the system-delivery automation and resource link,
 and verify a real signup through inbox delivery. Use the provider's documented
 confirmation/error responses; do not assume that a successful HTTP request means

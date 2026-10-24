@@ -391,7 +391,7 @@ test('signup does not collect or claim to deliver email before the provider is c
   await page.getByLabel('Email address', { exact: true }).fill('preview@example.test');
   await expect(page.getByRole('button', { name: 'Send me the system' })).toBeDisabled();
   await page.locator('#free-system-form').evaluate(form => form.requestSubmit());
-  await expect(page.getByRole('status')).toHaveText('Email delivery is being set up. Please check back soon.');
+  await expect(page.getByRole('status')).toHaveText('Coming soon. Email signup isn’t available yet.');
   await expect(page.getByRole('dialog')).toBeVisible();
   expect(posts).toEqual([]);
 });
