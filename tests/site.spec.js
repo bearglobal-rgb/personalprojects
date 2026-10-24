@@ -14,17 +14,22 @@ test('preserves the original content apart from the revised offer and removed la
   const result = await page.evaluate((html) => {
     const original = new DOMParser().parseFromString(html, 'text/html');
     original.querySelector('#top + div').remove();
+    original.querySelector('#top').after(original.querySelector('#founder'));
     const rebuilt = document.querySelector('main').cloneNode(true);
     rebuilt.querySelector('.system-intro').remove();
     const normalize = (text) => text.replace(/\s+/g, ' ').trim();
     return { expected: normalize(original.body.textContent), actual: normalize(rebuilt.textContent) };
   }, offerCopyChanges.reduce((html, [before, after]) => html.replaceAll(before, after), original));
   expect(result.actual).toBe(result.expected);
+  expect(await page.locator('main > div > section').evaluateAll(sections => sections.map(section => section.id))).toEqual([
+    'top', 'founder', 'failure', 'method', 'inside', 'offers', 'faq', 'final-cta',
+  ]);
 });
 
 test('corner treatments match the original and the layout fits the viewport', async ({ page }) => {
   const result = await page.evaluate((html) => {
     const source = new DOMParser().parseFromString(html, 'text/html');
+    source.querySelector('#top').after(source.querySelector('#founder'));
     const signature = (el) => ({ tag: el.tagName, radius: Array.from(el.classList).find(c => c.startsWith('rounded-')) });
     const elements = Array.from(document.querySelectorAll('main [class*="rounded-"]'));
     const incorrectRadii = elements.filter((el) => {
@@ -80,7 +85,7 @@ test('hero fills the opening viewport and the next section starts below the fold
       await expect(page.locator('#top a')).toBeInViewport({ ratio: 1 });
     }
   }
-  const nextLabel = page.locator('#top + section > p').first();
+  const nextLabel = page.locator('#top + section p').first();
   await nextLabel.scrollIntoViewIfNeeded();
   await expect(nextLabel).toBeInViewport();
 });

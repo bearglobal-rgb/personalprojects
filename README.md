@@ -5,6 +5,9 @@ brand specifications, SVGs, and screenshots. Main-page wording is preserved exce
 for the free-system offer revisions recorded in `reference/free-system-copy-changes.json`
 and the removed language/keyword strip beneath the hero. The hero fills the opening
 viewport below the header, keeping the next section below the fold.
+The section order is Hero → Origin → Failure → System → Inside → Choose Your
+Next Step → FAQ → Final CTA → Footer. A future Proof/Testimonials section belongs
+between Inside and Choose Your Next Step; it is omitted until real material is supplied.
 Black checkout destinations are preserved. Original corner treatments are restored:
 rounded cards and photographs, smaller rounded inner frames, and circular avatars
 and badges. Buttons retain their original rectangular shape. Both timeline structures have
