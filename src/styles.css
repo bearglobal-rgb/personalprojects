@@ -39,6 +39,12 @@
   color: var(--color-void);
 }
 .skip-link:focus { transform: translateY(0); }
+.hero-content {
+  /* Fill the opening screen below the 72px header and its 1px border. */
+  min-height: calc(100vh - 73px);
+  min-height: calc(100svh - 73px);
+  justify-content: center;
+}
 .site-header nav a { transition: color 180ms ease; }
 .site-header nav a:hover, .phase-link:hover { color: var(--color-ink); }
 .system-timeline > ol > li { scroll-margin-top: 8rem; }

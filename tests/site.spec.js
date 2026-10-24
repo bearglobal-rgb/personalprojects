@@ -10,9 +10,10 @@ test.beforeEach(async ({ page }) => {
   await page.evaluate(() => document.fonts.ready);
 });
 
-test('preserves the original content apart from the free-system offer copy', async ({ page }) => {
+test('preserves the original content apart from the revised offer and removed language strip', async ({ page }) => {
   const result = await page.evaluate((html) => {
     const original = new DOMParser().parseFromString(html, 'text/html');
+    original.querySelector('#top + div').remove();
     const rebuilt = document.querySelector('main').cloneNode(true);
     rebuilt.querySelector('.system-intro').remove();
     const normalize = (text) => text.replace(/\s+/g, ' ').trim();
@@ -48,6 +49,34 @@ test('corner treatments match the original and the layout fits the viewport', as
   expect(result.incorrectRadii).toEqual([]);
   expect(result.actualIcons).toEqual(result.expectedIcons);
   expect(result.overflow).toBe(false);
+});
+
+test('hero fills the opening viewport and the next section starts below the fold', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const sizes = testInfo.project.name === 'mobile'
+    ? [[320, 568], [390, 844], [414, 896]]
+    : [[1366, 768], [1440, 900], [1920, 991], [1920, 1080], [2560, 1440]];
+  for (const [width, height] of sizes) {
+    await page.setViewportSize({ width, height });
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    const layout = await page.locator('#top').evaluate(hero => ({
+      heroBottom: hero.getBoundingClientRect().bottom,
+      nextTag: hero.nextElementSibling.tagName,
+      labelTop: hero.nextElementSibling.querySelector('p').getBoundingClientRect().top,
+    }));
+    expect(layout.heroBottom).toBeGreaterThanOrEqual(height - 1);
+    expect(layout.nextTag).toBe('SECTION');
+    expect(layout.labelTop).toBeGreaterThanOrEqual(height);
+    await expect(page.locator('main').getByText('Portuguese', { exact: true })).toHaveCount(0);
+    if (testInfo.project.name === 'desktop') {
+      await expect(page.locator('#top h1')).toBeInViewport({ ratio: 1 });
+      await expect(page.locator('#top [data-free-system]')).toBeInViewport({ ratio: 1 });
+      await expect(page.locator('#top a')).toBeInViewport({ ratio: 1 });
+    }
+  }
+  const nextLabel = page.locator('#top + section > p').first();
+  await nextLabel.scrollIntoViewIfNeeded();
+  await expect(nextLabel).toBeInViewport();
 });
 
 test('permanent step labels sit below the copy on mobile and stay in the desktop header', async ({ page }, testInfo) => {

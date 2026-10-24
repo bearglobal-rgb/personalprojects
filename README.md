@@ -2,7 +2,9 @@
 
 Static Vite + Tailwind site built from the supplied Swan Academy HTML export,
 brand specifications, SVGs, and screenshots. Main-page wording is preserved except
-for the free-system offer revisions recorded in `reference/free-system-copy-changes.json`.
+for the free-system offer revisions recorded in `reference/free-system-copy-changes.json`
+and the removed language/keyword strip beneath the hero. The hero fills the opening
+viewport below the header, keeping the next section below the fold.
 Black checkout destinations are preserved. Original corner treatments are restored:
 rounded cards and photographs, smaller rounded inner frames, and circular avatars
 and badges. Buttons retain their original rectangular shape. Both timeline structures have
