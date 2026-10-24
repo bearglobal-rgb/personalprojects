@@ -383,6 +383,14 @@ test('FAQ opens and closes with keyboard input', async ({ page }) => {
 });
 
 test('Black checkout remains intact and every free CTA opens the signup form', async ({ page }) => {
+  for (const navigation of ['nav[aria-label="Main navigation"]', '#mobile-menu']) {
+    expect(await page.locator(`${navigation} a[href^="#"]`).evaluateAll(links => links.map(link => ({ text: link.textContent, href: link.getAttribute('href') })))).toEqual([
+      { text: 'Jota', href: '#founder' },
+      { text: 'System', href: '#method' },
+      { text: 'Inside', href: '#inside' },
+      { text: 'Enter', href: '#offers' },
+    ]);
+  }
   const external = await page.locator('header a[href^="https:"], main a[href^="https:"]').evaluateAll((links) => links.map((a) => a.href));
   expect(new Set(external)).toEqual(new Set([
     'https://whop.com/checkout/plan_DB7DJLmJ0TIf4',
