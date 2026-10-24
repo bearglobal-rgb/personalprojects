@@ -61,10 +61,16 @@ test('hero fills the opening viewport and the next section starts below the fold
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
     const layout = await page.locator('#top').evaluate(hero => ({
       heroBottom: hero.getBoundingClientRect().bottom,
+      contentInset: hero.querySelector('.hero-content > p').getBoundingClientRect().top - hero.getBoundingClientRect().top,
+      dividerWidth: getComputedStyle(hero).borderBottomWidth,
+      dividerStyle: getComputedStyle(hero).borderBottomStyle,
       nextTag: hero.nextElementSibling.tagName,
       labelTop: hero.nextElementSibling.querySelector('p').getBoundingClientRect().top,
     }));
     expect(layout.heroBottom).toBeGreaterThanOrEqual(height - 1);
+    expect(layout.contentInset).toBe(width >= 640 ? 112 : 80);
+    expect(layout.dividerWidth).toBe('1px');
+    expect(layout.dividerStyle).toBe('solid');
     expect(layout.nextTag).toBe('SECTION');
     expect(layout.labelTop).toBeGreaterThanOrEqual(height);
     await expect(page.locator('main').getByText('Portuguese', { exact: true })).toHaveCount(0);
