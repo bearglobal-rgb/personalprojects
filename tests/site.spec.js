@@ -148,12 +148,92 @@ test('System numbers and cards light up in both scroll directions without a line
       window.scrollTo({ top: scrollY + r.top + r.height / 2 - innerHeight / 2, behavior: 'instant' });
     });
     await expect(item).toHaveAttribute('data-active', 'true');
-    await expect(item.locator('button')).toHaveAttribute('aria-current', 'step');
+    await expect(item.locator(':scope > button')).toHaveAttribute('aria-current', 'step');
     await expect(item.locator('article')).toHaveCSS('opacity', '1');
     await expect(page.locator('.system-timeline li[data-active="true"]')).toHaveCount(1);
     await expect(page.locator('.phase-link[aria-current="step"]')).toHaveAttribute('href', `#protocol-${phase}`);
     await expect(page.locator('.system-timeline li[data-active="false"] article').first()).toHaveCSS('opacity', '0.38');
   }
+});
+
+test('every phase lands on its first card with matching highlighting', async ({ page }) => {
+  for (const reducedMotion of ['reduce', 'no-preference']) {
+    await page.emulateMedia({ reducedMotion });
+    for (const step of ['01', '04', '06', '07', '09']) {
+      await page.locator(`.phase-link[href="#protocol-${step}"]`).click();
+      const card = page.locator(`#protocol-${step} article`);
+      await expect.poll(() => card.evaluate(el => {
+        const r = el.getBoundingClientRect();
+        return Math.abs(r.top + r.height / 2 - innerHeight / 2);
+      })).toBeLessThan(2);
+      await expect(page.locator(`#protocol-${step}`)).toHaveAttribute('data-active', 'true');
+      await expect(page.locator('.phase-link[aria-current="step"]')).toHaveAttribute('href', `#protocol-${step}`);
+      await expect(page.locator('.system-timeline li[data-active="true"]')).toHaveCount(1);
+    }
+  }
+});
+
+test('only active mobile phase labels return to a single selected phase with cards dimmed', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  if (testInfo.project.name === 'desktop') {
+    await page.locator('#protocol-05 > button').click();
+    for (const label of await page.locator('.step-phase-label').all()) await expect(label).toBeDisabled();
+    return;
+  }
+  for (const [step, first] of [['03', '01'], ['05', '04'], ['06', '06'], ['08', '07'], ['10', '09']]) {
+    await page.locator(`#protocol-${step} > button`).click();
+    const label = page.locator(`#protocol-${step} .step-phase-label`);
+    await expect(label).toBeEnabled();
+    await expect(page.locator('.step-phase-label:enabled')).toHaveCount(1);
+    // A click on a neighboring inactive label cannot navigate, even if dispatched directly.
+    const before = await page.evaluate(() => scrollY);
+    await page.locator('.step-phase-label:disabled').first().dispatchEvent('click');
+    expect(await page.evaluate(() => scrollY)).toBe(before);
+    await label.tap();
+    const phase = page.locator(`.phase-link[href="#protocol-${first}"]`);
+    await expect(phase).toBeFocused();
+    await expect(page.locator('.phase-link[aria-current="step"]')).toHaveCount(1);
+    await expect(phase).toHaveAttribute('aria-current', 'step');
+    await expect(page.locator('.system-timeline li[data-active="true"]')).toHaveCount(0);
+    for (const card of await page.locator('.step-card').all()) await expect(card).toHaveCSS('opacity', '0.38');
+    const nav = await page.locator('nav[aria-label="System phases"]').boundingBox();
+    const header = await page.locator('.site-header').boundingBox();
+    expect(nav.y).toBeGreaterThanOrEqual(header.y + header.height);
+    expect(nav.y + nav.height).toBeLessThan(page.viewportSize().height);
+    // Browser layout/scroll events alone must not switch the selected phase to The Reset.
+    await page.evaluate(() => {
+      dispatchEvent(new Event('resize'));
+      window.scrollBy({ top: 1, behavior: 'instant' });
+    });
+    await expect(phase).toHaveAttribute('aria-current', 'step');
+    await expect(page.locator('.system-timeline li[data-active="true"]')).toHaveCount(0);
+    // Choosing a phase exits list mode and restores its first card.
+    await phase.tap();
+    await expect(page.locator(`#protocol-${first}`)).toHaveAttribute('data-active', 'true');
+  }
+});
+
+test('mobile return selection survives smooth scrolling and resumes on a deliberate swipe', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', 'Mobile return interaction');
+  await page.locator('#protocol-10 > button').click();
+  await expect.poll(() => page.locator('#protocol-10 article').evaluate(el => {
+    const r = el.getBoundingClientRect();
+    return Math.abs(r.top + r.height / 2 - innerHeight / 2);
+  })).toBeLessThan(2);
+  await page.locator('#protocol-10 .step-phase-label').tap();
+  await expect.poll(() => page.locator('nav[aria-label="System phases"]').evaluate(el =>
+    Math.abs(el.getBoundingClientRect().top - document.querySelector('.site-header').getBoundingClientRect().bottom - 20)
+  )).toBeLessThan(2);
+  await expect(page.locator('.phase-link[aria-current="step"]')).toHaveAttribute('href', '#protocol-09');
+  await expect(page.locator('.system-timeline li[data-active="true"]')).toHaveCount(0);
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 350, y: 620 }] });
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: 350, y: 570 }] });
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await expect(page.locator('#protocol-01')).toHaveAttribute('data-active', 'true');
+  await expect(page.locator('.phase-link[aria-current="step"]')).toHaveAttribute('href', '#protocol-01');
+  await expect(page.locator('.system-timeline li[data-active="true"]')).toHaveCount(1);
+  await cdp.detach();
 });
 
 test('the immersion still changes only the laptop display', async ({ page }) => {

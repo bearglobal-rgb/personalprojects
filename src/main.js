@@ -9,20 +9,26 @@ const compactOrigin = window.matchMedia('(max-width: 1023px)');
 const protocols = Array.from(system.querySelectorAll(':scope > ol > li'));
 const phaseLinks = Array.from(document.querySelectorAll('.phase-link'));
 const phases = [0, 3, 5, 6, 8];
-let activeIndex = -1;
+const compactSystem = window.matchMedia('(max-width: 1023px)');
+const phaseLabels = protocols.map(item => item.querySelector('.step-phase-label'));
+let activeIndex = null;
+let activePhase = null;
+// A return to the mobile phase list is a selection, not a reading position.
+let returnedPhase = null;
 let framePending = false;
 
-function setActive(index) {
-  if (index === activeIndex) return;
+function setActive(index, phase = phases.findLastIndex(start => index >= start)) {
+  if (index === activeIndex && phase === activePhase) return;
   activeIndex = index;
+  activePhase = phase;
   protocols.forEach((item, i) => {
     const active = i === index;
     item.dataset.active = String(active);
     const button = item.querySelector('button');
     if (active) button.setAttribute('aria-current', 'step');
     else button.removeAttribute('aria-current');
+    phaseLabels[i].disabled = !compactSystem.matches || !active;
   });
-  const phase = phases.findLastIndex((start) => index >= start);
   phaseLinks.forEach((link, i) => {
     if (i === phase) link.setAttribute('aria-current', 'step');
     else link.removeAttribute('aria-current');
@@ -52,7 +58,8 @@ function update() {
     const distance = Math.abs(card.top + card.height / 2 - activationY);
     if (distance < shortest) { shortest = distance; nearest = index; }
   });
-  setActive(nearest);
+  if (returnedPhase !== null) setActive(-1, returnedPhase);
+  else setActive(nearest);
 }
 
 function scheduleUpdate() {
@@ -61,13 +68,80 @@ function scheduleUpdate() {
   requestAnimationFrame(update);
 }
 
+function showProtocol(index) {
+  returnedPhase = null;
+  setActive(index);
+  const card = protocols[index].querySelector('article').getBoundingClientRect();
+  window.scrollTo({
+    top: scrollY + card.top + card.height / 2 - innerHeight / 2,
+    behavior: reduceMotion.matches ? 'instant' : 'smooth',
+  });
+}
+
+phaseLinks.forEach((link, phase) => {
+  link.id = `system-phase-${phase + 1}`;
+  link.addEventListener('click', event => {
+    event.preventDefault();
+    showProtocol(phases[phase]);
+    if (compactSystem.matches) protocols[phases[phase]].querySelector('button').focus({ preventScroll: true });
+  });
+});
+
 protocols.forEach((item, index) => {
   const button = item.querySelector('button');
   const card = item.querySelector('article');
   button.setAttribute('aria-label', `Step ${index + 1}: ${card.querySelector('h3').textContent}`);
-  button.addEventListener('click', () => {
-    card.scrollIntoView({ behavior: reduceMotion.matches ? 'instant' : 'smooth', block: 'center' });
+  button.addEventListener('click', () => showProtocol(index));
+  const phase = phases.findLastIndex(start => index >= start);
+  const label = phaseLabels[index];
+  label.setAttribute('aria-label', `Back to ${label.textContent} in the phase list`);
+  label.setAttribute('aria-controls', phaseLinks[phase].id);
+  label.addEventListener('click', () => {
+    if (!compactSystem.matches || index !== activeIndex) return;
+    returnedPhase = phase;
+    setActive(-1, phase);
+    const link = phaseLinks[phase];
+    const nav = link.parentElement.getBoundingClientRect();
+    const headerBottom = document.querySelector('.site-header').getBoundingClientRect().bottom;
+    // Show the whole list where possible; keep the selected row visible on short screens.
+    const offset = Math.max(nav.top - headerBottom - 20, link.getBoundingClientRect().bottom - innerHeight + 20);
+    link.focus({ preventScroll: true });
+    window.scrollTo({ top: scrollY + offset, behavior: reduceMotion.matches ? 'instant' : 'smooth' });
   });
+});
+
+function resumeSystemReading() {
+  if (returnedPhase === null) return;
+  returnedPhase = null;
+  // Stop an unfinished return animation before the visitor takes over scrolling.
+  window.scrollTo({ top: scrollY, behavior: 'instant' });
+  scheduleUpdate();
+}
+
+// Programmatic scrolling and Safari viewport changes must not release the selection.
+let touchStart = null;
+window.addEventListener('touchstart', event => {
+  const touch = event.touches[0];
+  touchStart = touch ? { x: touch.clientX, y: touch.clientY } : null;
+}, { passive: true });
+window.addEventListener('touchmove', event => {
+  if (!touchStart || !event.touches[0]) return;
+  const dx = event.touches[0].clientX - touchStart.x;
+  const dy = event.touches[0].clientY - touchStart.y;
+  if (Math.abs(dy) > 6 && Math.abs(dy) > Math.abs(dx)) resumeSystemReading();
+}, { passive: true });
+window.addEventListener('wheel', event => {
+  if (event.deltaY && !event.ctrlKey) resumeSystemReading();
+}, { passive: true });
+window.addEventListener('keydown', event => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+  if (event.target.closest('input, textarea, select, button, [contenteditable="true"]')) return;
+  if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) resumeSystemReading();
+});
+compactSystem.addEventListener('change', () => {
+  returnedPhase = null;
+  activeIndex = null;
+  scheduleUpdate();
 });
 
 window.addEventListener('scroll', scheduleUpdate, { passive: true });

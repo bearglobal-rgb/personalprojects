@@ -52,7 +52,29 @@
   }
 }
 .site-header nav a { transition: color 180ms ease; }
-.site-header nav a:hover, .phase-link:hover { color: var(--color-ink); }
+.site-header nav a:hover { color: var(--color-ink); }
+@media (hover: hover) {
+  .phase-link:hover { color: var(--color-ink); }
+}
+.step-phase-label {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  line-height: inherit;
+  text-align: left;
+  cursor: default;
+  -webkit-text-fill-color: currentColor;
+  opacity: 1;
+}
+.step-phase-label:enabled { cursor: pointer; }
+.step-phase-label:enabled::after {
+  content: '';
+  position: absolute;
+  inset: -14px -4px;
+}
+.step-phase-label:focus-visible { outline: 1px solid var(--color-ink); outline-offset: 4px; }
 .system-timeline > ol > li { scroll-margin-top: 8rem; }
 [data-progress] { will-change: transform; transition: transform 500ms ease; }
 .system-timeline .step-card {

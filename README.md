@@ -15,6 +15,14 @@ a scroll-linked line and chapter markers. The System has no vertical line; its n
 active cards, and phase still follow scrolling in either direction. Includes native
 FAQ disclosures and mobile navigation.
 
+System phase links center the first card of the selected phase. Below 1024px,
+the highlighted card's phase label returns to that phase in the list. While
+viewing the list, only the chosen phase is highlighted and all cards are dimmed.
+A deliberate vertical swipe, wheel scroll, or scroll key restores normal
+position-based highlighting; choosing a phase or step number also exits this mode.
+Automatic scrolling and browser viewport changes do not clear the selection.
+Desktop card labels remain noninteractive.
+
 ## Run
 
 The site includes a **visual preview of the email signup**. All free-offer buttons open
