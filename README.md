@@ -10,9 +10,10 @@ Next Step → FAQ → Final CTA → Footer. A future Proof/Testimonials section 
 between Inside and Choose Your Next Step; it is omitted until real material is supplied.
 Black checkout destinations are preserved. Original corner treatments are restored:
 rounded cards and photographs, smaller rounded inner frames, and circular avatars
-and badges. Buttons retain their original rectangular shape. Both timeline structures have
-scroll-linked progress; the system's active protocol and phase follow scrolling
-in either direction. Includes native FAQ disclosures and mobile navigation.
+and badges. Buttons retain their original rectangular shape. The Origin timeline has
+a scroll-linked line and chapter markers. The System has no vertical line; its numbers,
+active cards, and phase still follow scrolling in either direction. Includes native
+FAQ disclosures and mobile navigation.
 
 ## Run
 
@@ -69,7 +70,7 @@ npm test
 
 The Playwright suite uses `/usr/bin/chromium`. Set `CHROMIUM_PATH` if your browser
 is installed elsewhere. Checks cover source-text parity, original corner treatments,
-responsive width, both timelines in both scroll directions, protocol/phase
+responsive width, the Origin line and System highlighting in both scroll directions, protocol/phase
 selection, FAQs, navigation, checkout URLs, local SVGs, and font loading.
 
 ## Outstanding source verification

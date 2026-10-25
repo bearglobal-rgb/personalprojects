@@ -39,7 +39,6 @@ function updateTimeline(container, inset, activationY) {
 function update() {
   framePending = false;
   const activationY = window.innerHeight * .5;
-  updateTimeline(system, 16, activationY);
   const originInset = compactOrigin.matches ? 16 : 32;
   updateTimeline(origin, originInset, activationY);
   originChapters.forEach(chapter => {

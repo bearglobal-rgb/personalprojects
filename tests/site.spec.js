@@ -118,24 +118,41 @@ test('permanent step labels sit below the copy on mobile and stay in the desktop
   }
 });
 
-test('both timeline lines follow scrolling in both directions', async ({ page }) => {
+test('the Origin timeline line follows scrolling in both directions', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  for (const name of ['system', 'origin']) {
-    const selector = `[data-timeline="${name}"]`;
-    const scrollToProgress = async (fraction) => {
-      await page.locator(selector).evaluate((el, fraction) => {
-        const r = el.getBoundingClientRect();
-        window.scrollTo({ top: window.scrollY + r.top + r.height * fraction - window.innerHeight / 2, behavior: 'instant' });
-      }, fraction);
-      await expect.poll(async () => Number(await page.locator(selector).getAttribute('data-progress'))).toBeGreaterThan(fraction - .05);
-      await expect.poll(async () => Number(await page.locator(selector).getAttribute('data-progress'))).toBeLessThan(fraction + .05);
-      return Number(await page.locator(selector).getAttribute('data-progress'));
-    };
-    const first = await scrollToProgress(.15);
-    const second = await scrollToProgress(.75);
-    expect(second).toBeGreaterThan(first);
-    const reverse = await scrollToProgress(.3);
-    expect(reverse).toBeLessThan(second);
+  const selector = '[data-timeline="origin"]';
+  const scrollToProgress = async (fraction) => {
+    await page.locator(selector).evaluate((el, fraction) => {
+      const r = el.getBoundingClientRect();
+      window.scrollTo({ top: window.scrollY + r.top + r.height * fraction - window.innerHeight / 2, behavior: 'instant' });
+    }, fraction);
+    await expect.poll(async () => Number(await page.locator(selector).getAttribute('data-progress'))).toBeGreaterThan(fraction - .05);
+    await expect.poll(async () => Number(await page.locator(selector).getAttribute('data-progress'))).toBeLessThan(fraction + .05);
+    return Number(await page.locator(selector).getAttribute('data-progress'));
+  };
+  const first = await scrollToProgress(.15);
+  const second = await scrollToProgress(.75);
+  expect(second).toBeGreaterThan(first);
+  const reverse = await scrollToProgress(.3);
+  expect(reverse).toBeLessThan(second);
+});
+
+test('System numbers and cards light up in both scroll directions without a line', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('.system-timeline > div[aria-hidden="true"]')).toHaveCount(0);
+  await expect(page.locator('.system-timeline > ol > li > button')).toHaveCount(10);
+  for (const [step, phase] of [['01', '01'], ['06', '06'], ['10', '09'], ['03', '01']]) {
+    const item = page.locator(`#protocol-${step}`);
+    await item.locator('article').evaluate(el => {
+      const r = el.getBoundingClientRect();
+      window.scrollTo({ top: scrollY + r.top + r.height / 2 - innerHeight / 2, behavior: 'instant' });
+    });
+    await expect(item).toHaveAttribute('data-active', 'true');
+    await expect(item.locator('button')).toHaveAttribute('aria-current', 'step');
+    await expect(item.locator('article')).toHaveCSS('opacity', '1');
+    await expect(page.locator('.system-timeline li[data-active="true"]')).toHaveCount(1);
+    await expect(page.locator('.phase-link[aria-current="step"]')).toHaveAttribute('href', `#protocol-${phase}`);
+    await expect(page.locator('.system-timeline li[data-active="false"] article').first()).toHaveCSS('opacity', '0.38');
   }
 });
 
