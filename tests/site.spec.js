@@ -306,24 +306,36 @@ test('immersion photo matches neighboring images and keeps its text unobscured',
     'Devices. Media. Thought. Switched. Mimicry until the mouth owned the sound. Reading out loud. Sparring until easy vocabulary died.',
     'No drills. If I did not enjoy it, I would not have stuck. That became the law.',
   ]);
-  for (const width of [320, 390, 430, 768, 1024]) {
+  for (const width of [320, 390, 430, 768, 1024, 1440, 1920]) {
     await page.setViewportSize({ width, height: 844 });
     await figure.scrollIntoViewIfNeeded();
     await figure.locator('img').evaluate(img => img.decode());
     const layout = await figure.evaluate(el => {
-      const photo = el.querySelector('img').getBoundingClientRect();
+      const image = el.querySelector('img');
+      const photo = image.getBoundingClientRect();
+      const position = getComputedStyle(image).objectPosition;
+      const scale = Math.max(photo.width / image.naturalWidth, photo.height / image.naturalHeight);
+      const cropLeft = (image.naturalWidth - photo.width / scale) * parseFloat(position) / 100;
       const article = el.parentElement;
       const neighbor = article.previousElementSibling.querySelector('figure img').getBoundingClientRect();
       return {
         width: photo.width, height: photo.height, neighborWidth: neighbor.width,
         bottom: photo.bottom, textTop: article.querySelector('h3').getBoundingClientRect().top,
         overflow: document.documentElement.scrollWidth > innerWidth,
+        position, cropLeft, cropRight: cropLeft + photo.width / scale,
       };
     });
     expect(layout.width).toBeLessThanOrEqual(width);
     expect(Math.abs(layout.width - layout.neighborWidth)).toBeLessThan(1);
     expect(layout.width / layout.height).toBeCloseTo(width < 1024 ? 4 / 3 : .8, 2);
     expect(layout.overflow).toBe(false);
+    if (width >= 1024) {
+      // Native-image bounds of the laptop, including a little breathing room.
+      expect(layout.cropLeft).toBeLessThan(215);
+      expect(layout.cropRight).toBeGreaterThan(720);
+    } else {
+      expect(layout.position).toBe('50% 50%');
+    }
     if (width < 1024) expect(layout.textTop).toBeGreaterThan(layout.bottom);
     for (const text of await copy.all()) {
       await text.scrollIntoViewIfNeeded();

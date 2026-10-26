@@ -50,6 +50,8 @@
     padding-top: 152px;
     padding-bottom: 88px;
   }
+  /* Keep the full laptop inside the portrait crop without changing the photo. */
+  .immersion-photo > img { object-position: 40% center; }
 }
 .site-header nav a { transition: color 180ms ease; }
 .site-header nav a:hover { color: var(--color-ink); }
