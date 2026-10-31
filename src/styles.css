@@ -64,7 +64,7 @@
   -webkit-mask: url('/assets/Swan-Academy-Monogram-White-Master.svg') center / contain no-repeat;
   mask: url('/assets/Swan-Academy-Monogram-White-Master.svg') center / contain no-repeat;
 }
-.site-header nav a:hover { color: var(--color-ink); }
+.site-header nav a[href^="#"]:hover { color: var(--color-ink); }
 @media (hover: hover) {
   .phase-link:hover { color: var(--color-ink); }
 }
@@ -90,7 +90,7 @@
 .system-timeline > ol > li { scroll-margin-top: 8rem; }
 [data-progress] { will-change: transform; transition: transform 500ms ease; }
 .system-timeline .step-card {
-  opacity: .38;
+  opacity: .85;
   border-color: var(--color-line);
   background-color: color-mix(in srgb, var(--color-panel) 40%, transparent);
 }
@@ -99,8 +99,8 @@
   border-color: color-mix(in srgb, var(--color-ink) 35%, transparent);
   background-color: var(--color-panel);
 }
-.system-timeline li > button { color: color-mix(in srgb, var(--color-ink) 12%, transparent); }
-.system-timeline li > button:hover { color: color-mix(in srgb, var(--color-ink) 35%, transparent); }
+.system-timeline li > button { color: color-mix(in srgb, var(--color-ink) 40%, transparent); }
+.system-timeline li > button:hover { color: color-mix(in srgb, var(--color-ink) 55%, transparent); }
 .system-timeline li[data-active="true"] > button { color: color-mix(in srgb, var(--color-ink) 65%, transparent); }
 .system-timeline li .step-card > div > span:first-child {
   color: var(--color-mute);

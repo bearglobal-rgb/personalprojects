@@ -22,12 +22,16 @@ A deliberate vertical swipe, wheel scroll, or scroll key restores normal
 position-based highlighting; choosing a phase or step number also exits this mode.
 Automatic scrolling and browser viewport changes do not clear the selection.
 Desktop card labels remain noninteractive.
+Inactive cards retain 85% opacity and readable step numerals. Active cards keep
+their stronger border, solid panel, and brighter number; scroll behavior is unchanged.
 
 The palette keeps the near-black background and ivory buttons/wordmarks. Headings
 use a brighter warm white (`#F8F5EF`), reading text uses `#B2ABA0`, and secondary
 labels retain `#9A9286`. Header, footer, and signup monograms use the original SVG
 as a CSS mask to match the ivory wordmarks exactly without altering the artwork.
 The sticky header uses 85% background opacity and 16px backdrop blur.
+Header navigation hover colors apply only to section links, so the mobile Black
+CTA retains dark text on its ivory fill.
 
 ## Run
 

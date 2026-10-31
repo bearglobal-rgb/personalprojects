@@ -152,8 +152,51 @@ test('System numbers and cards light up in both scroll directions without a line
     await expect(item.locator('article')).toHaveCSS('opacity', '1');
     await expect(page.locator('.system-timeline li[data-active="true"]')).toHaveCount(1);
     await expect(page.locator('.phase-link[aria-current="step"]')).toHaveAttribute('href', `#protocol-${phase}`);
-    await expect(page.locator('.system-timeline li[data-active="false"] article').first()).toHaveCSS('opacity', '0.38');
+    await expect(page.locator('.system-timeline li[data-active="false"] article').first()).toHaveCSS('opacity', '0.85');
   }
+});
+
+test('inactive System content and clickable numbers remain readable', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.locator('#protocol-05 > button').click();
+  const readings = await page.locator('.system-timeline li[data-active="false"]').evaluateAll(items => {
+    const context = document.createElement('canvas').getContext('2d');
+    const rgba = color => {
+      context.clearRect(0, 0, 1, 1);
+      context.fillStyle = color;
+      context.fillRect(0, 0, 1, 1);
+      const p = [...context.getImageData(0, 0, 1, 1).data];
+      p[3] /= 255;
+      return p;
+    };
+    const over = (a, b) => {
+      const alpha = a[3] + b[3] * (1 - a[3]);
+      return alpha ? [...a.slice(0, 3).map((v, i) => (v * a[3] + b[i] * b[3] * (1 - a[3])) / alpha), alpha] : [0, 0, 0, 0];
+    };
+    const luminance = p => p.slice(0, 3).map(v => {
+      v /= 255;
+      return v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4;
+    }).reduce((sum, v, i) => sum + v * [.2126, .7152, .0722][i], 0);
+    return items.flatMap(item => [...item.querySelectorAll(':scope > button, h3, p, .step-phase-label, .step-permanence, article > div > span:first-child')].map(el => {
+      const pixel = text => {
+        let color = text ? rgba(getComputedStyle(el).color) : [0, 0, 0, 0];
+        for (let node = el; node; node = node.parentElement) {
+          const css = getComputedStyle(node);
+          color = over(color, rgba(css.backgroundColor));
+          color[3] *= Number(css.opacity);
+        }
+        return over(color, [255, 255, 255, 1]);
+      };
+      const a = luminance(pixel(true)), b = luminance(pixel(false));
+      return {
+        text: el.textContent.trim(),
+        contrast: (Math.max(a, b) + .05) / (Math.min(a, b) + .05),
+        target: parseFloat(getComputedStyle(el).fontSize) >= 24 ? 3 : 4.5,
+      };
+    }));
+  });
+  expect(readings.length).toBeGreaterThan(40);
+  for (const reading of readings) expect(reading.contrast, reading.text).toBeGreaterThanOrEqual(reading.target);
 });
 
 test('every phase lands on its first card with matching highlighting', async ({ page }) => {
@@ -195,7 +238,7 @@ test('only active mobile phase labels return to a single selected phase with car
     await expect(page.locator('.phase-link[aria-current="step"]')).toHaveCount(1);
     await expect(phase).toHaveAttribute('aria-current', 'step');
     await expect(page.locator('.system-timeline li[data-active="true"]')).toHaveCount(0);
-    for (const card of await page.locator('.step-card').all()) await expect(card).toHaveCSS('opacity', '0.38');
+    for (const card of await page.locator('.step-card').all()) await expect(card).toHaveCSS('opacity', '0.85');
     const nav = await page.locator('nav[aria-label="System phases"]').boundingBox();
     const header = await page.locator('.site-header').boundingBox();
     expect(nav.y).toBeGreaterThanOrEqual(header.y + header.height);
@@ -668,6 +711,12 @@ test('mobile menu opens, navigates, and closes', async ({ page }, testInfo) => {
   });
   expect(typography.free).toEqual(typography.black);
   expect(typography.free.textTransform).toBe('uppercase');
+  const black = page.locator('#mobile-menu a[href*="plan_DB7DJLmJ0TIf4"]');
+  await black.hover();
+  await expect(black).toHaveCSS('color', 'rgb(5, 5, 5)');
+  await expect(black).toHaveCSS('background-color', 'rgb(244, 239, 230)');
+  await black.focus();
+  await expect(black).toHaveCSS('color', 'rgb(5, 5, 5)');
   await page.locator('#mobile-menu a[href="#inside"]').click();
   await expect(page.locator('#mobile-menu')).toBeHidden();
   await expect(page).toHaveURL(/#inside$/);
