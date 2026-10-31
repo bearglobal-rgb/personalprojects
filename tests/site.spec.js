@@ -581,7 +581,7 @@ test('footer preserves the original proportions and links to the social profiles
     return {
       height: el.getBoundingClientRect().height,
       padding: [style.paddingTop, style.paddingBottom],
-      logo: [brand.querySelector('img').width, brand.querySelector('img').height],
+      logo: [brand.querySelector('.brand-monogram').getBoundingClientRect().width, brand.querySelector('.brand-monogram').getBoundingClientRect().height],
       name: getComputedStyle(brand.querySelector('.font-serif')).fontSize,
       social: getComputedStyle(el.querySelector('nav')).fontSize,
       copyright: getComputedStyle(el.querySelector('p')).fontSize,
@@ -623,22 +623,32 @@ test('header stays readable and sticky with subtle transparency and blur', async
   });
   expect(style.top).toBe(0);
   expect(style.position).toBe('sticky');
-  expect(style.alpha).toBeGreaterThanOrEqual(.85);
-  expect(style.alpha).toBeLessThan(.98);
-  expect(style.blur).toMatch(/blur\([1-9][\d.]*px\)/);
+  expect(style.alpha).toBeCloseTo(.85, 2);
+  expect(style.blur).toBe('blur(16px)');
   expect(style.opacity).toBe('1');
 });
 
-test('tab uses the black monogram while the site keeps white logos', async ({ page, request }) => {
+test('tab keeps the black monogram and site monograms match their ivory wordmarks', async ({ page, request }) => {
   const favicon = await page.locator('link[rel="icon"]').getAttribute('href');
   expect(favicon).toMatch(/Swan-Academy-Monogram-Black-Master\.svg$/);
   const response = await request.get(favicon);
   expect(response.ok()).toBe(true);
   expect(await response.text()).toBe(readFileSync(new URL('../public/assets/Swan-Academy-Monogram-Black-Master.svg', import.meta.url), 'utf8'));
-  for (const selector of ['.brand img', 'footer img']) {
-    await expect(page.locator(selector)).toHaveAttribute('src', /Swan-Academy-Monogram-White-Master\.svg$/);
-    expect(await page.locator(selector).evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+  await expect(page).toHaveTitle('Swan Academy · English Mastery');
+  for (const selector of ['.brand .brand-monogram', 'footer .brand-monogram', '.signup-brand .brand-monogram']) {
+    const logo = await page.locator(selector).evaluate(el => ({
+      color: getComputedStyle(el).backgroundColor,
+      wordmark: getComputedStyle(el.nextElementSibling).color,
+      mask: getComputedStyle(el).maskImage,
+    }));
+    expect(logo.color).toBe('rgb(244, 239, 230)');
+    expect(logo.color).toBe(logo.wordmark);
+    expect(logo.mask).toContain('Swan-Academy-Monogram-White-Master.svg');
   }
+  await expect(page.locator('#top h1')).toHaveCSS('color', 'rgb(248, 245, 239)');
+  await expect(page.locator('#top .text-body')).toHaveCSS('color', 'rgb(178, 171, 160)');
+  await expect(page.locator('#top p').first()).toHaveCSS('color', 'rgb(154, 146, 134)');
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(5, 5, 5)');
 });
 
 test('mobile menu opens, navigates, and closes', async ({ page }, testInfo) => {
@@ -672,7 +682,12 @@ test('local branding and both fonts load without JavaScript errors', async ({ pa
   page.on('pageerror', (error) => errors.push(error.message));
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.evaluate(() => document.fonts.ready);
-  expect(await page.locator('.brand img').evaluate((img) => img.complete && img.naturalWidth > 0)).toBe(true);
+  expect(await page.locator('.brand-monogram').first().evaluate(async el => {
+    const image = new Image();
+    image.src = getComputedStyle(el).maskImage.slice(5, -2);
+    await image.decode();
+    return image.naturalWidth > 0;
+  })).toBe(true);
   expect(await page.evaluate(() => document.fonts.check('16px "Inter Variable"'))).toBe(true);
   expect(await page.evaluate(() => document.fonts.check('16px "Playfair Display Variable"'))).toBe(true);
   expect(errors).toEqual([]);

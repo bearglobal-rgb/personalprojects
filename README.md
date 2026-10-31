@@ -23,6 +23,12 @@ position-based highlighting; choosing a phase or step number also exits this mod
 Automatic scrolling and browser viewport changes do not clear the selection.
 Desktop card labels remain noninteractive.
 
+The palette keeps the near-black background and ivory buttons/wordmarks. Headings
+use a brighter warm white (`#F8F5EF`), reading text uses `#B2ABA0`, and secondary
+labels retain `#9A9286`. Header, footer, and signup monograms use the original SVG
+as a CSS mask to match the ivory wordmarks exactly without altering the artwork.
+The sticky header uses 85% background opacity and 16px backdrop blur.
+
 ## Run
 
 The site includes a **visual preview of the email signup**. All free-offer buttons open

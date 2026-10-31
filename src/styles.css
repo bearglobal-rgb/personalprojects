@@ -9,6 +9,8 @@
 @theme {
   --color-void: #050505;
   --color-ink: #f4efe6;
+  --color-heading: #f8f5ef;
+  --color-body: #b2aba0;
   --color-mute: #9a9286;
   --color-line: #272522;
   --color-panel: #0d0d0c;
@@ -19,6 +21,7 @@
 @layer base {
   html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
   body { margin: 0; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { color: var(--color-heading); }
   button, summary, a { -webkit-tap-highlight-color: transparent; }
   button { cursor: pointer; }
   a, button, summary { touch-action: manipulation; }
@@ -54,6 +57,13 @@
   .immersion-photo > img { object-position: 40% center; }
 }
 .site-header nav a { transition: color 180ms ease; }
+.brand-monogram {
+  display: inline-block;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask: url('/assets/Swan-Academy-Monogram-White-Master.svg') center / contain no-repeat;
+  mask: url('/assets/Swan-Academy-Monogram-White-Master.svg') center / contain no-repeat;
+}
 .site-header nav a:hover { color: var(--color-ink); }
 @media (hover: hover) {
   .phase-link:hover { color: var(--color-ink); }
@@ -131,7 +141,7 @@
 .signup-brand { display: flex; align-items: center; gap: .75rem; padding-right: 1rem; font-family: var(--font-serif); font-size: 18px; }
 .signup-eyebrow { margin-top: 2rem; color: var(--color-mute); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; }
 .signup-dialog h2 { margin-top: .75rem; font-family: var(--font-serif); font-size: 2rem; line-height: 1.2; }
-#signup-description { margin-top: 1rem; color: var(--color-mute); font-size: 15px; line-height: 1.65; }
+#signup-description { margin-top: 1rem; color: var(--color-body); font-size: 15px; line-height: 1.65; }
 .signup-dialog form { margin-top: 1.75rem; }
 .signup-dialog label { display: block; margin-bottom: .5rem; font-size: 13px; }
 .signup-dialog input {
@@ -269,7 +279,7 @@
     bottom: 1.5rem;
   }
   .brand { gap: .5rem; }
-  .brand img { width: 2rem; height: 2rem; }
+  .brand .brand-monogram { width: 2rem; height: 2rem; }
   .brand span { font-size: 1.1rem; }
 }
 @media (prefers-reduced-motion: reduce) {
