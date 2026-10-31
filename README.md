@@ -22,8 +22,9 @@ A deliberate vertical swipe, wheel scroll, or scroll key restores normal
 position-based highlighting; choosing a phase or step number also exits this mode.
 Automatic scrolling and browser viewport changes do not clear the selection.
 Desktop card labels remain noninteractive.
-Inactive cards retain 85% opacity and readable step numerals. Active cards keep
-their stronger border, solid panel, and brighter number; scroll behavior is unchanged.
+Inactive cards use the user-preferred 38% opacity fade; step numerals remain readable.
+Active cards keep their stronger border, solid panel, and brighter number. The deeper
+card fade is intentional, including its lower inactive-text contrast; scroll behavior is unchanged.
 
 The palette keeps the near-black background and ivory buttons/wordmarks. Headings
 use a brighter warm white (`#F8F5EF`), reading text uses `#B2ABA0`, and secondary

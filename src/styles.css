@@ -90,7 +90,7 @@
 .system-timeline > ol > li { scroll-margin-top: 8rem; }
 [data-progress] { will-change: transform; transition: transform 500ms ease; }
 .system-timeline .step-card {
-  opacity: .85;
+  opacity: .38;
   border-color: var(--color-line);
   background-color: color-mix(in srgb, var(--color-panel) 40%, transparent);
 }
