@@ -726,6 +726,42 @@ test('mobile menu opens, navigates, and closes', async ({ page }, testInfo) => {
   await expect(page.locator('#mobile-menu')).toBeHidden();
 });
 
+test('hero fonts start loading before the stylesheet arrives and are reused', async ({ page, browser, baseURL }) => {
+  const context = await browser.newContext({ viewport: page.viewportSize() });
+  const fresh = await context.newPage();
+  const fonts = [];
+  fresh.on('request', request => {
+    if (request.url().endsWith('.woff2')) fonts.push(request.url());
+  });
+  let releaseStyles;
+  let stylesheetHeld = false;
+  const gate = new Promise(resolve => { releaseStyles = resolve; });
+  await fresh.route('**/*.css', async route => {
+    stylesheetHeld = true;
+    await gate;
+    await route.continue();
+  });
+  const navigation = fresh.goto(baseURL, { waitUntil: 'load' });
+  try {
+    try {
+      await expect.poll(() => stylesheetHeld).toBe(true);
+      await expect.poll(() => fonts.length).toBe(3);
+    } finally {
+      releaseStyles();
+      await navigation;
+    }
+    await fresh.evaluate(() => document.fonts.ready);
+    expect(fonts).toHaveLength(3);
+    expect(new Set(fonts).size).toBe(3);
+    const preloaded = await fresh.locator('link[rel="preload"][as="font"]').evaluateAll(links => links.map(link => link.href));
+    expect(new Set(fonts)).toEqual(new Set(preloaded));
+    expect(fonts.some(url => /playfair-display-latin-wght-italic/.test(url))).toBe(true);
+    expect(await fresh.evaluate(() => document.fonts.check('italic 400 72px "Playfair Display Variable"'))).toBe(true);
+  } finally {
+    await context.close();
+  }
+});
+
 test('local branding and both fonts load without JavaScript errors', async ({ page }) => {
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));

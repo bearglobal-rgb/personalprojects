@@ -59,6 +59,10 @@ npm run dev
 Build with `npm run build`. The generated `dist/` directory can be served by any
 static host. `npm run preview` serves the production build for local inspection.
 Fonts and supplied SVG branding are bundled locally.
+The HTML preloads the Latin Playfair regular/italic and Inter font files used in
+the hero, allowing downloads to begin before CSS is parsed. Vite fingerprints
+these URLs and shares the same files with the font-face declarations. The page
+remains visible during loading; no JavaScript font gate or artificial delay is used.
 
 ## GitHub Pages preview
 
