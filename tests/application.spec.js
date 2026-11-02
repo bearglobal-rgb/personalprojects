@@ -8,7 +8,7 @@ test('Black application opens from the homepage and supports direct navigation',
   await expect(page.getByRole('heading', { name: 'Apply for Black.', exact: true })).toBeVisible();
   await page.reload();
   await expect(page.locator('#black-application-form')).toBeVisible();
-  await page.getByRole('link', { name: 'Swan Academy — home' }).click();
+  await page.getByRole('link', { name: 'Back to Academy' }).click();
   await expect(page).toHaveURL(/\/$/);
   await page.evaluate(() => document.fonts.ready);
   expect(await page.evaluate(() => location.hash)).toBe('');

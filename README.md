@@ -69,9 +69,9 @@ is disabled, no Paddle SDK is loaded, and URL parameters cannot activate checkou
 The responsive page works without JavaScript. Paddle will supply the actual payment
 form after its account, product, terms, and private approval flow are configured.
 
-Application, status, and checkout pages share a centered, clickable Swan Academy
-logo that returns to the homepage top. They omit the full footer and separate
-“Back to Academy” link, while retaining contextual links within their content.
+Application, status, and checkout pages share a left-aligned, clickable Swan Academy
+logo and a “Back to Academy” link on the right; both return to the homepage top.
+They omit the full footer while retaining contextual links within their content.
 The homepage navigation and footer remain unchanged.
 
 Application processing, real-time private status updates, approval emails, and

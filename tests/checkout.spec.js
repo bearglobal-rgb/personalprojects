@@ -14,7 +14,7 @@ test('approved example links to checkout preview without enabling payment', asyn
   await page.getByRole('link', { name: 'Back to status preview' }).click();
   await expect(page.locator('#status-heading')).toHaveText('You’re invited to Black.');
   await page.getByRole('link', { name: 'Preview the checkout page' }).click();
-  await page.getByRole('link', { name: 'Swan Academy — home', exact: true }).click();
+  await page.getByRole('link', { name: 'Back to Academy', exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
 });
