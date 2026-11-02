@@ -75,11 +75,46 @@ to approve an application by changing HTML, URL parameters, or local storage.
 
 ## Finally: branded checkout
 
-Choose Whop, Paddle, or another provider and confirm its current supported embed,
-product eligibility, required disclosures, and branding options. The surrounding
+The user selected Paddle. `/checkout/` now provides the branded page shell, with a
+Black order summary, illustrative payment fields, a disabled pay button, and an
+explicit preview notice. The approved status example links to it separately; its
+real payment button stays disabled. No SDK, card inputs, API calls, storage, or
+payment callbacks are active. Direct links and reloads work on GitHub Pages.
+
+Before integration, confirm Paddle's current supported embed, product eligibility,
+required disclosures, and branding options. The surrounding
 Swan Academy page can match the site; provider-controlled payment fields and
 authentication steps may retain provider styling or require a redirect. Do not
 promise that every payment step will remain fully customizable or on-site.
+
+The intended integration is Paddle's supported inline checkout. Documentation:
+https://developer.paddle.com/build/checkout/build-branded-inline-checkout
+This environment returned a proxy 403 when accessing that documentation; no SDK
+interface or account-specific setup has been implemented on unverified assumptions.
+
+Before enabling payments:
+
+1. Confirm price, currency, billing model, cohort timing, refund/cancellation terms,
+   customer support contact, and the required privacy/terms URLs. Populate the
+   final order summary from authoritative pricing, including taxes and recurring
+   terms when applicable; never trust a query-string price or payment status.
+2. Configure the Paddle product/price, account and domain requirements, public
+   client configuration, and server-only API/webhook secrets. Verify eligibility
+   for this guided cohort with Paddle. Start in its sandbox.
+3. Authenticate the applicant and check approval server-side before creating or
+   retrieving their checkout transaction. Do not treat `preview=approved`, a
+   transaction ID in the URL, or possession of this public page as authorization.
+4. Replace the whole `#paddle-checkout` placeholder with Paddle-hosted payment
+   components. Remove the illustrative external pay button if the embedded form
+   supplies its own. Apply only supported theme options; do not collect card
+   details with custom HTML inputs or attempt to restyle inside the provider iframe.
+5. Handle loading, unavailable/expired invitations, cancellation, payment errors,
+   and payment pending verification. Verify signed provider webhooks server-side,
+   correlate them to the applicant and transaction, process them idempotently,
+   and update enrollment only on the appropriate verified payment event.
+6. Test the complete sandbox flow, including mobile payment/authentication flows
+   and delayed/duplicate webhooks, before enabling live payments. A browser callback
+   or success URL alone must never confirm enrollment.
 
 Use the provider's supported hosted payment components. Do not build raw card
 collection into the site. An approved applicant's checkout access/session should

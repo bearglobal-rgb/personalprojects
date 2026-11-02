@@ -59,6 +59,14 @@ under review, approved, not accepted, enrollment confirmed, expired link, and
 unavailable states. The approval checkout button is disabled. Preview parameters
 never represent actual decisions, applicants, payments, or authenticated access.
 
+The branded checkout preview is available at `/checkout/`, linked separately from
+the approved status example as “Preview the checkout page.” Its order summary uses
+the existing Black offer; price, currency, and payment plan await confirmation.
+Payment fields are noninteractive visual placeholders, not inputs. The pay button
+is disabled, no Paddle SDK is loaded, and URL parameters cannot activate checkout.
+The responsive page works without JavaScript. Paddle will supply the actual payment
+form after its account, product, terms, and private approval flow are configured.
+
 Application processing, real-time private status updates, approval emails, and
 an embedded provider checkout are not connected. See
 `reference/black-application-integration.md` for the remaining integration work.

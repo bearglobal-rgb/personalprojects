@@ -57,7 +57,8 @@ test('every example displays the right decision and progress without offering re
       await expect(page.locator('[data-stage="3"]')).toBeHidden();
     }
   }
-  await expect(page.locator('a[href*="checkout"], iframe, form')).toHaveCount(0);
+  await expect(page.locator('iframe, form')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Preview the checkout page' })).toHaveCount(0);
   expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
   expect(errors).toEqual([]);
 });

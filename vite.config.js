@@ -11,6 +11,7 @@ export default defineConfig({
         main: fileURLToPath(new URL('./index.html', import.meta.url)),
         application: fileURLToPath(new URL('./apply/index.html', import.meta.url)),
         applicationStatus: fileURLToPath(new URL('./status/index.html', import.meta.url)),
+        checkout: fileURLToPath(new URL('./checkout/index.html', import.meta.url)),
       },
     },
   },
