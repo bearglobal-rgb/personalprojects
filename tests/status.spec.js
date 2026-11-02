@@ -12,7 +12,7 @@ test('application links to an explicitly labeled status preview without submitti
   await expect(page.locator('body')).not.toContainText('Preview Visitor');
   await page.reload();
   await expect(page.locator('#status-preview-select')).toHaveValue('received');
-  await page.getByRole('link', { name: 'Back to Academy', exact: true }).click();
+  await page.getByRole('link', { name: 'Swan Academy — home', exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
   expect(posts).toEqual([]);

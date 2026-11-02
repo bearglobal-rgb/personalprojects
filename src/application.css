@@ -6,11 +6,10 @@
   margin: auto;
   padding-inline: 32px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 20px;
 }
-.application-back { display: inline-flex; align-items: center; gap: 10px; color: var(--color-mute); font-size: 12px; }
-.application-back:hover { color: var(--color-ink); }
+.application-header .brand { min-height: 44px; }
 .application-layout { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); align-items: start; gap: 72px; max-width: 1152px; margin: auto; padding: 88px 32px 112px; }
 .application-intro { position: sticky; top: 120px; }
 .application-eyebrow { color: var(--color-mute); font-size: 10px; letter-spacing: .25em; text-transform: uppercase; }
@@ -58,7 +57,6 @@
 }
 @media (max-width: 639px) {
   .application-header { padding-inline: 20px; gap: 12px; }
-  .application-back { max-width: 100px; gap: 6px; font-size: 11px; line-height: 1.5; }
   .application-layout { padding-inline: 20px; padding-top: 40px; }
   .application-intro h1 { font-size: 36px; }
   .application-lead { font-size: 16px; }

@@ -4,7 +4,9 @@
 
 The user approved draft questions and a visual preview with submission disabled.
 `apply/index.html` uses the shared Swan Academy palette, typography, monogram,
-header treatment, and footer. `src/application.js` prevents form submission;
+and header treatment. Application, status, and checkout use a centered logo linked
+to the homepage, without a full footer or separate “Back to Academy” link.
+Contextual navigation remains within the content. `src/application.js` prevents form submission;
 no answers are transmitted or stored by the preview. The form must stay disabled
 until a real endpoint and operational workflow are configured and tested.
 
