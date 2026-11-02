@@ -18,6 +18,10 @@ FAQ disclosures and mobile navigation.
 The homepage header has no Jota/System/Inside/Enter shortcut links. It keeps the
 logo, Free System, and Apply Black actions. Below 640px, those actions appear in
 the mobile menu; at wider sizes they sit directly in the header.
+The homepage header and footer span the available width, with matching desktop
+side padding of `clamp(48px, 5.75vw, 144px)`, based on the user-supplied Peterson
+Academy screenshots. Tablet/phone padding remains 32px/20px and the phone footer
+stays centered. Main content and application-flow page widths are unchanged.
 
 System phase links center the first card of the selected phase. Below 1024px,
 the highlighted card's phase label returns to that phase in the list. While

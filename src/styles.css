@@ -60,6 +60,10 @@
   .immersion-photo > img { object-position: 40% center; }
 }
 .site-header nav a { transition: color 180ms ease; }
+@media (min-width: 1024px) {
+  /* Wide page framing, based on the supplied Peterson Academy screenshots. */
+  .homepage-edge-row { padding-inline: clamp(48px, 5.75vw, 144px); }
+}
 .brand-monogram {
   display: inline-block;
   flex-shrink: 0;

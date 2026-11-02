@@ -638,6 +638,22 @@ test('footer preserves the original proportions and links to the social profiles
     expect(dimensions.height).toBeGreaterThanOrEqual(140);
     expect(dimensions.height).toBeLessThanOrEqual(144);
     expect(dimensions.direction).toBe('row');
+    const alignment = await page.evaluate(() => {
+      const header = document.querySelector('header > .homepage-edge-row');
+      const footer = document.querySelector('footer > .homepage-edge-row');
+      const headerLogo = header.querySelector('.brand').getBoundingClientRect();
+      const headerAction = header.querySelector('[data-black-application]').getBoundingClientRect();
+      const footerLogo = footer.querySelector('a').getBoundingClientRect();
+      const copyright = footer.querySelector('p').getBoundingClientRect();
+      return { left: headerLogo.left, right: headerAction.right,
+        footerLeft: footerLogo.left, footerRight: copyright.right,
+        width: document.querySelector('header').getBoundingClientRect().width };
+    });
+    expect(alignment.left).toBeGreaterThan(40);
+    expect(alignment.left).toBeLessThan(alignment.width * .08);
+    expect(Math.abs(alignment.left - (alignment.width - alignment.right))).toBeLessThan(1);
+    expect(Math.abs(alignment.left - alignment.footerLeft)).toBeLessThan(1);
+    expect(Math.abs(alignment.right - alignment.footerRight)).toBeLessThan(1);
   } else {
     expect(dimensions.height).toBeGreaterThanOrEqual(240);
     expect(dimensions.height).toBeLessThanOrEqual(244);
