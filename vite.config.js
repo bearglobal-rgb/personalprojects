@@ -10,6 +10,7 @@ export default defineConfig({
       input: {
         main: fileURLToPath(new URL('./index.html', import.meta.url)),
         application: fileURLToPath(new URL('./apply/index.html', import.meta.url)),
+        applicationStatus: fileURLToPath(new URL('./status/index.html', import.meta.url)),
       },
     },
   },

@@ -5,6 +5,7 @@
 
 @source "../index.html";
 @source "../apply/index.html";
+@source "../status/index.html";
 @source "./main.js";
 
 @theme {

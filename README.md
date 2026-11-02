@@ -52,8 +52,15 @@ Submission is disabled, and the preview never sends or stores answers. The appli
 FAQ reflects review before payment; its copy exception is recorded alongside the
 offer changes in `reference/free-system-copy-changes.json`.
 
-This is stage one only. Application processing, private status updates, approval
-emails, and an embedded provider checkout are not connected. See
+The status-page visual preview is available at `/status/`. By default it shows
+that no application is loaded. The application preview links to
+`/status/?preview=received`; a clearly labeled selector demonstrates received,
+under review, approved, not accepted, enrollment confirmed, expired link, and
+unavailable states. The approval checkout button is disabled. Preview parameters
+never represent actual decisions, applicants, payments, or authenticated access.
+
+Application processing, real-time private status updates, approval emails, and
+an embedded provider checkout are not connected. See
 `reference/black-application-integration.md` for the remaining integration work.
 
 Before enabling submission, connect the user's actual public Brevo signup form (or their

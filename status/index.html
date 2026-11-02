@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050505">
+  <title>Application Status · Swan Academy</title>
+  <meta name="description" content="Follow your Swan Academy Black application from review to your next step.">
+  <meta name="robots" content="noindex">
+  <meta name="referrer" content="no-referrer">
+  <link rel="icon" type="image/svg+xml" href="/assets/Swan-Academy-Monogram-Black-Master.svg">
+  <link rel="preload" href="/node_modules/@fontsource-variable/playfair-display/files/playfair-display-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/node_modules/@fontsource-variable/playfair-display/files/playfair-display-latin-wght-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/src/styles.css">
+  <link rel="stylesheet" href="/src/application.css">
+  <link rel="stylesheet" href="/src/application-status.css">
+  <script type="module" src="/src/application-status.js"></script>
+</head>
+<body class="application-page bg-void text-ink font-sans">
+  <a class="skip-link" href="#status-page">Skip to application status</a>
+  <header class="site-header sticky top-0 z-50 border-b border-line bg-void/85 backdrop-blur-lg">
+    <div class="application-header">
+      <a href="../" aria-label="Swan Academy — home" class="brand flex shrink-0 items-center gap-3">
+        <span aria-hidden="true" class="brand-monogram h-10 w-10"></span>
+        <span class="font-serif text-xl">Swan Academy</span>
+      </a>
+      <a class="application-back" href="../"><span aria-hidden="true">←</span> Back to Academy</a>
+    </div>
+  </header>
+
+  <main id="status-page" class="status-layout">
+    <div class="status-intro">
+      <p class="application-eyebrow">Swan Academy Black</p>
+      <h1>Your application.<br><em>Your next step.</em></h1>
+      <p>From your first application to your invitation to join.</p>
+    </div>
+
+    <aside class="status-preview" aria-label="Preview controls">
+      <div>
+        <p class="application-eyebrow">Status page preview</p>
+        <p class="status-preview-description">No application is connected. These are example states, not live decisions.</p>
+      </div>
+      <div class="status-preview-control" hidden>
+        <label for="status-preview-select">Preview a status</label>
+        <select id="status-preview-select">
+          <option value="none">No application loaded</option>
+          <option value="received">Received</option>
+          <option value="under-review">Under review</option>
+          <option value="approved">Approved</option>
+          <option value="not-accepted">Not accepted</option>
+          <option value="enrolled">Enrollment confirmed</option>
+          <option value="expired">Expired link</option>
+          <option value="unavailable">Temporarily unavailable</option>
+        </select>
+      </div>
+      <noscript><p class="status-preview-description">Enable JavaScript to explore the example states. No live application status is available here.</p></noscript>
+    </aside>
+
+    <section class="status-card" aria-labelledby="status-heading" aria-live="polite" aria-atomic="true" data-status="none">
+      <div class="status-card-header">
+        <p class="application-eyebrow">Application · Black</p>
+        <span class="status-badge" id="status-badge">Not connected</span>
+      </div>
+      <h2 id="status-heading">No application loaded.</h2>
+      <p class="status-description" id="status-description">Once applications open, your private application link will show your progress here.</p>
+      <p class="status-context" id="status-context">For now, you can explore the example states above.</p>
+
+      <ol class="status-progress" aria-label="Application progress" hidden>
+        <li data-stage="0" data-state="upcoming"><span class="status-dot" aria-hidden="true"></span><span class="status-stage-label">Received</span><span class="status-stage-detail">Upcoming</span></li>
+        <li data-stage="1" data-state="upcoming"><span class="status-dot" aria-hidden="true"></span><span class="status-stage-label">Review</span><span class="status-stage-detail">Upcoming</span></li>
+        <li data-stage="2" data-state="upcoming"><span class="status-dot" aria-hidden="true"></span><span class="status-stage-label">Decision</span><span class="status-stage-detail">Upcoming</span></li>
+        <li data-stage="3" data-state="upcoming"><span class="status-dot" aria-hidden="true"></span><span class="status-stage-label">Enrollment</span><span class="status-stage-detail">Upcoming</span></li>
+      </ol>
+
+      <div class="status-decision-note" hidden>
+        <h3>Decision note</h3>
+        <p>The reviewer’s explanation will appear here. No reason has been assigned in this preview.</p>
+      </div>
+      <div class="status-checkout" hidden>
+        <button type="button" class="status-payment-button" disabled aria-describedby="status-payment-note">Continue to checkout</button>
+        <p id="status-payment-note">Checkout is not connected in this preview. No payment can be made.</p>
+      </div>
+    </section>
+
+    <div class="status-bottom">
+      <p>This preview does not submit an application, reserve a place, or confirm a payment.</p>
+      <a href="../apply/">View the application <span aria-hidden="true">→</span></a>
+    </div>
+  </main>
+  <footer class="border-t border-line">
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-8 px-5 py-12 sm:flex-row sm:px-8">
+      <a href="../" aria-label="Swan Academy — home" class="flex min-h-[44.5px] shrink-0 items-center gap-3"><span aria-hidden="true" class="brand-monogram h-8 w-8"></span><span class="font-serif text-lg">Swan Academy</span></a>
+      <nav aria-label="Footer" class="flex gap-6 text-[12px] tracking-[0.16em] uppercase text-mute"><a href="https://x.com/jotaswan" class="hover:text-ink" target="_blank" rel="noopener noreferrer">X</a><a href="https://www.instagram.com/jotaswan/" class="hover:text-ink" target="_blank" rel="noopener noreferrer">Instagram</a><a href="https://www.youtube.com/@JotaSwan" class="hover:text-ink" target="_blank" rel="noopener noreferrer">YouTube</a></nav>
+      <p class="text-[12px] text-mute">© 2026 Swan Academy</p>
+    </div>
+  </footer>
+</body>
+</html>

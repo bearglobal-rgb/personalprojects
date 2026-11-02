@@ -12,6 +12,17 @@ All five homepage Black links open `./apply/`. The previous direct Whop checkout
 is no longer exposed through those application buttons. The free-system dialog
 remains independent and retains its existing disabled preview behavior.
 
+The status-page visual preview now lives at `status/index.html`. A separate link
+in the application preview opens `/status/?preview=received`; the submit button
+remains disabled. A persistent preview notice and selector show that the status
+states are examples. The default `/status/` route shows no application loaded.
+Only whitelisted `preview` values select examples. Arbitrary status, identity,
+and checkout URL parameters are ignored; there is no record lookup, storage,
+polling, submission, or payment. Checkout remains disabled in the approved view.
+The declined example contains a placeholder for the reviewer's explanation,
+not an invented rejection reason. Expired/unavailable examples communicate that
+they do not establish a decision. Without JavaScript, no approval is displayed.
+
 ## Draft fields
 
 | Field | Form name | Purpose |
@@ -44,6 +55,11 @@ Show success only after the backend confirms a durable record.
 
 ## Then: private status page
 
+The branded layout and sample states are built; the authenticated data connection
+is still required. Replace the preview controls and fixtures with verified record
+data only when the full flow is ready. Do not enable payment or submission merely
+by removing the preview notice. Keep review messages as text, never injected HTML.
+
 Suggested states: received, under review, approved, not accepted, and enrolled.
 The website should read the authoritative status from the backend. Use private
 email access links or authenticated sessions; do not expose records through a
@@ -73,6 +89,8 @@ provider credentials in the client or repository.
 
 ## Not yet implemented
 
-No application backend, approval automation, status page, status emails, payment
-session creation, or payment webhook integration is active. Those are subsequent
-stages after this visual preview, with provider configuration supplied by the user.
+No application backend, approval automation, live status tracking, status emails,
+payment session creation, or payment webhook integration is active. Those are
+subsequent stages after the visual previews, with provider configuration supplied
+by the user. After a real submission succeeds, redirect using the backend-issued
+private access flow; the example `preview` query parameter is never that flow.
