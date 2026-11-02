@@ -8,9 +8,12 @@ test('Black application opens from the homepage and supports direct navigation',
   await expect(page.getByRole('heading', { name: 'Apply for Black.', exact: true })).toBeVisible();
   await page.reload();
   await expect(page.locator('#black-application-form')).toBeVisible();
-  await page.getByRole('link', { name: 'Back to academy' }).click();
-  await expect(page).toHaveURL(/\/#offers$/);
-  await expect(page.locator('#offers')).toBeInViewport();
+  await page.getByRole('link', { name: 'Back to Academy' }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await page.evaluate(() => document.fonts.ready);
+  expect(await page.evaluate(() => location.hash)).toBe('');
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+  await expect(page.locator('#top h1')).toBeInViewport();
 });
 
 test('application preview has labeled fields, no payment links, and cannot submit answers', async ({ page }) => {
