@@ -22,9 +22,10 @@
 .status-card h2 { margin-top: 30px; font-family: var(--font-serif); font-size: 36px; line-height: 1.2; }
 .status-description { max-width: 580px; margin-top: 18px; color: var(--color-body); font-size: 16px; line-height: 1.7; white-space: pre-line; }
 .status-context { margin-top: 14px; color: var(--color-mute); font-size: 13px; line-height: 1.7; }
-.status-progress { display: flex; margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--color-line); }
+.status-progress { --status-stage-width: 72px; display: flex; margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--color-line); }
 .status-progress li { position: relative; flex: 1; min-width: 0; color: var(--color-mute); }
-.status-progress li:not(:first-child)::before { content: ''; position: absolute; top: 4px; right: 100%; width: calc(100% - 9px); height: 1px; background: var(--color-line); }
+.status-stage-group { display: block; width: var(--status-stage-width); margin-inline: auto; text-align: left; }
+.status-progress li:not(:first-child)::before { content: ''; position: absolute; top: 4px; right: calc(50% + var(--status-stage-width) / 2); width: calc(100% - 9px); height: 1px; background: var(--color-line); }
 .status-progress li[data-state="complete"]::before,
 .status-progress li[data-state="current"]::before { background: var(--color-mute); }
 .status-dot { display: block; width: 9px; height: 9px; border: 1px solid var(--color-mute); border-radius: 50%; background: var(--color-panel); }

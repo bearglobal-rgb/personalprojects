@@ -83,7 +83,9 @@ descriptive text has a narrower reading width within the status card. Return-lin
 text aligns to the right margin on mobile and wraps only when needed. The checkout
 summary monogram is 32px, at the upper-right with its vertical center aligned to
 the center of “Your enrollment.” Every mobile status badge occupies a dedicated
-row below “Application · Black.”
+row below “Application · Black.” Progress milestones use equally sized groups
+centered within each column, with the dot and both text lines aligned left inside
+each group. Desktop connectors follow the repositioned dots.
 
 All four pages use a white vector monogram inside a rounded black square as the
 tab favicon. `scripts/build_favicon.mjs` frames the original white SVG path without
