@@ -19,8 +19,8 @@
 </head>
 <body class="application-page bg-void text-ink font-sans">
   <a class="skip-link" href="#checkout-page">Skip to checkout</a>
-  <header class="site-header sticky top-0 z-50 bg-void/85 backdrop-blur-lg">
-    <div class="application-header site-edge-row">
+  <header class="site-header sticky top-0 z-50 border-b border-line bg-void/85 backdrop-blur-lg">
+    <div class="application-header">
       <a href="../" aria-label="Swan Academy — home" class="brand flex shrink-0 items-center gap-3">
         <span aria-hidden="true" class="brand-monogram h-10 w-10"></span>
         <span class="font-serif text-xl">Swan Academy</span>
@@ -44,9 +44,11 @@
     <div class="checkout-columns">
       <section class="checkout-summary" aria-labelledby="enrollment-heading">
         <div class="checkout-product">
-          <p class="application-eyebrow">Your enrollment</p>
+          <div class="checkout-product-header">
+            <p class="application-eyebrow">Your enrollment</p>
+            <span class="brand-monogram checkout-monogram" aria-hidden="true"></span>
+          </div>
           <h2 id="enrollment-heading">Black</h2>
-          <span class="brand-monogram checkout-monogram" aria-hidden="true"></span>
           <p class="checkout-product-caption">Founding members · Beta cohort.<br>English, put into practice.</p>
         </div>
         <ul class="checkout-inclusions" aria-label="Included in Black">

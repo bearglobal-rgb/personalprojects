@@ -15,13 +15,11 @@ and badges. Buttons retain their original rectangular shape. The Origin timeline
 a scroll-linked line and chapter markers. The System has no vertical line; its numbers,
 active cards, and phase still follow scrolling in either direction. Includes native
 FAQ disclosures and mobile navigation.
-The homepage header has no Jota/System/Inside/Enter shortcut links. It keeps the
-logo, Free System, and Apply Black actions. Below 640px, those actions appear in
-the mobile menu; at wider sizes they sit directly in the header.
-All page headers and the homepage footer span the available width, with matching desktop
-side padding of `clamp(48px, 5.75vw, 144px)`, based on the user-supplied Peterson
-Academy screenshots. Tablet/phone padding remains 32px/20px and the phone footer
-stays centered. Headers have no bottom divider. Main content widths are unchanged.
+The homepage header restores the Jota/System/Inside/Enter shortcuts at desktop
+widths and in the mobile menu below 1024px, alongside Free System and Apply Black.
+All page headers and the homepage footer use their original centered 1152px
+maximum width, with 32px tablet/desktop and 20px phone side padding. Headers
+include the bottom divider, and the phone footer stays centered.
 
 System phase links center the first card of the selected phase. Below 1024px,
 the highlighted card's phase label returns to that phase in the list. While
@@ -80,10 +78,12 @@ Application, status, and checkout pages share a left-aligned, clickable Swan Aca
 logo and a “Back to Academy” link on the right; both return to the homepage top.
 They omit the full footer while retaining contextual links within their content.
 The homepage keeps its own action navigation and full footer.
-The status-page content retains its 1152px maximum width below the wider header;
+The status-page content and header share a 1152px maximum width;
 descriptive text has a narrower reading width within the status card. Return-link
 text aligns to the right margin on mobile and wraps only when needed. The checkout
-summary monogram is 32px, at the upper-right aligned with the enrollment label.
+summary monogram is 32px, at the upper-right with its vertical center aligned to
+the center of “Your enrollment.” Every mobile status badge occupies a dedicated
+row below “Application · Black.”
 
 All four pages use a white vector monogram inside a rounded black square as the
 tab favicon. `scripts/build_favicon.mjs` frames the original white SVG path without

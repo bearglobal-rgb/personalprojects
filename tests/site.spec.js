@@ -535,8 +535,14 @@ test('FAQ opens and closes with keyboard input', async ({ page }) => {
 });
 
 test('Black links open the application and every free CTA opens the signup form', async ({ page }) => {
-  await expect(page.locator('nav[aria-label="Main navigation"]')).toHaveCount(0);
-  await expect(page.locator('header a:is([href="#founder"], [href="#method"], [href="#inside"], [href="#offers"])')).toHaveCount(0);
+  for (const navigation of ['nav[aria-label="Main navigation"]', '#mobile-menu']) {
+    expect(await page.locator(`${navigation} a[href^="#"]`).evaluateAll(links => links.map(link => ({ text: link.textContent, href: link.getAttribute('href') })))).toEqual([
+      { text: 'Jota', href: '#founder' },
+      { text: 'System', href: '#method' },
+      { text: 'Inside', href: '#inside' },
+      { text: 'Enter', href: '#offers' },
+    ]);
+  }
   const external = await page.locator('header a[href^="https:"], main a[href^="https:"]').evaluateAll((links) => links.map((a) => a.href));
   expect(external).toEqual([]);
   await expect(page.locator('[data-black-application]')).toHaveCount(5);
@@ -638,22 +644,6 @@ test('footer preserves the original proportions and links to the social profiles
     expect(dimensions.height).toBeGreaterThanOrEqual(140);
     expect(dimensions.height).toBeLessThanOrEqual(144);
     expect(dimensions.direction).toBe('row');
-    const alignment = await page.evaluate(() => {
-      const header = document.querySelector('header > .site-edge-row');
-      const footer = document.querySelector('footer > .site-edge-row');
-      const headerLogo = header.querySelector('.brand').getBoundingClientRect();
-      const headerAction = header.querySelector('[data-black-application]').getBoundingClientRect();
-      const footerLogo = footer.querySelector('a').getBoundingClientRect();
-      const copyright = footer.querySelector('p').getBoundingClientRect();
-      return { left: headerLogo.left, right: headerAction.right,
-        footerLeft: footerLogo.left, footerRight: copyright.right,
-        width: document.querySelector('header').getBoundingClientRect().width };
-    });
-    expect(alignment.left).toBeGreaterThan(40);
-    expect(alignment.left).toBeLessThan(alignment.width * .08);
-    expect(Math.abs(alignment.left - (alignment.width - alignment.right))).toBeLessThan(1);
-    expect(Math.abs(alignment.left - alignment.footerLeft)).toBeLessThan(1);
-    expect(Math.abs(alignment.right - alignment.footerRight)).toBeLessThan(1);
   } else {
     expect(dimensions.height).toBeGreaterThanOrEqual(240);
     expect(dimensions.height).toBeLessThanOrEqual(244);
@@ -667,7 +657,6 @@ test('header stays readable and sticky with subtle transparency and blur', async
   await page.evaluate(() => window.scrollTo(0, 900));
   const header = page.locator('.site-header');
   await expect(header.getByRole('link', { name: 'Swan Academy — home' })).toBeVisible();
-  await expect(header).toHaveCSS('border-bottom-width', '0px');
   const style = await header.evaluate(el => {
     const css = getComputedStyle(el);
     const context = document.createElement('canvas').getContext('2d');
@@ -730,19 +719,13 @@ test('mobile menu opens, navigates, and closes', async ({ page }, testInfo) => {
   await expect(black).toHaveCSS('background-color', 'rgb(244, 239, 230)');
   await black.focus();
   await expect(black).toHaveCSS('color', 'rgb(5, 5, 5)');
+  await page.locator('#mobile-menu a[href="#inside"]').click();
+  await expect(page.locator('#mobile-menu')).toBeHidden();
+  await expect(page).toHaveURL(/#inside$/);
+  await toggle.click();
   await page.keyboard.press('Escape');
   await expect(toggle).toBeFocused();
   await expect(page.locator('#mobile-menu')).toBeHidden();
-  await toggle.click();
-  await page.setViewportSize({ width: 768, height: 844 });
-  await expect(page.locator('#mobile-menu')).toBeHidden();
-  await expect(toggle).toBeHidden();
-  await expect(page.locator('header > div [data-free-system]')).toBeVisible();
-  await expect(page.locator('header > div [data-black-application]')).toBeVisible();
-  await page.setViewportSize({ width: 390, height: 844 });
-  await toggle.click();
-  await black.click();
-  await expect(page).toHaveURL(/\/apply\/$/);
 });
 
 test('hero fonts start loading before the stylesheet arrives and are reused', async ({ page, browser, baseURL }) => {
