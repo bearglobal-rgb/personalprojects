@@ -20,7 +20,7 @@
   .status-card[data-status="under-review"] .status-badge::before { animation: none; }
 }
 .status-card h2 { margin-top: 30px; font-family: var(--font-serif); font-size: 36px; line-height: 1.2; }
-.status-description { max-width: 580px; margin-top: 18px; color: var(--color-body); font-size: 16px; line-height: 1.7; }
+.status-description { max-width: 580px; margin-top: 18px; color: var(--color-body); font-size: 16px; line-height: 1.7; white-space: pre-line; }
 .status-context { margin-top: 14px; color: var(--color-mute); font-size: 13px; line-height: 1.7; }
 .status-progress { display: flex; margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--color-line); }
 .status-progress li { position: relative; flex: 1; min-width: 0; color: var(--color-mute); }

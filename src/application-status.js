@@ -18,7 +18,7 @@ const examples = {
   },
   approved: {
     badge: 'Approved', heading: 'You’re invited to Black.',
-    description: 'Congratulations. Your application has been approved. The next step is to complete your enrollment.',
+    description: 'Congratulations. Your application has been approved.\nThe next step is to complete your enrollment.',
     context: 'Approval is your invitation to join. Your place is confirmed after payment.', stage: 2,
   },
   'not-accepted': {
