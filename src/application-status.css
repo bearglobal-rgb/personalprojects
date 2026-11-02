@@ -10,9 +10,15 @@
 .status-card { margin-top: 24px; padding: 36px; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-panel); }
 .status-card-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
 .status-badge { display: inline-flex; align-items: center; gap: 9px; padding: 7px 10px; border: 1px solid var(--color-line); color: var(--color-ink); font-size: 10px; line-height: 1.5; letter-spacing: .12em; text-transform: uppercase; }
-.status-badge::before { content: ''; width: 6px; height: 6px; border: 1px solid var(--color-mute); border-radius: 50%; }
-.status-card[data-status="approved"] .status-badge::before,
-.status-card[data-status="enrolled"] .status-badge::before { border-color: var(--color-ink); background: var(--color-ink); }
+.status-badge::before { content: ''; flex-shrink: 0; width: 6px; height: 6px; border: 1px solid var(--color-mute); border-radius: 50%; }
+.status-card[data-status="under-review"] .status-badge::before { border-color: var(--color-ink); background: var(--color-ink); animation: status-review-pulse 2.8s ease-in-out infinite; }
+.status-card[data-status="approved"] .status-badge::before { border-color: #8FAE96; background: #8FAE96; }
+.status-card[data-status="enrolled"] .status-badge::before { width: 5px; height: 9px; border: solid #8FAE96; border-width: 0 1.5px 1.5px 0; border-radius: 0; transform: translateY(-1px) rotate(45deg); }
+.status-card[data-status="not-accepted"] .status-badge::before { border-color: #C28B86; background: #C28B86; }
+@keyframes status-review-pulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .status-card[data-status="under-review"] .status-badge::before { animation: none; }
+}
 .status-card h2 { margin-top: 30px; font-family: var(--font-serif); font-size: 36px; line-height: 1.2; }
 .status-description { max-width: 580px; margin-top: 18px; color: var(--color-body); font-size: 16px; line-height: 1.7; }
 .status-context { margin-top: 14px; color: var(--color-mute); font-size: 13px; line-height: 1.7; }
