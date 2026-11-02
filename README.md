@@ -18,10 +18,10 @@ FAQ disclosures and mobile navigation.
 The homepage header has no Jota/System/Inside/Enter shortcut links. It keeps the
 logo, Free System, and Apply Black actions. Below 640px, those actions appear in
 the mobile menu; at wider sizes they sit directly in the header.
-The homepage header and footer span the available width, with matching desktop
+All page headers and the homepage footer span the available width, with matching desktop
 side padding of `clamp(48px, 5.75vw, 144px)`, based on the user-supplied Peterson
 Academy screenshots. Tablet/phone padding remains 32px/20px and the phone footer
-stays centered. Main content and application-flow page widths are unchanged.
+stays centered. Headers have no bottom divider. Main content widths are unchanged.
 
 System phase links center the first card of the selected phase. Below 1024px,
 the highlighted card's phase label returns to that phase in the list. While
@@ -80,8 +80,10 @@ Application, status, and checkout pages share a left-aligned, clickable Swan Aca
 logo and a “Back to Academy” link on the right; both return to the homepage top.
 They omit the full footer while retaining contextual links within their content.
 The homepage keeps its own action navigation and full footer.
-The status-page outer width and horizontal padding match its header; descriptive
-text retains a narrower reading width within the status card.
+The status-page content retains its 1152px maximum width below the wider header;
+descriptive text has a narrower reading width within the status card. Return-link
+text aligns to the right margin on mobile and wraps only when needed. The checkout
+summary monogram is 32px, at the upper-right aligned with the enrollment label.
 
 All four pages use a white vector monogram inside a rounded black square as the
 tab favicon. `scripts/build_favicon.mjs` frames the original white SVG path without

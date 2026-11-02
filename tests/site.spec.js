@@ -639,8 +639,8 @@ test('footer preserves the original proportions and links to the social profiles
     expect(dimensions.height).toBeLessThanOrEqual(144);
     expect(dimensions.direction).toBe('row');
     const alignment = await page.evaluate(() => {
-      const header = document.querySelector('header > .homepage-edge-row');
-      const footer = document.querySelector('footer > .homepage-edge-row');
+      const header = document.querySelector('header > .site-edge-row');
+      const footer = document.querySelector('footer > .site-edge-row');
       const headerLogo = header.querySelector('.brand').getBoundingClientRect();
       const headerAction = header.querySelector('[data-black-application]').getBoundingClientRect();
       const footerLogo = footer.querySelector('a').getBoundingClientRect();
@@ -667,6 +667,7 @@ test('header stays readable and sticky with subtle transparency and blur', async
   await page.evaluate(() => window.scrollTo(0, 900));
   const header = page.locator('.site-header');
   await expect(header.getByRole('link', { name: 'Swan Academy — home' })).toBeVisible();
+  await expect(header).toHaveCSS('border-bottom-width', '0px');
   const style = await header.evaluate(el => {
     const css = getComputedStyle(el);
     const context = document.createElement('canvas').getContext('2d');
