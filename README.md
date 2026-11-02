@@ -2,13 +2,14 @@
 
 Static Vite + Tailwind site built from the supplied Swan Academy HTML export,
 brand specifications, SVGs, and screenshots. Main-page wording is preserved except
-for the free-system offer revisions recorded in `reference/free-system-copy-changes.json`
+for the offer and application revisions recorded in `reference/free-system-copy-changes.json`
 and the removed language/keyword strip beneath the hero. The hero fills the opening
 viewport below the header, keeping the next section below the fold.
 The section order is Hero → Origin → Failure → System → Inside → Choose Your
 Next Step → FAQ → Final CTA → Footer. A future Proof/Testimonials section belongs
 between Inside and Choose Your Next Step; it is omitted until real material is supplied.
-Black checkout destinations are preserved. Original corner treatments are restored:
+Black CTAs lead to the branded `/apply/` application preview instead of checkout.
+Original corner treatments are restored:
 rounded cards and photographs, smaller rounded inner frames, and circular avatars
 and badges. Buttons retain their original rectangular shape. The Origin timeline has
 a scroll-linked line and chapter markers. The System has no vertical line; its numbers,
@@ -42,6 +43,18 @@ instead of free academy membership. Submission is deliberately disabled, with no
 email storage or delivery claim. The user requested this preview be published
 before Brevo and the finished resource are available; the form displays a
 clear coming-soon message.
+
+Black has a separate branded application preview at `/apply/`, built as a second
+Vite HTML entry so direct links and reloads work on GitHub Pages. All five Black
+CTAs open it. Draft questions cover name, email, current English, goals, obstacles,
+daily availability, and acknowledgment that Black is paid and admission is selective.
+Submission is disabled, and the preview never sends or stores answers. The application
+FAQ reflects review before payment; its copy exception is recorded alongside the
+offer changes in `reference/free-system-copy-changes.json`.
+
+This is stage one only. Application processing, private status updates, approval
+emails, and an embedded provider checkout are not connected. See
+`reference/black-application-integration.md` for the remaining integration work.
 
 Before enabling submission, connect the user's actual public Brevo signup form (or their
 chosen provider), configure the system-delivery automation and resource link,
@@ -94,7 +107,7 @@ npm test
 The Playwright suite uses `/usr/bin/chromium`. Set `CHROMIUM_PATH` if your browser
 is installed elsewhere. Checks cover source-text parity, original corner treatments,
 responsive width, the Origin line and System highlighting in both scroll directions, protocol/phase
-selection, FAQs, navigation, checkout URLs, local SVGs, and font loading.
+selection, FAQs, navigation, application links and preview behavior, local SVGs, and font loading.
 
 ## Outstanding source verification
 

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050505">
+  <title>Apply for Black · Swan Academy</title>
+  <meta name="description" content="Apply for Swan Academy Black: guided execution, personal feedback, and a focused English mastery cohort.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/svg+xml" href="/assets/Swan-Academy-Monogram-Black-Master.svg">
+  <link rel="preload" href="/node_modules/@fontsource-variable/playfair-display/files/playfair-display-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/node_modules/@fontsource-variable/playfair-display/files/playfair-display-latin-wght-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/src/styles.css">
+  <link rel="stylesheet" href="/src/application.css">
+  <script type="module" src="/src/application.js"></script>
+</head>
+<body class="application-page bg-void text-ink font-sans">
+  <a class="skip-link" href="#application">Skip to application</a>
+  <header class="site-header sticky top-0 z-50 border-b border-line bg-void/85 backdrop-blur-lg">
+    <div class="application-header">
+      <a href="../" aria-label="Swan Academy — home" class="brand flex shrink-0 items-center gap-3">
+        <span aria-hidden="true" class="brand-monogram h-10 w-10"></span>
+        <span class="font-serif text-xl">Swan Academy</span>
+      </a>
+      <a class="application-back" href="../#offers"><span aria-hidden="true">←</span> Back to academy</a>
+    </div>
+  </header>
+
+  <main id="application" class="application-layout">
+    <div class="application-intro">
+      <p class="application-eyebrow">Swan Academy Black</p>
+      <h1>Bring the ambition.<br><em>Commit to the work.</em></h1>
+      <p class="application-lead">Guided execution. Personal feedback. A focused cohort for making English part of the life you want to live.</p>
+      <p class="application-intro-note">Tell us where you are, where you want to go, and what you are ready to put into it.</p>
+
+      <div class="application-process" aria-label="How applying works">
+        <p class="application-eyebrow">The next steps</p>
+        <ol>
+          <li><span class="application-process-number" aria-hidden="true">01</span><div><h2>Apply</h2><p>Share your goals, your current English, and the time you can commit.</p></div></li>
+          <li><span class="application-process-number" aria-hidden="true">02</span><div><h2>Review</h2><p>Your application is reviewed for fit with the cohort.</p></div></li>
+          <li><span class="application-process-number" aria-hidden="true">03</span><div><h2>Invitation</h2><p>If accepted, you receive an invitation to complete payment and join.</p></div></li>
+        </ol>
+        <p class="application-process-note">Applying does not guarantee a place. Payment comes after approval.</p>
+      </div>
+    </div>
+
+    <section class="application-panel" aria-labelledby="application-heading">
+      <p class="application-eyebrow">Your application</p>
+      <h2 id="application-heading">Apply for Black.</h2>
+      <p class="application-panel-intro">Be honest and specific. We want to understand the person behind the application.</p>
+      <div class="application-preview" id="application-preview-note">
+        <p>Application preview</p>
+        <span>Submissions are not open yet. You can explore the form, but nothing you enter will be submitted.</span>
+      </div>
+
+      <form id="black-application-form" method="post" aria-describedby="application-preview-note">
+        <p class="application-required-note">All fields are required.</p>
+        <fieldset>
+          <legend>About you</legend>
+          <div class="application-fields">
+            <div class="application-field"><label for="applicant-name">Your name</label><input id="applicant-name" name="name" type="text" autocomplete="name" maxlength="100" required></div>
+            <div class="application-field"><label for="applicant-email">Email address</label><input id="applicant-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" maxlength="254" required></div>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Your English</legend>
+          <div class="application-fields">
+            <div class="application-field">
+              <label for="english-level">Where are you with English right now?</label>
+              <select id="english-level" name="englishLevel" required>
+                <option value="" disabled selected>Select the closest description</option>
+                <option value="starting">I am just getting started</option>
+                <option value="basic">I know the basics; conversations are difficult</option>
+                <option value="intermediate">I can communicate, but hesitate or translate</option>
+                <option value="advanced">I speak comfortably and want more precision</option>
+              </select>
+            </div>
+            <div class="application-field">
+              <label for="english-goal">What do you want English to make possible?</label>
+              <p class="application-help" id="english-goal-help">Think about a real situation: your work, a conversation, an opportunity, or your everyday life.</p>
+              <textarea id="english-goal" name="goal" rows="4" maxlength="1200" aria-describedby="english-goal-help" required></textarea>
+            </div>
+            <div class="application-field">
+              <label for="english-obstacle">What keeps you stuck right now?</label>
+              <p class="application-help" id="english-obstacle-help">Tell us what you have tried and where it breaks down.</p>
+              <textarea id="english-obstacle" name="obstacle" rows="4" maxlength="1200" aria-describedby="english-obstacle-help" required></textarea>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Your commitment</legend>
+          <div class="application-fields">
+            <div class="application-field">
+              <label for="daily-time">How much time can you consistently dedicate each day?</label>
+              <select id="daily-time" name="dailyTime" required>
+                <option value="" disabled selected>Select your daily availability</option>
+                <option value="under-30">Less than 30 minutes</option>
+                <option value="30-60">30–60 minutes</option>
+                <option value="1-2-hours">1–2 hours</option>
+                <option value="2-plus-hours">2 hours or more</option>
+              </select>
+            </div>
+            <label class="application-acknowledgment" for="paid-cohort"><input id="paid-cohort" name="paidCohortAcknowledged" type="checkbox" required><span>I understand that Black is a paid cohort and that applying does not guarantee acceptance.</span></label>
+          </div>
+        </fieldset>
+        <div class="application-submit-area">
+          <button type="submit" class="application-submit" disabled aria-describedby="application-status">Submit application</button>
+          <p id="application-status" role="status">Applications are not open yet. Nothing is submitted from this preview.</p>
+        </div>
+      </form>
+    </section>
+  </main>
+  <footer class="border-t border-line">
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-8 px-5 py-12 sm:flex-row sm:px-8">
+      <a href="../" aria-label="Swan Academy — home" class="flex min-h-[44.5px] shrink-0 items-center gap-3"><span aria-hidden="true" class="brand-monogram h-8 w-8"></span><span class="font-serif text-lg">Swan Academy</span></a>
+      <nav aria-label="Footer" class="flex gap-6 text-[12px] tracking-[0.16em] uppercase text-mute"><a href="https://x.com/jotaswan" class="hover:text-ink" target="_blank" rel="noopener noreferrer">X</a><a href="https://www.instagram.com/jotaswan/" class="hover:text-ink" target="_blank" rel="noopener noreferrer">Instagram</a><a href="https://www.youtube.com/@JotaSwan" class="hover:text-ink" target="_blank" rel="noopener noreferrer">YouTube</a></nav>
+      <p class="text-[12px] text-mute">© 2026 Swan Academy</p>
+    </div>
+  </footer>
+</body>
+</html>

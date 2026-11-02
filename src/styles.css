@@ -4,6 +4,7 @@
 @import "tailwindcss";
 
 @source "../index.html";
+@source "../apply/index.html";
 @source "./main.js";
 
 @theme {

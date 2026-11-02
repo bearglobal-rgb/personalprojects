@@ -534,7 +534,7 @@ test('FAQ opens and closes with keyboard input', async ({ page }) => {
   await expect(question).not.toHaveAttribute('open', '');
 });
 
-test('Black checkout remains intact and every free CTA opens the signup form', async ({ page }) => {
+test('Black links open the application and every free CTA opens the signup form', async ({ page }) => {
   for (const navigation of ['nav[aria-label="Main navigation"]', '#mobile-menu']) {
     expect(await page.locator(`${navigation} a[href^="#"]`).evaluateAll(links => links.map(link => ({ text: link.textContent, href: link.getAttribute('href') })))).toEqual([
       { text: 'Jota', href: '#founder' },
@@ -544,9 +544,9 @@ test('Black checkout remains intact and every free CTA opens the signup form', a
     ]);
   }
   const external = await page.locator('header a[href^="https:"], main a[href^="https:"]').evaluateAll((links) => links.map((a) => a.href));
-  expect(new Set(external)).toEqual(new Set([
-    'https://whop.com/checkout/plan_DB7DJLmJ0TIf4',
-  ]));
+  expect(external).toEqual([]);
+  await expect(page.locator('[data-black-application]')).toHaveCount(5);
+  for (const link of await page.locator('[data-black-application]').all()) await expect(link).toHaveAttribute('href', './apply/');
   const missing = await page.locator('a[href^="#"]').evaluateAll((links) => links.filter((a) => !document.getElementById(a.hash.slice(1))).map((a) => a.hash));
   expect(missing).toEqual([]);
   await expect(page.locator('[data-free-system]')).toHaveCount(6);
@@ -706,12 +706,12 @@ test('mobile menu opens, navigates, and closes', async ({ page }, testInfo) => {
     };
     return {
       free: read(menu.querySelector('[data-free-system]')),
-      black: read(menu.querySelector('a[href*="plan_DB7DJLmJ0TIf4"]')),
+      black: read(menu.querySelector('a[data-black-application]')),
     };
   });
   expect(typography.free).toEqual(typography.black);
   expect(typography.free.textTransform).toBe('uppercase');
-  const black = page.locator('#mobile-menu a[href*="plan_DB7DJLmJ0TIf4"]');
+  const black = page.locator('#mobile-menu a[data-black-application]');
   await black.hover();
   await expect(black).toHaveCSS('color', 'rgb(5, 5, 5)');
   await expect(black).toHaveCSS('background-color', 'rgb(244, 239, 230)');
