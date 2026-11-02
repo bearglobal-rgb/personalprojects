@@ -26,7 +26,7 @@ test('checkout ignores URL payment claims and does not send or store payment dat
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/checkout/?status=approved&paid=true&price=1&email=someone@example.com&_ptxn=txn_example');
   await expect(page.getByRole('button', { name: 'Confirm & pay' })).toBeDisabled();
-  await expect(page.locator('.checkout-total')).toContainText('To be confirmed');
+  await expect(page.locator('.checkout-total')).toContainText('US$350');
   await expect(page.locator('body')).not.toContainText('someone@example.com');
   await expect(page.locator('#checkout-payment-note')).toContainText('No charge can be made');
   expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);

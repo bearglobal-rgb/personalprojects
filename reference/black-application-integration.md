@@ -36,7 +36,7 @@ they do not establish a decision. Without JavaScript, no approval is displayed.
 | Paid-cohort acknowledgment | `paidCohortAcknowledged` | Awareness of payment and selective admission |
 
 Questions and options are drafts. The readiness checkbox is not payment
-authorization or marketing consent. No price, decision deadline, refund policy,
+authorization or marketing consent. No decision deadline, refund policy,
 or guaranteed admission has been invented.
 
 ## Next: application submission and review
@@ -80,6 +80,11 @@ Black order summary, illustrative payment fields, a disabled pay button, and an
 explicit preview notice. The approved status example links to it separately; its
 real payment button stays disabled. No SDK, card inputs, API calls, storage, or
 payment callbacks are active. Direct links and reloads work on GitHub Pages.
+
+The user supplied $350 as an example discounted price for the founding beta cohort,
+paid once. The preview displays US$350 (USD assumed), one-time payment, and a total
+before tax, explicitly labeled illustrative. Confirm final currency, pricing, and
+tax treatment before launch. No reference price or discount percentage is invented.
 
 Before integration, confirm Paddle's current supported embed, product eligibility,
 required disclosures, and branding options. The surrounding
