@@ -1,0 +1,1 @@
+import"./styles-BpXizbVq.js";document.querySelector(`#black-application-form`).addEventListener(`submit`,e=>e.preventDefault());
