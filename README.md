@@ -73,6 +73,13 @@ Application, status, and checkout pages share a left-aligned, clickable Swan Aca
 logo and a “Back to Academy” link on the right; both return to the homepage top.
 They omit the full footer while retaining contextual links within their content.
 The homepage navigation and footer remain unchanged.
+The status-page outer width and horizontal padding match its header; descriptive
+text retains a narrower reading width within the status card.
+
+All four pages use a white vector monogram inside a rounded black square as the
+tab favicon. `scripts/build_favicon.mjs` frames the original white SVG path without
+modifying it and creates a 16/32/48/64px ICO fallback for older browsers. The original
+master files and the logos displayed within the website are unchanged.
 
 Application processing, real-time private status updates, approval emails, and
 an embedded provider checkout are not connected. See

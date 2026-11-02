@@ -671,12 +671,14 @@ test('header stays readable and sticky with subtle transparency and blur', async
   expect(style.opacity).toBe('1');
 });
 
-test('tab keeps the black monogram and site monograms match their ivory wordmarks', async ({ page, request }) => {
-  const favicon = await page.locator('link[rel="icon"]').getAttribute('href');
-  expect(favicon).toMatch(/Swan-Academy-Monogram-Black-Master\.svg$/);
+test('tab uses the framed vector favicon and site monograms match their ivory wordmarks', async ({ page, request }) => {
+  const favicon = await page.locator('link[rel="icon"][type="image/svg+xml"]').getAttribute('href');
+  expect(favicon).toMatch(/Swan-Academy-Favicon\.svg$/);
   const response = await request.get(favicon);
   expect(response.ok()).toBe(true);
-  expect(await response.text()).toBe(readFileSync(new URL('../public/assets/Swan-Academy-Monogram-Black-Master.svg', import.meta.url), 'utf8'));
+  expect(await response.text()).toBe(readFileSync(new URL('../public/assets/Swan-Academy-Favicon.svg', import.meta.url), 'utf8'));
+  const fallback = await page.locator('link[rel="icon"][type="image/x-icon"]').getAttribute('href');
+  expect((await request.get(fallback)).ok()).toBe(true);
   await expect(page).toHaveTitle('Swan Academy · English Mastery');
   for (const selector of ['.brand .brand-monogram', 'footer .brand-monogram', '.signup-brand .brand-monogram']) {
     const logo = await page.locator(selector).evaluate(el => ({
