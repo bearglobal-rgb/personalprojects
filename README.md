@@ -15,6 +15,9 @@ and badges. Buttons retain their original rectangular shape. The Origin timeline
 a scroll-linked line and chapter markers. The System has no vertical line; its numbers,
 active cards, and phase still follow scrolling in either direction. Includes native
 FAQ disclosures and mobile navigation.
+The homepage header has no Jota/System/Inside/Enter shortcut links. It keeps the
+logo, Free System, and Apply Black actions. Below 640px, those actions appear in
+the mobile menu; at wider sizes they sit directly in the header.
 
 System phase links center the first card of the selected phase. Below 1024px,
 the highlighted card's phase label returns to that phase in the list. While
@@ -72,7 +75,7 @@ form after its account, product, terms, and private approval flow are configured
 Application, status, and checkout pages share a left-aligned, clickable Swan Academy
 logo and a “Back to Academy” link on the right; both return to the homepage top.
 They omit the full footer while retaining contextual links within their content.
-The homepage navigation and footer remain unchanged.
+The homepage keeps its own action navigation and full footer.
 The status-page outer width and horizontal padding match its header; descriptive
 text retains a narrower reading width within the status card.
 

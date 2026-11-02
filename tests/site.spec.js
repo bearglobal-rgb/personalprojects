@@ -535,14 +535,8 @@ test('FAQ opens and closes with keyboard input', async ({ page }) => {
 });
 
 test('Black links open the application and every free CTA opens the signup form', async ({ page }) => {
-  for (const navigation of ['nav[aria-label="Main navigation"]', '#mobile-menu']) {
-    expect(await page.locator(`${navigation} a[href^="#"]`).evaluateAll(links => links.map(link => ({ text: link.textContent, href: link.getAttribute('href') })))).toEqual([
-      { text: 'Jota', href: '#founder' },
-      { text: 'System', href: '#method' },
-      { text: 'Inside', href: '#inside' },
-      { text: 'Enter', href: '#offers' },
-    ]);
-  }
+  await expect(page.locator('nav[aria-label="Main navigation"]')).toHaveCount(0);
+  await expect(page.locator('header a:is([href="#founder"], [href="#method"], [href="#inside"], [href="#offers"])')).toHaveCount(0);
   const external = await page.locator('header a[href^="https:"], main a[href^="https:"]').evaluateAll((links) => links.map((a) => a.href));
   expect(external).toEqual([]);
   await expect(page.locator('[data-black-application]')).toHaveCount(5);
@@ -719,13 +713,19 @@ test('mobile menu opens, navigates, and closes', async ({ page }, testInfo) => {
   await expect(black).toHaveCSS('background-color', 'rgb(244, 239, 230)');
   await black.focus();
   await expect(black).toHaveCSS('color', 'rgb(5, 5, 5)');
-  await page.locator('#mobile-menu a[href="#inside"]').click();
-  await expect(page.locator('#mobile-menu')).toBeHidden();
-  await expect(page).toHaveURL(/#inside$/);
-  await toggle.click();
   await page.keyboard.press('Escape');
   await expect(toggle).toBeFocused();
   await expect(page.locator('#mobile-menu')).toBeHidden();
+  await toggle.click();
+  await page.setViewportSize({ width: 768, height: 844 });
+  await expect(page.locator('#mobile-menu')).toBeHidden();
+  await expect(toggle).toBeHidden();
+  await expect(page.locator('header > div [data-free-system]')).toBeVisible();
+  await expect(page.locator('header > div [data-black-application]')).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await toggle.click();
+  await black.click();
+  await expect(page).toHaveURL(/\/apply\/$/);
 });
 
 test('hero fonts start loading before the stylesheet arrives and are reused', async ({ page, browser, baseURL }) => {

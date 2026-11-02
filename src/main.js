@@ -171,7 +171,7 @@ mobileMenu.querySelectorAll('a').forEach((link) => link.addEventListener('click'
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && !mobileMenu.hidden) closeMenu(true);
 });
-window.matchMedia('(min-width: 1024px)').addEventListener('change', (event) => {
+window.matchMedia('(min-width: 640px)').addEventListener('change', (event) => {
   if (event.matches) closeMenu();
 });
 
