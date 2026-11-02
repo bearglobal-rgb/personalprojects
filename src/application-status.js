@@ -13,7 +13,7 @@ const examples = {
   },
   'under-review': {
     badge: 'Under review', heading: 'Your application is under review.',
-    description: 'Your goals and commitment are being considered for the cohort. Your decision will appear here when the review is complete.',
+    description: 'Your goals and commitment are being considered for the cohort.\nYour decision will appear here when the review is complete.',
     context: 'No payment is needed while your application is being reviewed.', stage: 1,
   },
   approved: {
@@ -33,7 +33,7 @@ const examples = {
   },
   expired: {
     badge: 'Link expired', heading: 'This link has expired.',
-    description: 'Your application status cannot be shown through this link. A new private access link is needed.',
+    description: 'Your application status cannot be shown through this link.\nA new private access link is needed.',
     context: 'An expired link does not mean your application was declined.', stage: null,
   },
   unavailable: {
