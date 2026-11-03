@@ -49,6 +49,9 @@ credit use a slightly brighter `#A8A094` for legibility. Header, footer, and sig
 as a CSS mask to match the ivory wordmarks exactly without altering the artwork.
 The sticky header is a compact glass panel around the monogram, with 24px side
 padding, 24px backdrop blur, and 16px bottom corners. Its top corners stay square.
+A transparent, pointer-transparent 8px backdrop blur spans the top of all pages.
+It fades out around the monogram panel’s bottom edge, ending at 96px, so scrolling
+content softens near the header while the logo remains sharp. It adds no tinted bar.
 The floating Apply Black action keeps dark text on its ivory fill.
 
 ## Run

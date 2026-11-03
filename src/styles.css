@@ -60,6 +60,19 @@
   /* Keep the full laptop inside the portrait crop without changing the photo. */
   .immersion-photo > img { object-position: 40% center; }
 }
+/* Transparent edge blur: content softens near the header without a visible bar. */
+body::before {
+  content: '';
+  position: fixed;
+  z-index: 45;
+  inset: 0 0 auto;
+  height: 96px;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 48px, rgb(0 0 0 / .65) 73px, transparent 96px);
+  mask-image: linear-gradient(to bottom, #000 0, #000 48px, rgb(0 0 0 / .65) 73px, transparent 96px);
+}
 .site-header {
   width: fit-content;
   margin-inline: auto;
