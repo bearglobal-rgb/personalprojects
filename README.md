@@ -14,13 +14,18 @@ rounded cards and photographs, smaller rounded inner frames, and circular avatar
 and badges. Buttons retain their original rectangular shape. The Origin timeline has
 a scroll-linked line and chapter markers. The System has no vertical line; its numbers,
 active cards, and phase still follow scrolling in either direction. Includes native
-FAQ disclosures and mobile navigation.
-The homepage header has two section links, The Founder and The System, at desktop
-widths and in the mobile menu below 1024px, alongside Free System and Apply Black.
-The former The Origin and Inside section labels are now The Founder and What’s Inside.
-All page headers and the homepage footer use their original centered 1152px
-maximum width, with 32px tablet/desktop and 20px phone side padding. Headers
-include the bottom divider, and the phone footer stays centered.
+FAQ disclosures and responsive layouts.
+All four headers contain only the centered, clickable Swan Academy logo, with
+no navigation links, menu, or header CTAs. The homepage footer stacks its centered
+logo, social links, and copyright with 24px gaps and 48px vertical padding.
+The Founder and What’s Inside section labels remain in place.
+A fixed glass-style banner holds Free System and Apply Black, using a 16px radius,
+backdrop blur, and safe-area spacing. It fades in as Founder reaches the upper
+reading area, hides at Choose Your Next Step, returns at Questions, and hides at
+the final CTA and footer. Scrolling upward reverses these states. Hidden actions
+are inert and excluded from accessibility navigation; reduced motion removes
+transitions, and without JavaScript the banner stays hidden while page CTAs work.
+
 
 System phase links center the first card of the selected phase. Below 1024px,
 the highlighted card's phase label returns to that phase in the list. While
@@ -39,8 +44,7 @@ text retains `#9A9286`. Homepage section labels, offer labels, and the founder
 credit use a slightly brighter `#A8A094` for legibility. Header, footer, and signup monograms use the original SVG
 as a CSS mask to match the ivory wordmarks exactly without altering the artwork.
 The sticky header uses 85% background opacity and 16px backdrop blur.
-Header navigation hover colors apply only to section links, so the mobile Black
-CTA retains dark text on its ivory fill.
+The floating Apply Black action keeps dark text on its ivory fill.
 
 ## Run
 
@@ -76,13 +80,13 @@ is disabled, no Paddle SDK is loaded, and URL parameters cannot activate checkou
 The responsive page works without JavaScript. Paddle will supply the actual payment
 form after its account, product, terms, and private approval flow are configured.
 
-Application, status, and checkout pages share a left-aligned, clickable Swan Academy
-logo and a “Back to Academy” link on the right; both return to the homepage top.
+Application, status, and checkout headers have a centered clickable Swan Academy
+logo that returns to the homepage top. The Back to Academy text is removed.
 They omit the full footer while retaining contextual links within their content.
-The homepage keeps its own action navigation and full footer.
+The homepage keeps its full footer and contextual floating actions.
 The status-page content and header share a 1152px maximum width;
-descriptive text has a narrower reading width within the status card. Return-link
-text aligns to the right margin on mobile and wraps only when needed. The checkout
+descriptive text has a narrower reading width within the status card. Status and checkout introductions are centered at all widths. The application
+introduction is centered on phones; its Next Steps and form remain left-aligned. The checkout
 summary monogram is 32px, at the upper-right with its vertical center aligned to
 the center of “Your enrollment.” Every mobile status badge occupies a dedicated
 row below “Application · Black.” Progress milestones align left in each desktop

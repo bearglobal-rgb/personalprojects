@@ -26,7 +26,7 @@ export function initFreeSystemSignup({ beforeOpen = () => {} } = {}) {
     if (savedBodyStyle === null) document.body.removeAttribute('style');
     else document.body.setAttribute('style', savedBodyStyle);
     window.scrollTo({ top: savedScrollY, behavior: 'instant' });
-    const focusTarget = opener?.getClientRects().length ? opener : document.querySelector('.menu-toggle');
+    const focusTarget = opener?.getClientRects().length ? opener : document.querySelector('.site-header .brand');
     focusTarget?.focus({ preventScroll: true });
     form.reset();
   });

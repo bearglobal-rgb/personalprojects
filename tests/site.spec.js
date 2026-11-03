@@ -383,7 +383,7 @@ test('immersion photo matches neighboring images and keeps its text unobscured',
     }
     if (width < 1024) expect(layout.textTop).toBeGreaterThan(layout.bottom);
     for (const text of await copy.all()) {
-      await text.scrollIntoViewIfNeeded();
+      await text.evaluate(el => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
       await expect(text).toBeInViewport({ ratio: .95 });
       expect(await text.evaluate(el => {
         const r = el.getBoundingClientRect();
@@ -537,19 +537,14 @@ test('FAQ opens and closes with keyboard input', async ({ page }) => {
 });
 
 test('Black links open the application and every free CTA opens the signup form', async ({ page }) => {
-  for (const navigation of ['nav[aria-label="Main navigation"]', '#mobile-menu']) {
-    expect(await page.locator(`${navigation} a[href^="#"]`).evaluateAll(links => links.map(link => ({ text: link.textContent, href: link.getAttribute('href') })))).toEqual([
-      { text: 'The Founder', href: '#founder' },
-      { text: 'The System', href: '#method' },
-    ]);
-  }
+  await expect(page.locator('header nav, header button, .menu-toggle')).toHaveCount(0);
   const external = await page.locator('header a[href^="https:"], main a[href^="https:"]').evaluateAll((links) => links.map((a) => a.href));
   expect(external).toEqual([]);
-  await expect(page.locator('[data-black-application]')).toHaveCount(5);
+  await expect(page.locator('[data-black-application]')).toHaveCount(4);
   for (const link of await page.locator('[data-black-application]').all()) await expect(link).toHaveAttribute('href', './apply/');
   const missing = await page.locator('a[href^="#"]').evaluateAll((links) => links.filter((a) => !document.getElementById(a.hash.slice(1))).map((a) => a.hash));
   expect(missing).toEqual([]);
-  await expect(page.locator('[data-free-system]')).toHaveCount(6);
+  await expect(page.locator('[data-free-system]')).toHaveCount(5);
   await expect(page.locator('a[href*="plan_kIUSXT7V4Lkag"]')).toHaveCount(0);
   for (const button of await page.locator('main [data-free-system]').all()) {
     await button.click();
@@ -596,17 +591,20 @@ test('signup does not collect or claim to deliver email before the provider is c
   expect(posts).toEqual([]);
 });
 
-test('mobile-menu signup closes the menu and returns focus to its toggle', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole('button', { name: 'Open navigation' }).click();
-  await page.locator('#mobile-menu [data-free-system]').click();
-  await expect(page.locator('#mobile-menu')).toBeHidden();
+test('floating signup preserves scroll and returns focus to its button', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.locator('#founder').evaluate(el => window.scrollTo({ top: el.offsetTop, behavior: 'instant' }));
+  const trigger = page.locator('.floating-cta [data-free-system]');
+  await expect(trigger).toBeVisible();
+  const position = await page.evaluate(() => scrollY);
+  await trigger.click();
   await expect(page.getByRole('dialog')).toBeVisible();
-  await page.getByRole('button', { name: 'Close signup form' }).click();
-  await expect(page.getByRole('button', { name: 'Open navigation' })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(trigger).toBeFocused();
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeCloseTo(position, 0);
 });
 
-test('footer preserves the original proportions and links to the social profiles', async ({ page }, testInfo) => {
+test('footer stacks the brand, socials and copyright with centered spacing', async ({ page }, testInfo) => {
   const footer = page.locator('footer');
   await footer.scrollIntoViewIfNeeded();
   await expect(footer.getByText('English mastery', { exact: true })).toHaveCount(0);
@@ -631,7 +629,8 @@ test('footer preserves the original proportions and links to the social profiles
       direction: style.flexDirection,
       centerOffsets: [...row.children].map(child => {
         const bounds = child.getBoundingClientRect();
-        return bounds.x + bounds.width / 2 - window.innerWidth / 2;
+        const footerBounds = el.getBoundingClientRect();
+        return bounds.x + bounds.width / 2 - footerBounds.x - footerBounds.width / 2;
       }),
     };
   });
@@ -640,16 +639,10 @@ test('footer preserves the original proportions and links to the social profiles
   expect(dimensions.name).toBe('18px');
   expect(dimensions.social).toBe('12px');
   expect(dimensions.copyright).toBe('12px');
-  if (testInfo.project.name === 'desktop') {
-    expect(dimensions.height).toBeGreaterThanOrEqual(140);
-    expect(dimensions.height).toBeLessThanOrEqual(144);
-    expect(dimensions.direction).toBe('row');
-  } else {
-    expect(dimensions.height).toBeGreaterThanOrEqual(240);
-    expect(dimensions.height).toBeLessThanOrEqual(244);
-    expect(dimensions.direction).toBe('column');
-    for (const offset of dimensions.centerOffsets) expect(Math.abs(offset)).toBeLessThan(1);
-  }
+  expect(dimensions.height).toBeGreaterThanOrEqual(224);
+  expect(dimensions.height).toBeLessThanOrEqual(228);
+  expect(dimensions.direction).toBe('column');
+  for (const offset of dimensions.centerOffsets) expect(Math.abs(offset)).toBeLessThan(1);
 });
 
 test('header stays readable and sticky with subtle transparency and blur', async ({ page }) => {
@@ -696,36 +689,20 @@ test('tab uses the framed vector favicon and site monograms match their ivory wo
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(5, 5, 5)');
 });
 
-test('mobile menu opens, navigates, and closes', async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== 'mobile', 'Mobile navigation is only shown on narrow screens.');
-  const toggle = page.getByRole('button', { name: 'Open navigation' });
-  await toggle.click();
-  await expect(page.locator('#mobile-menu')).toBeVisible();
-  const typography = await page.locator('#mobile-menu').evaluate(menu => {
-    const read = element => {
-      const style = getComputedStyle(element);
-      return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'textTransform'].map(property => [property, style[property]]));
-    };
-    return {
-      free: read(menu.querySelector('[data-free-system]')),
-      black: read(menu.querySelector('a[data-black-application]')),
-    };
-  });
-  expect(typography.free).toEqual(typography.black);
-  expect(typography.free.textTransform).toBe('uppercase');
-  const black = page.locator('#mobile-menu a[data-black-application]');
-  await black.hover();
-  await expect(black).toHaveCSS('color', 'rgb(5, 5, 5)');
-  await expect(black).toHaveCSS('background-color', 'rgb(244, 239, 230)');
-  await black.focus();
-  await expect(black).toHaveCSS('color', 'rgb(5, 5, 5)');
-  await page.locator('#mobile-menu a[href="#method"]').click();
-  await expect(page.locator('#mobile-menu')).toBeHidden();
-  await expect(page).toHaveURL(/#method$/);
-  await toggle.click();
-  await page.keyboard.press('Escape');
-  await expect(toggle).toBeFocused();
-  await expect(page.locator('#mobile-menu')).toBeHidden();
+test('floating CTAs follow the reading sections in both scroll directions', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const banner = page.locator('.floating-cta');
+  for (const [id, visible] of [['top', false], ['founder', true], ['failure', true], ['method', true], ['inside', true], ['offers', false], ['faq', true], ['final-cta', false], ['faq', true], ['offers', false], ['inside', true], ['founder', true], ['top', false]]) {
+    await page.locator('#' + id).evaluate(el => window.scrollTo({ top: el.offsetTop, behavior: 'instant' }));
+    await expect(banner).toHaveAttribute('aria-hidden', String(!visible));
+    await expect(banner).toBeVisible({ visible });
+    expect(await banner.evaluate(el => el.inert)).toBe(!visible);
+  }
+  await page.locator('#founder').evaluate(el => window.scrollTo({ top: el.offsetTop, behavior: 'instant' }));
+  await page.reload();
+  await expect(banner).toBeVisible();
+  await banner.getByRole('link', { name: 'Apply Black' }).click();
+  await expect(page).toHaveURL(/\/apply\/$/);
 });
 
 test('hero fonts start loading before the stylesheet arrives and are reused', async ({ page, browser, baseURL }) => {

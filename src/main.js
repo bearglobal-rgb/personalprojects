@@ -1,3 +1,4 @@
+import { initFloatingCta } from './floating-cta.js';
 import { initFreeSystemSignup } from './free-system-signup.js';
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
@@ -153,28 +154,6 @@ resizeObserver.observe(system);
 resizeObserver.observe(origin);
 update();
 
-const menuToggle = document.querySelector('.menu-toggle');
-const mobileMenu = document.querySelector('#mobile-menu');
-function closeMenu(returnFocus = false) {
-  mobileMenu.hidden = true;
-  menuToggle.setAttribute('aria-expanded', 'false');
-  menuToggle.setAttribute('aria-label', 'Open navigation');
-  if (returnFocus) menuToggle.focus();
-}
-menuToggle.addEventListener('click', () => {
-  const expanded = menuToggle.getAttribute('aria-expanded') !== 'true';
-  mobileMenu.hidden = !expanded;
-  menuToggle.setAttribute('aria-expanded', String(expanded));
-  menuToggle.setAttribute('aria-label', expanded ? 'Close navigation' : 'Open navigation');
-});
-mobileMenu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => closeMenu()));
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && !mobileMenu.hidden) closeMenu(true);
-});
-window.matchMedia('(min-width: 1024px)').addEventListener('change', (event) => {
-  if (event.matches) closeMenu();
-});
-
 const rooms = document.querySelector('.rooms-carousel');
 const roomCards = Array.from(rooms.children);
 const roomControls = document.querySelector('.rooms-controls');
@@ -245,4 +224,5 @@ rooms.addEventListener('keydown', event => {
 compactRooms.addEventListener('change', syncRoomLayout);
 new ResizeObserver(scheduleRoomUpdate).observe(rooms);
 syncRoomLayout();
-initFreeSystemSignup({ beforeOpen: () => closeMenu() });
+initFreeSystemSignup();
+initFloatingCta();

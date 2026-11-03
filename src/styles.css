@@ -61,6 +61,43 @@
   .immersion-photo > img { object-position: 40% center; }
 }
 .site-header nav a { transition: color 180ms ease; }
+.site-header-inner { display: flex; min-height: 72px; max-width: 1152px; margin-inline: auto; padding-inline: 20px; align-items: center; justify-content: center; }
+.site-header-inner .brand { min-height: 44px; }
+.site-footer-inner { text-align: center; }
+.floating-cta {
+  position: fixed;
+  z-index: 40;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: min(420px, calc(100% - 32px));
+  padding: 12px;
+  border: 1px solid rgb(244 239 230 / .22);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgb(244 239 230 / .08), transparent 65%), rgb(13 13 12 / .8);
+  -webkit-backdrop-filter: blur(24px) saturate(130%);
+  backdrop-filter: blur(24px) saturate(130%);
+  box-shadow: inset 0 1px 0 rgb(244 239 230 / .1), 0 12px 40px rgb(0 0 0 / .35);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, 12px);
+  transition: opacity 240ms ease, transform 240ms ease, visibility 240ms;
+}
+.floating-cta[data-visible="true"] { opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%, 0); }
+.floating-cta > * { display: flex; min-height: 48px; align-items: center; justify-content: center; padding: 12px 8px; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; }
+.floating-cta-free { border: 1px solid rgb(244 239 230 / .32); color: var(--color-ink); transition: border-color 180ms ease, background 180ms ease; }
+.floating-cta-free:hover { border-color: var(--color-ink); background: rgb(244 239 230 / .06); }
+.floating-cta-black { background: var(--color-ink); color: var(--color-void); transition: opacity 180ms ease; }
+.floating-cta-black:hover { opacity: .85; }
+@media (max-width: 639px) {
+  .floating-cta { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); padding: 10px; gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .floating-cta { transition: none; }
+}
 .brand-monogram {
   display: inline-block;
   flex-shrink: 0;

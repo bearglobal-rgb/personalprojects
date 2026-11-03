@@ -1,3 +1,4 @@
+.checkout-intro { text-align: center; }
 .checkout-layout { max-width: 1152px; margin: auto; padding: 64px 32px 88px; }
 .checkout-intro h1 { margin-top: 22px; font-family: var(--font-serif); font-size: clamp(36px, 5vw, 52px); line-height: 1.15; letter-spacing: -.025em; }
 .checkout-intro > p:last-child { margin-top: 20px; color: var(--color-body); font-size: 16px; line-height: 1.7; }
