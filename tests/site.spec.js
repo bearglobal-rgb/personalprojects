@@ -10,9 +10,11 @@ test.beforeEach(async ({ page }) => {
   await page.evaluate(() => document.fonts.ready);
 });
 
-test('preserves the original content apart from the revised offer and removed language strip', async ({ page }) => {
+test('preserves the original content apart from approved copy and section-label revisions', async ({ page }) => {
   const result = await page.evaluate((html) => {
     const original = new DOMParser().parseFromString(html, 'text/html');
+    original.querySelector('#founder p').textContent = 'The founder';
+    original.querySelector('#inside p').textContent = 'What’s inside';
     original.querySelector('#top + div').remove();
     original.querySelector('#top').after(original.querySelector('#founder'));
     const rebuilt = document.querySelector('main').cloneNode(true);
@@ -537,10 +539,8 @@ test('FAQ opens and closes with keyboard input', async ({ page }) => {
 test('Black links open the application and every free CTA opens the signup form', async ({ page }) => {
   for (const navigation of ['nav[aria-label="Main navigation"]', '#mobile-menu']) {
     expect(await page.locator(`${navigation} a[href^="#"]`).evaluateAll(links => links.map(link => ({ text: link.textContent, href: link.getAttribute('href') })))).toEqual([
-      { text: 'Jota', href: '#founder' },
-      { text: 'System', href: '#method' },
-      { text: 'Inside', href: '#inside' },
-      { text: 'Enter', href: '#offers' },
+      { text: 'The Founder', href: '#founder' },
+      { text: 'The System', href: '#method' },
     ]);
   }
   const external = await page.locator('header a[href^="https:"], main a[href^="https:"]').evaluateAll((links) => links.map((a) => a.href));
@@ -692,7 +692,7 @@ test('tab uses the framed vector favicon and site monograms match their ivory wo
   }
   await expect(page.locator('#top h1')).toHaveCSS('color', 'rgb(248, 245, 239)');
   await expect(page.locator('#top .text-body')).toHaveCSS('color', 'rgb(178, 171, 160)');
-  await expect(page.locator('#top p').first()).toHaveCSS('color', 'rgb(154, 146, 134)');
+  await expect(page.locator('#top p').first()).toHaveCSS('color', 'rgb(168, 160, 148)');
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(5, 5, 5)');
 });
 
@@ -719,9 +719,9 @@ test('mobile menu opens, navigates, and closes', async ({ page }, testInfo) => {
   await expect(black).toHaveCSS('background-color', 'rgb(244, 239, 230)');
   await black.focus();
   await expect(black).toHaveCSS('color', 'rgb(5, 5, 5)');
-  await page.locator('#mobile-menu a[href="#inside"]').click();
+  await page.locator('#mobile-menu a[href="#method"]').click();
   await expect(page.locator('#mobile-menu')).toBeHidden();
-  await expect(page).toHaveURL(/#inside$/);
+  await expect(page).toHaveURL(/#method$/);
   await toggle.click();
   await page.keyboard.press('Escape');
   await expect(toggle).toBeFocused();

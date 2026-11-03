@@ -2,12 +2,12 @@
 
 Static Vite + Tailwind site built from the supplied Swan Academy HTML export,
 brand specifications, SVGs, and screenshots. Main-page wording is preserved except
-for the offer and application revisions recorded in `reference/free-system-copy-changes.json`
-and the removed language/keyword strip beneath the hero. The hero fills the opening
+for the offer and application revisions recorded in `reference/free-system-copy-changes.json`,
+the homepage navigation/section names below, and the removed language/keyword strip beneath the hero. The hero fills the opening
 viewport below the header, keeping the next section below the fold.
-The section order is Hero → Origin → Failure → System → Inside → Choose Your
+The section order is Hero → The Founder → Failure → System → What’s Inside → Choose Your
 Next Step → FAQ → Final CTA → Footer. A future Proof/Testimonials section belongs
-between Inside and Choose Your Next Step; it is omitted until real material is supplied.
+between What’s Inside and Choose Your Next Step; it is omitted until real material is supplied.
 Black CTAs lead to the branded `/apply/` application preview instead of checkout.
 Original corner treatments are restored:
 rounded cards and photographs, smaller rounded inner frames, and circular avatars
@@ -15,8 +15,9 @@ and badges. Buttons retain their original rectangular shape. The Origin timeline
 a scroll-linked line and chapter markers. The System has no vertical line; its numbers,
 active cards, and phase still follow scrolling in either direction. Includes native
 FAQ disclosures and mobile navigation.
-The homepage header restores the Jota/System/Inside/Enter shortcuts at desktop
+The homepage header has two section links, The Founder and The System, at desktop
 widths and in the mobile menu below 1024px, alongside Free System and Apply Black.
+The former The Origin and Inside section labels are now The Founder and What’s Inside.
 All page headers and the homepage footer use their original centered 1152px
 maximum width, with 32px tablet/desktop and 20px phone side padding. Headers
 include the bottom divider, and the phone footer stays centered.
@@ -34,7 +35,8 @@ card fade is intentional, including its lower inactive-text contrast; scroll beh
 
 The palette keeps the near-black background and ivory buttons/wordmarks. Headings
 use a brighter warm white (`#F8F5EF`), reading text uses `#B2ABA0`, and secondary
-labels retain `#9A9286`. Header, footer, and signup monograms use the original SVG
+text retains `#9A9286`. Homepage section labels, offer labels, and the founder
+credit use a slightly brighter `#A8A094` for legibility. Header, footer, and signup monograms use the original SVG
 as a CSS mask to match the ivory wordmarks exactly without altering the artwork.
 The sticky header uses 85% background opacity and 16px backdrop blur.
 Header navigation hover colors apply only to section links, so the mobile Black
