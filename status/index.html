@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="/src/application.css">
   <link rel="stylesheet" href="/src/application-status.css">
   <script type="module" src="/src/application-status.js"></script>
-  <script type="module" src="/src/top-edge.js"></script>
+  <script type="module" src="/src/page-scroll.js"></script>
 </head>
 <body class="application-page bg-void text-ink font-sans">
   <a class="skip-link" href="#status-page">Skip to application status</a>
@@ -29,7 +29,8 @@
     </div>
   </header>
 
-  <main id="status-page" class="status-layout">
+  <div class="page-viewport">
+<main id="status-page" class="status-layout">
     <div class="status-intro">
       <p class="application-eyebrow">Swan Academy Black</p>
       <h1>Your application.<br><em>Your next step.</em></h1>
@@ -89,5 +90,6 @@
       <a href="../apply/">View the application <span aria-hidden="true">→</span></a>
     </div>
   </main>
+</div>
 </body>
 </html>

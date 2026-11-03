@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="/src/styles.css">
   <link rel="stylesheet" href="/src/application.css">
   <script type="module" src="/src/application.js"></script>
-  <script type="module" src="/src/top-edge.js"></script>
+  <script type="module" src="/src/page-scroll.js"></script>
 </head>
 <body class="application-page bg-void text-ink font-sans">
   <a class="skip-link" href="#application">Skip to application</a>
@@ -27,7 +27,8 @@
     </div>
   </header>
 
-  <main id="application" class="application-layout">
+  <div class="page-viewport">
+<main id="application" class="application-layout">
     <div class="application-intro">
       <p class="application-eyebrow">Swan Academy Black</p>
       <h1>Bring the ambition.<br><em>Commit to the work.</em></h1>
@@ -112,5 +113,6 @@
       </form>
     </section>
   </main>
+</div>
 </body>
 </html>

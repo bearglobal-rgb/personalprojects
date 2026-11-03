@@ -49,15 +49,18 @@ credit use a slightly brighter `#A8A094` for legibility. Header, footer, and sig
 as a CSS mask to match the ivory wordmarks exactly without altering the artwork.
 The sticky header is a compact glass panel around the monogram, with 24px side
 padding, 24px backdrop blur, and 16px bottom corners. Its top corners stay square.
-On phones, the glass extends through the top safe area to the screen edge while
-the monogram and panel’s bottom remain at their previous positions.
-A pointer-transparent background gradient fades content out at the top without
-using a mask or backdrop filter. A separate opaque cover extends above the
-viewport and across the device’s safe area. The shared `top-edge.js` also clips
-already-hidden main content at the opaque edge, preventing it from being painted
-again behind Safari’s status bar. It updates on scrolling, viewport changes,
-font loading, and layout changes. All pages retain `viewport-fit=cover`, safe-area
-spacing, and a sharp monogram below the status bar.
+On phones, the painted glass surface extends a full viewport height above the
+header, independently of the safe-area value; its monogram and rounded bottom
+retain their positions. A pointer-transparent background gradient fades content
+out, and a separate opaque cover extends above the viewport.
+On iOS, `.page-viewport` is a fixed native scrolling container with a stationary
+CSS clipping boundary. Root-document scrolling stays locked, so fast momentum
+scrolling cannot expose content behind the status bar while waiting for JavaScript.
+`page-scroll.js` routes timelines, floating CTA triggers, and signup scroll locking
+through the active scroller. Desktop and Android retain document scrolling.
+This iOS containment can keep Safari’s browser controls visible instead of allowing
+the normal document-scroll collapse. All pages retain `viewport-fit=cover` and
+safe-area spacing. No per-scroll JavaScript clipping remains.
 The floating Apply Black action keeps dark text on its ivory fill.
 
 ## Run

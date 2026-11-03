@@ -1,3 +1,4 @@
+import { getPageScrollTop, scrollPageTo, pageScroller } from './page-scroll.js';
 import { initFloatingCta } from './floating-cta.js';
 import { initFreeSystemSignup } from './free-system-signup.js';
 
@@ -73,8 +74,8 @@ function showProtocol(index) {
   returnedPhase = null;
   setActive(index);
   const card = protocols[index].querySelector('article').getBoundingClientRect();
-  window.scrollTo({
-    top: scrollY + card.top + card.height / 2 - innerHeight / 2,
+  scrollPageTo({
+    top: getPageScrollTop() + card.top + card.height / 2 - innerHeight / 2,
     behavior: reduceMotion.matches ? 'instant' : 'smooth',
   });
 }
@@ -107,7 +108,7 @@ protocols.forEach((item, index) => {
     // Show the whole list where possible; keep the selected row visible on short screens.
     const offset = Math.max(nav.top - headerBottom - 20, link.getBoundingClientRect().bottom - innerHeight + 20);
     link.focus({ preventScroll: true });
-    window.scrollTo({ top: scrollY + offset, behavior: reduceMotion.matches ? 'instant' : 'smooth' });
+    scrollPageTo({ top: getPageScrollTop() + offset, behavior: reduceMotion.matches ? 'instant' : 'smooth' });
   });
 });
 
@@ -115,7 +116,7 @@ function resumeSystemReading() {
   if (returnedPhase === null) return;
   returnedPhase = null;
   // Stop an unfinished return animation before the visitor takes over scrolling.
-  window.scrollTo({ top: scrollY, behavior: 'instant' });
+  scrollPageTo({ top: getPageScrollTop(), behavior: 'instant' });
   scheduleUpdate();
 }
 
@@ -145,7 +146,7 @@ compactSystem.addEventListener('change', () => {
   scheduleUpdate();
 });
 
-window.addEventListener('scroll', scheduleUpdate, { passive: true });
+pageScroller.addEventListener('scroll', scheduleUpdate, { passive: true });
 window.addEventListener('resize', scheduleUpdate);
 window.addEventListener('pageshow', scheduleUpdate);
 document.fonts.ready.then(scheduleUpdate);

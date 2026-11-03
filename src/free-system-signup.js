@@ -1,3 +1,4 @@
+import { getPageScrollTop, scrollPageTo, lockPageScroll } from './page-scroll.js';
 // The signup UI stays in preview until a real email-delivery integration is supplied.
 // Never collect an address or claim delivery while that connection is missing.
 export function initFreeSystemSignup({ beforeOpen = () => {} } = {}) {
@@ -5,15 +6,14 @@ export function initFreeSystemSignup({ beforeOpen = () => {} } = {}) {
   const form = dialog.querySelector('form');
   let opener;
   let savedScrollY = 0;
-  let savedBodyStyle;
+  let unlockScroll;
 
   document.querySelectorAll('[data-free-system]').forEach(button => {
     button.addEventListener('click', () => {
       opener = button;
       beforeOpen();
-      savedScrollY = window.scrollY;
-      savedBodyStyle = document.body.getAttribute('style');
-      Object.assign(document.body.style, { position: 'fixed', top: `-${savedScrollY}px`, width: '100%' });
+      savedScrollY = getPageScrollTop();
+      unlockScroll = lockPageScroll();
       dialog.showModal();
     });
   });
@@ -23,9 +23,8 @@ export function initFreeSystemSignup({ beforeOpen = () => {} } = {}) {
     if (event.target === dialog && (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom)) dialog.close();
   });
   dialog.addEventListener('close', () => {
-    if (savedBodyStyle === null) document.body.removeAttribute('style');
-    else document.body.setAttribute('style', savedBodyStyle);
-    window.scrollTo({ top: savedScrollY, behavior: 'instant' });
+    unlockScroll();
+    scrollPageTo({ top: savedScrollY, behavior: 'instant' });
     const focusTarget = opener?.getClientRects().length ? opener : document.querySelector('.site-header .brand');
     focusTarget?.focus({ preventScroll: true });
     form.reset();

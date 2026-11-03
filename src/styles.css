@@ -83,10 +83,29 @@ body::after {
   background: var(--color-void);
   pointer-events: none;
 }
-/* Remove already-hidden content from painting, including Safari's status-bar area. */
-main {
-  clip-path: inset(var(--top-content-clip, 0px) 0 0);
+.page-viewport { display: contents; }
+/* A stationary clipping boundary is applied by the browser during momentum
+   scrolling; it never depends on a JavaScript scroll handler catching up. */
+html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+.contained-scroll body { padding-top: 0; }
+.contained-scroll .page-viewport {
+  display: block;
+  position: fixed;
+  inset: 0;
+  height: 100%;
+  height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+  padding-top: calc(73px + var(--safe-area-top));
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(96px + var(--safe-area-top));
+  clip-path: inset(calc(48px + var(--safe-area-top)) 0 0);
 }
+.contained-scroll .site-header { position: fixed; left: 50%; transform: translateX(-50%); margin: 0; }
 .site-header {
   top: var(--safe-area-top);
   width: fit-content;
@@ -130,12 +149,27 @@ main {
 .floating-cta-black { background: var(--color-ink); color: var(--color-void); transition: opacity 180ms ease; }
 .floating-cta-black:hover { opacity: .85; }
 @media (max-width: 639px) {
-  .site-header { top: 0; margin-top: calc(-1 * var(--safe-area-top)); }
+  .site-header { top: 0; margin-top: calc(-1 * var(--safe-area-top)); border-color: transparent; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; isolation: isolate; }
+  .contained-scroll .site-header { margin-top: 0; }
+  .site-header::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: -100vh -1px -1px;
+    border: 1px solid rgb(244 239 230 / .22);
+    border-top: 0;
+    border-radius: 0 0 16px 16px;
+    background: linear-gradient(90deg, rgb(244 239 230 / .04), transparent), rgb(13 13 12 / .8);
+    -webkit-backdrop-filter: blur(24px) saturate(130%);
+    backdrop-filter: blur(24px) saturate(130%);
+    pointer-events: none;
+  }
   .site-header-inner { min-height: calc(72px + var(--safe-area-top)); padding-top: var(--safe-area-top); }
   .floating-cta { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); padding: 10px; gap: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .floating-cta { transition: none; }
+  .contained-scroll .page-viewport { scroll-behavior: auto; }
 }
 .brand-monogram {
   display: inline-block;

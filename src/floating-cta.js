@@ -1,3 +1,4 @@
+import { getPageScrollTop, getPageScrollHeight, pageScroller } from './page-scroll.js';
 export function initFloatingCta() {
   const banner = document.querySelector('.floating-cta');
   const header = document.querySelector('.site-header');
@@ -25,7 +26,7 @@ export function initFloatingCta() {
     const final = innerWidth < 640
       ? finalSection.getBoundingClientRect().top <= readingLine
       : finalButtons.some(button => button.getBoundingClientRect().top <= bannerBottom);
-    const atBottom = scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
+    const atBottom = getPageScrollTop() + innerHeight >= getPageScrollHeight() - 2;
     const visible = buttonsPassed(heroButtons) && !final && !atBottom && (!offers || buttonsPassed(offerButtons));
     banner.dataset.visible = String(visible);
     banner.inert = !visible;
@@ -38,7 +39,7 @@ export function initFloatingCta() {
     requestAnimationFrame(update);
   }
 
-  window.addEventListener('scroll', schedule, { passive: true });
+  pageScroller.addEventListener('scroll', schedule, { passive: true });
   window.addEventListener('resize', schedule);
   window.addEventListener('pageshow', schedule);
   new ResizeObserver(schedule).observe(document.querySelector('main'));

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, devices } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 const original = readFileSync(new URL('../reference/original.html', import.meta.url), 'utf8');
@@ -658,10 +658,11 @@ test('compact monogram header stays sticky with glass and rounded bottom corners
   await expect(header.getByRole('link', { name: 'Swan Academy — home' })).toBeVisible();
   const style = await header.evaluate(el => {
     const css = getComputedStyle(el);
+    const glass = innerWidth < 640 ? getComputedStyle(el, '::before') : css;
     const context = document.createElement('canvas').getContext('2d');
-    context.fillStyle = css.backgroundColor;
+    context.fillStyle = glass.backgroundColor;
     context.fillRect(0, 0, 1, 1);
-    return { top: el.getBoundingClientRect().top, position: css.position, alpha: context.getImageData(0, 0, 1, 1).data[3] / 255, blur: css.backdropFilter, opacity: css.opacity, width: el.getBoundingClientRect().width, corners: [css.borderTopLeftRadius, css.borderTopRightRadius, css.borderBottomLeftRadius, css.borderBottomRightRadius] };
+    return { top: el.getBoundingClientRect().top, position: css.position, alpha: context.getImageData(0, 0, 1, 1).data[3] / 255, blur: glass.backdropFilter, opacity: css.opacity, width: el.getBoundingClientRect().width, corners: [css.borderTopLeftRadius, css.borderTopRightRadius, css.borderBottomLeftRadius, css.borderBottomRightRadius] };
   });
   expect(style.top).toBe(0);
   expect(style.position).toBe('sticky');
@@ -691,22 +692,30 @@ test('compact monogram header stays sticky with glass and rounded bottom corners
   expect(fade.pointerEvents).toBe('none');
 });
 
-test('top content stays clipped without overlays when the mobile viewport changes', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  for (const route of ['/', '/apply/', '/status/?preview=approved', '/checkout/']) {
-    await page.goto(route);
-    await page.addStyleTag({ content: ':root { --safe-area-top: 44px; } body::before, body::after { display: none !important; }' });
-    for (const height of [844, 680, 844]) {
-      await page.setViewportSize({ width: 390, height });
-      await page.evaluate(() => window.scrollTo({ top: 500, behavior: 'instant' }));
-      await expect.poll(() => page.locator('main').evaluate(el => {
-        const rect = el.getBoundingClientRect();
-        return rect.top + parseFloat(el.style.getPropertyValue('--top-content-clip'));
-      })).toBeCloseTo(92, 0);
-      expect(await page.evaluate(() => document.querySelector('main').contains(document.elementFromPoint(20, 30)))).toBe(false);
-      expect(await page.evaluate(() => document.querySelector('main').contains(document.elementFromPoint(20, 200)))).toBe(true);
+test('iPhone scrolling remains natively clipped during abrupt jumps and viewport changes', async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ ...devices['iPhone 11'], reducedMotion: 'reduce' });
+  const page = await context.newPage();
+  try {
+    for (const route of ['/', '/apply/', '/status/?preview=approved', '/checkout/']) {
+      await page.goto(baseURL + route);
+      await expect(page.locator('html')).toHaveClass(/contained-scroll/);
+      await page.addStyleTag({ content: ':root { --safe-area-top: 44px; } body::before, body::after { display: none !important; }' });
+      for (const height of [844, 680, 844]) {
+        await page.setViewportSize({ width: 390, height });
+        const result = await page.locator('.page-viewport').evaluate(viewport => {
+          const clipped = [];
+          for (const top of [500, 4000, 800, 12000, 500]) {
+            viewport.scrollTo({ top, behavior: 'instant' });
+            clipped.push(!document.querySelector('main').contains(document.elementFromPoint(20, 30)) && window.scrollY === 0);
+          }
+          return { clipped, clip: getComputedStyle(viewport).clipPath, contentVisible: document.querySelector('main').contains(document.elementFromPoint(20, 200)) };
+        });
+        expect(result.clipped).toEqual([true, true, true, true, true]);
+        expect(result.clip).toBe('inset(92px 0px 0px)');
+        expect(result.contentVisible).toBe(true);
+      }
     }
-  }
+  } finally { await context.close(); }
 });
 
 test('tab uses the framed vector favicon and site monograms match their ivory wordmarks', async ({ page, request }) => {
