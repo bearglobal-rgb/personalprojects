@@ -63,7 +63,6 @@
 .site-header nav a { transition: color 180ms ease; }
 .site-header-inner { display: flex; min-height: 72px; max-width: 1152px; margin-inline: auto; padding-inline: 20px; align-items: center; justify-content: center; }
 .site-header-inner .brand { min-height: 44px; }
-.site-footer-inner { text-align: center; }
 .floating-cta {
   position: fixed;
   z-index: 40;

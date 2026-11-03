@@ -1,17 +1,27 @@
 export function initFloatingCta() {
   const banner = document.querySelector('.floating-cta');
   const header = document.querySelector('.site-header');
-  const sections = ['founder', 'offers', 'faq', 'final-cta'].map(id => document.getElementById(id));
+  const offersSection = document.getElementById('offers');
+  const finalSection = document.getElementById('final-cta');
+  const heroButtons = [...document.querySelectorAll('#top [data-free-system], #top [data-black-application]')];
+  const offerButtons = [...offersSection.querySelectorAll('[data-free-system], [data-black-application]')];
   let pending = false;
 
   function update() {
     pending = false;
     if (document.querySelector('#free-system-dialog').open) return;
-    // Change state as each section reaches the upper reading area of the viewport.
-    const readingLine = header.getBoundingClientRect().bottom + Math.min(160, innerHeight * .2);
-    const [founder, offers, questions, final] = sections.map(section => section.getBoundingClientRect().top <= readingLine);
+    const headerBottom = header.getBoundingClientRect().bottom;
+    const readingLine = headerBottom + Math.min(160, innerHeight * .2);
+    // Wait until 80% of each button has passed behind the sticky header.
+    // This also handles stacked buttons and offer cards on phones.
+    const buttonsPassed = buttons => buttons.every(button => {
+      const rect = button.getBoundingClientRect();
+      return rect.top + rect.height * .8 <= headerBottom;
+    });
+    const offers = offersSection.getBoundingClientRect().top <= readingLine;
+    const final = finalSection.getBoundingClientRect().top <= readingLine;
     const atBottom = scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
-    const visible = founder && !final && !atBottom && (!offers || questions);
+    const visible = buttonsPassed(heroButtons) && !final && !atBottom && (!offers || buttonsPassed(offerButtons));
     banner.dataset.visible = String(visible);
     banner.inert = !visible;
     banner.setAttribute('aria-hidden', String(!visible));

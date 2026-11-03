@@ -604,7 +604,7 @@ test('floating signup preserves scroll and returns focus to its button', async (
   await expect.poll(() => page.evaluate(() => scrollY)).toBeCloseTo(position, 0);
 });
 
-test('footer stacks the brand, socials and copyright with centered spacing', async ({ page }, testInfo) => {
+test('footer retains its original responsive layout and wordmark', async ({ page }, testInfo) => {
   const footer = page.locator('footer');
   await footer.scrollIntoViewIfNeeded();
   await expect(footer.getByText('English mastery', { exact: true })).toHaveCount(0);
@@ -639,10 +639,16 @@ test('footer stacks the brand, socials and copyright with centered spacing', asy
   expect(dimensions.name).toBe('18px');
   expect(dimensions.social).toBe('12px');
   expect(dimensions.copyright).toBe('12px');
-  expect(dimensions.height).toBeGreaterThanOrEqual(224);
-  expect(dimensions.height).toBeLessThanOrEqual(228);
-  expect(dimensions.direction).toBe('column');
-  for (const offset of dimensions.centerOffsets) expect(Math.abs(offset)).toBeLessThan(1);
+  if (testInfo.project.name === 'desktop') {
+    expect(dimensions.height).toBeGreaterThanOrEqual(140);
+    expect(dimensions.height).toBeLessThanOrEqual(144);
+    expect(dimensions.direction).toBe('row');
+  } else {
+    expect(dimensions.height).toBeGreaterThanOrEqual(240);
+    expect(dimensions.height).toBeLessThanOrEqual(244);
+    expect(dimensions.direction).toBe('column');
+    for (const offset of dimensions.centerOffsets) expect(Math.abs(offset)).toBeLessThan(1);
+  }
 });
 
 test('header stays readable and sticky with subtle transparency and blur', async ({ page }) => {
@@ -673,14 +679,17 @@ test('tab uses the framed vector favicon and site monograms match their ivory wo
   const fallback = await page.locator('link[rel="icon"][type="image/x-icon"]').getAttribute('href');
   expect((await request.get(fallback)).ok()).toBe(true);
   await expect(page).toHaveTitle('Swan Academy · English Mastery');
+  await expect(page.locator('header .brand')).toHaveText('');
+  await expect(page.locator('header .brand-monogram')).toHaveCSS('width', page.viewportSize().width < 640 ? '32px' : '40px');
+  await expect(page.locator('header .brand-monogram')).toHaveCSS('height', page.viewportSize().width < 640 ? '32px' : '40px');
   for (const selector of ['.brand .brand-monogram', 'footer .brand-monogram', '.signup-brand .brand-monogram']) {
     const logo = await page.locator(selector).evaluate(el => ({
       color: getComputedStyle(el).backgroundColor,
-      wordmark: getComputedStyle(el.nextElementSibling).color,
+      wordmark: el.nextElementSibling ? getComputedStyle(el.nextElementSibling).color : null,
       mask: getComputedStyle(el).maskImage,
     }));
     expect(logo.color).toBe('rgb(244, 239, 230)');
-    expect(logo.color).toBe(logo.wordmark);
+    if (logo.wordmark) expect(logo.color).toBe(logo.wordmark);
     expect(logo.mask).toContain('Swan-Academy-Monogram-White-Master.svg');
   }
   await expect(page.locator('#top h1')).toHaveCSS('color', 'rgb(248, 245, 239)');
@@ -692,6 +701,20 @@ test('tab uses the framed vector favicon and site monograms match their ivory wo
 test('floating CTAs follow the reading sections in both scroll directions', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   const banner = page.locator('.floating-cta');
+  for (const section of ['top', 'offers']) {
+    for (const [fraction, visible] of [[.7, false], [.9, true], [.7, false]]) {
+      await page.locator('#' + section).evaluate((el, fraction) => {
+        const headerBottom = document.querySelector('header').getBoundingClientRect().bottom;
+        const target = Math.max(...[...el.querySelectorAll('[data-free-system], [data-black-application]')].map(button => {
+          const r = button.getBoundingClientRect();
+          return scrollY + r.top + r.height * fraction - headerBottom;
+        }));
+        window.scrollTo({ top: target, behavior: 'instant' });
+      }, fraction);
+      await expect(banner).toHaveAttribute('aria-hidden', String(!visible));
+      await expect(banner).toBeVisible({ visible });
+    }
+  }
   for (const [id, visible] of [['top', false], ['founder', true], ['failure', true], ['method', true], ['inside', true], ['offers', false], ['faq', true], ['final-cta', false], ['faq', true], ['offers', false], ['inside', true], ['founder', true], ['top', false]]) {
     await page.locator('#' + id).evaluate(el => window.scrollTo({ top: el.offsetTop, behavior: 'instant' }));
     await expect(banner).toHaveAttribute('aria-hidden', String(!visible));

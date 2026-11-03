@@ -15,13 +15,15 @@ and badges. Buttons retain their original rectangular shape. The Origin timeline
 a scroll-linked line and chapter markers. The System has no vertical line; its numbers,
 active cards, and phase still follow scrolling in either direction. Includes native
 FAQ disclosures and responsive layouts.
-All four headers contain only the centered, clickable Swan Academy logo, with
-no navigation links, menu, or header CTAs. The homepage footer stacks its centered
-logo, social links, and copyright with 24px gaps and 48px vertical padding.
+All four headers contain only the centered, clickable monogram at its existing
+size (40px desktop, 32px phone), with no wordmark, navigation links, menu, or header CTAs. The homepage footer retains the
+Swan Academy wordmark and its original layout: a desktop row and a centered phone
+stack, with 32px gaps and 48px vertical padding.
 The Founder and What’s Inside section labels remain in place.
 A fixed glass-style banner holds Free System and Apply Black, using a 16px radius,
-backdrop blur, and safe-area spacing. It fades in as Founder reaches the upper
-reading area, hides at Choose Your Next Step, returns at Questions, and hides at
+backdrop blur, and safe-area spacing. It fades in once 80% of both hero buttons
+have scrolled behind the header, hides at Choose Your Next Step, returns once
+80% of both offer buttons have passed the header, and hides at
 the final CTA and footer. Scrolling upward reverses these states. Hidden actions
 are inert and excluded from accessibility navigation; reduced motion removes
 transitions, and without JavaScript the banner stays hidden while page CTAs work.
@@ -80,13 +82,13 @@ is disabled, no Paddle SDK is loaded, and URL parameters cannot activate checkou
 The responsive page works without JavaScript. Paddle will supply the actual payment
 form after its account, product, terms, and private approval flow are configured.
 
-Application, status, and checkout headers have a centered clickable Swan Academy
-logo that returns to the homepage top. The Back to Academy text is removed.
+Application, status, and checkout headers have a centered clickable monogram
+that returns to the homepage top. The Back to Academy text is removed.
 They omit the full footer while retaining contextual links within their content.
 The homepage keeps its full footer and contextual floating actions.
 The status-page content and header share a 1152px maximum width;
 descriptive text has a narrower reading width within the status card. Status and checkout introductions are centered at all widths. The application
-introduction is centered on phones; its Next Steps and form remain left-aligned. The checkout
+introduction and entire Next Steps section are centered on phones; the form remains left-aligned. The checkout
 summary monogram is 32px, at the upper-right with its vertical center aligned to
 the center of “Your enrollment.” Every mobile status badge occupies a dedicated
 row below “Application · Black.” Progress milestones align left in each desktop
