@@ -670,6 +670,15 @@ test('compact monogram header stays sticky with glass and rounded bottom corners
   expect(style.corners).toEqual(['0px', '0px', '16px', '16px']);
   expect(style.blur).toBe('blur(24px) saturate(1.3)');
   expect(style.opacity).toBe('1');
+  await expect(page.locator('meta[name="viewport"]')).toHaveAttribute('content', /viewport-fit=cover/);
+  await page.addStyleTag({ content: ':root { --safe-area-top: 44px; }' });
+  await expect(header).toHaveCSS('top', '44px');
+  expect(await header.evaluate(el => el.getBoundingClientRect().top)).toBe(44);
+  const fade = await page.evaluate(() => {
+    const css = getComputedStyle(document.body, '::before');
+    return { height: css.height, background: css.backgroundColor, pointerEvents: css.pointerEvents };
+  });
+  expect(fade).toEqual({ height: '140px', background: 'rgb(5, 5, 5)', pointerEvents: 'none' });
 });
 
 test('tab uses the framed vector favicon and site monograms match their ivory wordmarks', async ({ page, request }) => {

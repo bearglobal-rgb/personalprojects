@@ -23,8 +23,9 @@
 }
 
 @layer base {
-  html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
-  body { margin: 0; -webkit-font-smoothing: antialiased; }
+  :root { --safe-area-top: env(safe-area-inset-top, 0px); }
+  html { background: var(--color-void); scroll-behavior: smooth; scroll-padding-top: calc(6rem + var(--safe-area-top)); }
+  body { margin: 0; padding-top: var(--safe-area-top); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); -webkit-font-smoothing: antialiased; }
   h1, h2, h3 { color: var(--color-heading); }
   button, summary, a { -webkit-tap-highlight-color: transparent; }
   button { cursor: pointer; }
@@ -48,8 +49,8 @@
 .skip-link:focus { transform: translateY(0); }
 .hero-content {
   /* Allow for the 72px header, its border, and the hero's bottom divider. */
-  min-height: calc(100vh - 74px);
-  min-height: calc(100svh - 74px);
+  min-height: calc(100vh - 74px - var(--safe-area-top));
+  min-height: calc(100svh - 74px - var(--safe-area-top));
   justify-content: flex-start;
 }
 @media (min-width: 1024px) {
@@ -60,20 +61,22 @@
   /* Keep the full laptop inside the portrait crop without changing the photo. */
   .immersion-photo > img { object-position: 40% center; }
 }
-/* Transparent edge blur: content softens near the header without a visible bar. */
+/* Fade scrolling content completely into the page background, including the notch. */
 body::before {
   content: '';
   position: fixed;
   z-index: 45;
   inset: 0 0 auto;
-  height: 96px;
+  height: calc(96px + var(--safe-area-top));
   pointer-events: none;
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 48px, rgb(0 0 0 / .65) 73px, transparent 96px);
-  mask-image: linear-gradient(to bottom, #000 0, #000 48px, rgb(0 0 0 / .65) 73px, transparent 96px);
+  background: var(--color-void);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(48px + var(--safe-area-top)), rgb(0 0 0 / .95) calc(64px + var(--safe-area-top)), rgb(0 0 0 / .5) calc(80px + var(--safe-area-top)), transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0, #000 calc(48px + var(--safe-area-top)), rgb(0 0 0 / .95) calc(64px + var(--safe-area-top)), rgb(0 0 0 / .5) calc(80px + var(--safe-area-top)), transparent 100%);
 }
 .site-header {
+  top: var(--safe-area-top);
   width: fit-content;
   margin-inline: auto;
   border: 1px solid rgb(244 239 230 / .22);

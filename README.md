@@ -49,9 +49,12 @@ credit use a slightly brighter `#A8A094` for legibility. Header, footer, and sig
 as a CSS mask to match the ivory wordmarks exactly without altering the artwork.
 The sticky header is a compact glass panel around the monogram, with 24px side
 padding, 24px backdrop blur, and 16px bottom corners. Its top corners stay square.
-A transparent, pointer-transparent 8px backdrop blur spans the top of all pages.
-It fades out around the monogram panel’s bottom edge, ending at 96px, so scrolling
-content softens near the header while the logo remains sharp. It adds no tinted bar.
+A pointer-transparent top overlay fades scrolling content fully into the near-black
+page background, with only a light 3px blur at its soft lower edge. It becomes fully
+opaque above 48px and ends at 96px below the top safe area. All pages use
+`viewport-fit=cover`, reserve the device’s top/side safe areas, and keep the sticky
+monogram below the status bar. The overlay covers the top safe area so content
+cannot show through behind the iPhone clock and notch.
 The floating Apply Black action keeps dark text on its ivory fill.
 
 ## Run
