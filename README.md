@@ -24,8 +24,9 @@ A fixed glass-style banner holds Free System and Apply Black, using a 16px radiu
 backdrop blur, and safe-area spacing. It fades in once 80% of both hero buttons
 have scrolled behind the header, hides at Choose Your Next Step, returns once
 80% of both offer buttons have passed the header, and hides at
-the final CTA and footer. On desktop, it hides as soon as the final buttons touch
-the banner’s bottom edge; the mobile section-based exit remains unchanged.
+the final CTA and footer. At every screen width, it hides as soon as the final
+buttons touch the banner’s bottom edge (the Free System button reaches it first
+on mobile).
 Scrolling upward reverses these states. Hidden actions
 are inert and excluded from accessibility navigation; reduced motion removes
 transitions, and without JavaScript the banner stays hidden while page CTAs work.

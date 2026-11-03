@@ -23,9 +23,7 @@ export function initFloatingCta() {
     const offers = offersSection.getBoundingClientRect().top <= readingLine;
     // Use the resting banner edge, so its exit animation cannot change the trigger.
     const bannerBottom = innerHeight - parseFloat(getComputedStyle(banner).bottom);
-    const final = innerWidth < 640
-      ? finalSection.getBoundingClientRect().top <= readingLine
-      : finalButtons.some(button => button.getBoundingClientRect().top <= bannerBottom);
+    const final = finalButtons.some(button => button.getBoundingClientRect().top <= bannerBottom);
     const atBottom = getPageScrollTop() + innerHeight >= getPageScrollHeight() - 2;
     const visible = buttonsPassed(heroButtons) && !final && !atBottom && (!offers || buttonsPassed(offerButtons));
     banner.dataset.visible = String(visible);

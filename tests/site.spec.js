@@ -769,16 +769,14 @@ test('floating CTAs follow the reading sections in both scroll directions', asyn
     await expect(banner).toBeVisible({ visible });
     expect(await banner.evaluate(el => el.inert)).toBe(!visible);
   }
-  if (page.viewportSize().width >= 640) {
-    for (const [offset, visible] of [[8, true], [-8, false], [8, true]]) {
-      await page.locator('#final-cta').evaluate((section, offset) => {
-        const banner = document.querySelector('.floating-cta');
-        const edge = innerHeight - parseFloat(getComputedStyle(banner).bottom);
-        const firstButtonTop = Math.min(...[...section.querySelectorAll('[data-free-system], [data-black-application]')].map(el => scrollY + el.getBoundingClientRect().top));
-        window.scrollTo({ top: firstButtonTop - edge - offset, behavior: 'instant' });
-      }, offset);
-      await expect(banner).toHaveAttribute('aria-hidden', String(!visible));
-    }
+  for (const [offset, visible] of [[8, true], [-8, false], [8, true]]) {
+    await page.locator('#final-cta').evaluate((section, offset) => {
+      const banner = document.querySelector('.floating-cta');
+      const edge = innerHeight - parseFloat(getComputedStyle(banner).bottom);
+      const firstButtonTop = Math.min(...[...section.querySelectorAll('[data-free-system], [data-black-application]')].map(el => scrollY + el.getBoundingClientRect().top));
+      window.scrollTo({ top: firstButtonTop - edge - offset, behavior: 'instant' });
+    }, offset);
+    await expect(banner).toHaveAttribute('aria-hidden', String(!visible));
   }
   await page.locator('#founder').evaluate(el => window.scrollTo({ top: el.offsetTop, behavior: 'instant' }));
   await page.reload();
