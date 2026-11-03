@@ -672,8 +672,14 @@ test('compact monogram header stays sticky with glass and rounded bottom corners
   expect(style.opacity).toBe('1');
   await expect(page.locator('meta[name="viewport"]')).toHaveAttribute('content', /viewport-fit=cover/);
   await page.addStyleTag({ content: ':root { --safe-area-top: 44px; }' });
-  await expect(header).toHaveCSS('top', '44px');
-  expect(await header.evaluate(el => el.getBoundingClientRect().top)).toBe(44);
+  const mobile = page.viewportSize().width < 640;
+  await expect(header).toHaveCSS('top', mobile ? '0px' : '44px');
+  expect(await header.evaluate(el => el.getBoundingClientRect().top)).toBe(mobile ? 0 : 44);
+  expect(await header.evaluate(el => el.getBoundingClientRect().bottom)).toBe(117);
+  if (mobile) {
+    await expect(header.locator('.site-header-inner')).toHaveCSS('padding-top', '44px');
+    expect(await header.locator('.brand-monogram').evaluate(el => el.getBoundingClientRect().top)).toBe(64);
+  }
   const fade = await page.evaluate(() => {
     const css = getComputedStyle(document.body, '::before');
     return { height: css.height, background: css.backgroundImage, mask: css.maskImage, filter: css.backdropFilter, pointerEvents: css.pointerEvents };
