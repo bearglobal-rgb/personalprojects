@@ -676,9 +676,31 @@ test('compact monogram header stays sticky with glass and rounded bottom corners
   expect(await header.evaluate(el => el.getBoundingClientRect().top)).toBe(44);
   const fade = await page.evaluate(() => {
     const css = getComputedStyle(document.body, '::before');
-    return { height: css.height, background: css.backgroundColor, pointerEvents: css.pointerEvents };
+    return { height: css.height, background: css.backgroundImage, mask: css.maskImage, filter: css.backdropFilter, pointerEvents: css.pointerEvents };
   });
-  expect(fade).toEqual({ height: '140px', background: 'rgb(5, 5, 5)', pointerEvents: 'none' });
+  expect(fade.height).toBe('140px');
+  expect(fade.background).toContain('linear-gradient');
+  expect(fade.mask).toBe('none');
+  expect(fade.filter).toBe('none');
+  expect(fade.pointerEvents).toBe('none');
+});
+
+test('top content stays clipped without overlays when the mobile viewport changes', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (const route of ['/', '/apply/', '/status/?preview=approved', '/checkout/']) {
+    await page.goto(route);
+    await page.addStyleTag({ content: ':root { --safe-area-top: 44px; } body::before, body::after { display: none !important; }' });
+    for (const height of [844, 680, 844]) {
+      await page.setViewportSize({ width: 390, height });
+      await page.evaluate(() => window.scrollTo({ top: 500, behavior: 'instant' }));
+      await expect.poll(() => page.locator('main').evaluate(el => {
+        const rect = el.getBoundingClientRect();
+        return rect.top + parseFloat(el.style.getPropertyValue('--top-content-clip'));
+      })).toBeCloseTo(92, 0);
+      expect(await page.evaluate(() => document.querySelector('main').contains(document.elementFromPoint(20, 30)))).toBe(false);
+      expect(await page.evaluate(() => document.querySelector('main').contains(document.elementFromPoint(20, 200)))).toBe(true);
+    }
+  }
 });
 
 test('tab uses the framed vector favicon and site monograms match their ivory wordmarks', async ({ page, request }) => {

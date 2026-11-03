@@ -61,7 +61,7 @@
   /* Keep the full laptop inside the portrait crop without changing the photo. */
   .immersion-photo > img { object-position: 40% center; }
 }
-/* Fade scrolling content completely into the page background, including the notch. */
+/* Use ordinary paint, not a masked backdrop layer, for Safari's top-edge fade. */
 body::before {
   content: '';
   position: fixed;
@@ -69,11 +69,23 @@ body::before {
   inset: 0 0 auto;
   height: calc(96px + var(--safe-area-top));
   pointer-events: none;
+  background: linear-gradient(to bottom, var(--color-void) 0, var(--color-void) calc(48px + var(--safe-area-top)), rgb(5 5 5 / .95) calc(64px + var(--safe-area-top)), rgb(5 5 5 / .5) calc(80px + var(--safe-area-top)), rgb(5 5 5 / 0) 100%);
+}
+/* Overscan above the viewport as Safari expands/collapses its browser chrome. */
+body::after {
+  content: '';
+  position: fixed;
+  z-index: 46;
+  top: -160px;
+  right: 0;
+  left: 0;
+  height: calc(160px + var(--safe-area-top));
   background: var(--color-void);
-  -webkit-backdrop-filter: blur(3px);
-  backdrop-filter: blur(3px);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(48px + var(--safe-area-top)), rgb(0 0 0 / .95) calc(64px + var(--safe-area-top)), rgb(0 0 0 / .5) calc(80px + var(--safe-area-top)), transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0, #000 calc(48px + var(--safe-area-top)), rgb(0 0 0 / .95) calc(64px + var(--safe-area-top)), rgb(0 0 0 / .5) calc(80px + var(--safe-area-top)), transparent 100%);
+  pointer-events: none;
+}
+/* Remove already-hidden content from painting, including Safari's status-bar area. */
+main {
+  clip-path: inset(var(--top-content-clip, 0px) 0 0);
 }
 .site-header {
   top: var(--safe-area-top);

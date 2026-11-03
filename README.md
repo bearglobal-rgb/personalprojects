@@ -49,12 +49,13 @@ credit use a slightly brighter `#A8A094` for legibility. Header, footer, and sig
 as a CSS mask to match the ivory wordmarks exactly without altering the artwork.
 The sticky header is a compact glass panel around the monogram, with 24px side
 padding, 24px backdrop blur, and 16px bottom corners. Its top corners stay square.
-A pointer-transparent top overlay fades scrolling content fully into the near-black
-page background, with only a light 3px blur at its soft lower edge. It becomes fully
-opaque above 48px and ends at 96px below the top safe area. All pages use
-`viewport-fit=cover`, reserve the device’s top/side safe areas, and keep the sticky
-monogram below the status bar. The overlay covers the top safe area so content
-cannot show through behind the iPhone clock and notch.
+A pointer-transparent background gradient fades content out at the top without
+using a mask or backdrop filter. A separate opaque cover extends above the
+viewport and across the device’s safe area. The shared `top-edge.js` also clips
+already-hidden main content at the opaque edge, preventing it from being painted
+again behind Safari’s status bar. It updates on scrolling, viewport changes,
+font loading, and layout changes. All pages retain `viewport-fit=cover`, safe-area
+spacing, and a sharp monogram below the status bar.
 The floating Apply Black action keeps dark text on its ivory fill.
 
 ## Run
