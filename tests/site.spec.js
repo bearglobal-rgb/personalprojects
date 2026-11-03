@@ -651,7 +651,7 @@ test('footer retains its original responsive layout and wordmark', async ({ page
   }
 });
 
-test('header stays readable and sticky with subtle transparency and blur', async ({ page }) => {
+test('compact monogram header stays sticky with glass and rounded bottom corners', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.evaluate(() => window.scrollTo(0, 900));
   const header = page.locator('.site-header');
@@ -661,12 +661,14 @@ test('header stays readable and sticky with subtle transparency and blur', async
     const context = document.createElement('canvas').getContext('2d');
     context.fillStyle = css.backgroundColor;
     context.fillRect(0, 0, 1, 1);
-    return { top: el.getBoundingClientRect().top, position: css.position, alpha: context.getImageData(0, 0, 1, 1).data[3] / 255, blur: css.backdropFilter, opacity: css.opacity };
+    return { top: el.getBoundingClientRect().top, position: css.position, alpha: context.getImageData(0, 0, 1, 1).data[3] / 255, blur: css.backdropFilter, opacity: css.opacity, width: el.getBoundingClientRect().width, corners: [css.borderTopLeftRadius, css.borderTopRightRadius, css.borderBottomLeftRadius, css.borderBottomRightRadius] };
   });
   expect(style.top).toBe(0);
   expect(style.position).toBe('sticky');
-  expect(style.alpha).toBeCloseTo(.85, 2);
-  expect(style.blur).toBe('blur(16px)');
+  expect(style.alpha).toBeCloseTo(.8, 2);
+  expect(style.width).toBeLessThanOrEqual(90);
+  expect(style.corners).toEqual(['0px', '0px', '16px', '16px']);
+  expect(style.blur).toBe('blur(24px) saturate(1.3)');
   expect(style.opacity).toBe('1');
 });
 
@@ -720,6 +722,17 @@ test('floating CTAs follow the reading sections in both scroll directions', asyn
     await expect(banner).toHaveAttribute('aria-hidden', String(!visible));
     await expect(banner).toBeVisible({ visible });
     expect(await banner.evaluate(el => el.inert)).toBe(!visible);
+  }
+  if (page.viewportSize().width >= 640) {
+    for (const [offset, visible] of [[8, true], [-8, false], [8, true]]) {
+      await page.locator('#final-cta').evaluate((section, offset) => {
+        const banner = document.querySelector('.floating-cta');
+        const edge = innerHeight - parseFloat(getComputedStyle(banner).bottom);
+        const firstButtonTop = Math.min(...[...section.querySelectorAll('[data-free-system], [data-black-application]')].map(el => scrollY + el.getBoundingClientRect().top));
+        window.scrollTo({ top: firstButtonTop - edge - offset, behavior: 'instant' });
+      }, offset);
+      await expect(banner).toHaveAttribute('aria-hidden', String(!visible));
+    }
   }
   await page.locator('#founder').evaluate(el => window.scrollTo({ top: el.offsetTop, behavior: 'instant' }));
   await page.reload();

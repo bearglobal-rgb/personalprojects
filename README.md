@@ -24,7 +24,9 @@ A fixed glass-style banner holds Free System and Apply Black, using a 16px radiu
 backdrop blur, and safe-area spacing. It fades in once 80% of both hero buttons
 have scrolled behind the header, hides at Choose Your Next Step, returns once
 80% of both offer buttons have passed the header, and hides at
-the final CTA and footer. Scrolling upward reverses these states. Hidden actions
+the final CTA and footer. On desktop, it hides as soon as the final buttons touch
+the banner’s bottom edge; the mobile section-based exit remains unchanged.
+Scrolling upward reverses these states. Hidden actions
 are inert and excluded from accessibility navigation; reduced motion removes
 transitions, and without JavaScript the banner stays hidden while page CTAs work.
 
@@ -45,7 +47,8 @@ use a brighter warm white (`#F8F5EF`), reading text uses `#B2ABA0`, and secondar
 text retains `#9A9286`. Homepage section labels, offer labels, and the founder
 credit use a slightly brighter `#A8A094` for legibility. Header, footer, and signup monograms use the original SVG
 as a CSS mask to match the ivory wordmarks exactly without altering the artwork.
-The sticky header uses 85% background opacity and 16px backdrop blur.
+The sticky header is a compact glass panel around the monogram, with 24px side
+padding, 24px backdrop blur, and 16px bottom corners. Its top corners stay square.
 The floating Apply Black action keeps dark text on its ivory fill.
 
 ## Run

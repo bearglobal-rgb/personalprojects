@@ -5,6 +5,7 @@ export function initFloatingCta() {
   const finalSection = document.getElementById('final-cta');
   const heroButtons = [...document.querySelectorAll('#top [data-free-system], #top [data-black-application]')];
   const offerButtons = [...offersSection.querySelectorAll('[data-free-system], [data-black-application]')];
+  const finalButtons = [...finalSection.querySelectorAll('[data-free-system], [data-black-application]')];
   let pending = false;
 
   function update() {
@@ -19,7 +20,11 @@ export function initFloatingCta() {
       return rect.top + rect.height * .8 <= headerBottom;
     });
     const offers = offersSection.getBoundingClientRect().top <= readingLine;
-    const final = finalSection.getBoundingClientRect().top <= readingLine;
+    // Use the resting banner edge, so its exit animation cannot change the trigger.
+    const bannerBottom = innerHeight - parseFloat(getComputedStyle(banner).bottom);
+    const final = innerWidth < 640
+      ? finalSection.getBoundingClientRect().top <= readingLine
+      : finalButtons.some(button => button.getBoundingClientRect().top <= bannerBottom);
     const atBottom = scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
     const visible = buttonsPassed(heroButtons) && !final && !atBottom && (!offers || buttonsPassed(offerButtons));
     banner.dataset.visible = String(visible);
