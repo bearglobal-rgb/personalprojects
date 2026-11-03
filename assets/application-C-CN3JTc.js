@@ -1,0 +1,1 @@
+import"./top-edge-DWyWW3Ai.js";/* empty css                    */document.querySelector(`#black-application-form`).addEventListener(`submit`,e=>e.preventDefault());
