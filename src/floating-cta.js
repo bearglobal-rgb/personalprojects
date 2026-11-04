@@ -13,17 +13,20 @@ export function initFloatingCta() {
     pending = false;
     if (document.querySelector('#free-system-dialog').open) return;
     const headerBottom = header.getBoundingClientRect().bottom;
-    const readingLine = headerBottom + Math.min(160, innerHeight * .2);
     // Wait until 80% of each button has passed behind the sticky header.
     // This also handles stacked buttons and offer cards on phones.
     const buttonsPassed = buttons => buttons.every(button => {
       const rect = button.getBoundingClientRect();
       return rect.top + rect.height * .8 <= headerBottom;
     });
-    const offers = offersSection.getBoundingClientRect().top <= readingLine;
     // Use the resting banner edge, so its exit animation cannot change the trigger.
     const bannerBottom = innerHeight - parseFloat(getComputedStyle(banner).bottom);
-    const final = finalButtons.some(button => button.getBoundingClientRect().top <= bannerBottom);
+    // Treat subpixel rounding at the shared edge as contact too.
+    const buttonsReachBanner = buttons => buttons.some(button => button.getBoundingClientRect().top <= bannerBottom + 1);
+    // Use the same contact rule for both CTA sections. Keep stacked offer
+    // buttons clear until the last one has passed 80% behind the header.
+    const offers = buttonsReachBanner(offerButtons);
+    const final = buttonsReachBanner(finalButtons);
     const atBottom = getPageScrollTop() + innerHeight >= getPageScrollHeight() - 2;
     const visible = buttonsPassed(heroButtons) && !final && !atBottom && (!offers || buttonsPassed(offerButtons));
     banner.dataset.visible = String(visible);
@@ -40,6 +43,7 @@ export function initFloatingCta() {
   pageScroller.addEventListener('scroll', schedule, { passive: true });
   window.addEventListener('resize', schedule);
   window.addEventListener('pageshow', schedule);
+  window.visualViewport?.addEventListener('resize', schedule);
   new ResizeObserver(schedule).observe(document.querySelector('main'));
   document.fonts.ready.then(schedule);
   update();

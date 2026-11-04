@@ -22,11 +22,11 @@ stack, with 32px gaps and 48px vertical padding.
 The Founder and What’s Inside section labels remain in place.
 A fixed glass-style banner holds Free System and Apply Black, using a 16px radius,
 backdrop blur, and safe-area spacing. It fades in once 80% of both hero buttons
-have scrolled behind the header, hides at Choose Your Next Step, returns once
-80% of both offer buttons have passed the header, and hides at
-the final CTA and footer. At every screen width, it hides as soon as the final
-buttons touch the banner’s bottom edge (the Free System button reaches it first
-on mobile).
+have scrolled behind the header. At every screen width, it hides when the first
+button in either Choose Your Next Step or the final CTA touches the banner’s
+bottom edge (the Free System button reaches it first on mobile). It returns once
+80% of both offer buttons have passed the header, but stays hidden after the
+final CTA and through the footer. Contact allows one pixel for scroll rounding.
 Scrolling upward reverses these states. Hidden actions
 are inert and excluded from accessibility navigation; reduced motion removes
 transitions, and without JavaScript the banner stays hidden while page CTAs work.
@@ -54,6 +54,13 @@ On phones, the painted glass surface extends a full viewport height above the
 header, independently of the safe-area value; its monogram and rounded bottom
 retain their positions. A pointer-transparent background gradient fades content
 out, and a separate opaque cover extends above the viewport.
+On iOS phones, the root canvas and the cover above viewport zero also paint an
+82px strip matching the panel's fill and side borders. This supplies a matching
+background for Safari's status-bar extension instead of relying solely on a
+fixed element's overflowing pseudo-element. The cover ends at viewport zero to
+avoid applying the translucent fill twice. Physical iPhone testing is still
+needed to confirm Safari's browser-chrome rendering; desktop WebKit does not
+emulate that surface.
 On iOS, `.page-viewport` is a fixed native scrolling container with a stationary
 CSS clipping boundary. Root-document scrolling stays locked, so fast momentum
 scrolling cannot expose content behind the status bar while waiting for JavaScript.
