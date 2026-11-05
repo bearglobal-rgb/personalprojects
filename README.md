@@ -31,8 +31,9 @@ The banner slides down fully out of view when hidden, using a 320ms eased
 translation without an opacity fade. Scrolling upward reverses these states. Hidden actions
 are inert and excluded from accessibility navigation; reduced motion removes
 transitions, and without JavaScript the banner stays hidden while page CTAs work.
-On phones, the exit accelerates gently downward while the entrance keeps its
-existing easing. Rendering stays enabled until the transform ends, with a
+Desktop and phone use the same motion: the exit accelerates gently downward,
+and the entrance starts gently and slows into its resting position. Both retain
+the 320ms duration. Rendering stays enabled until the transform ends, with a
 duration-based fallback for interrupted transition events. This avoids relying
 on a delayed CSS visibility transition. Reversing the exit cancels its cleanup;
 interaction and accessibility are disabled as soon as the exit starts.
