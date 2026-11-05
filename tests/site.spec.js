@@ -787,6 +787,60 @@ test('floating CTAs follow the reading sections in both scroll directions', asyn
   await expect(page).toHaveURL(/\/apply\/$/);
 });
 
+test('floating banner stays painted through its exit and survives a reversed exit', async ({ browser, baseURL }, testInfo) => {
+  const mobile = testInfo.project.name === 'mobile';
+  const context = await browser.newContext(mobile ? { ...devices['iPhone 11'] } : { viewport: { width: 1920, height: 1080 } });
+  const page = await context.newPage();
+  try {
+    await page.goto(baseURL);
+    await page.evaluate(() => document.fonts.ready);
+    const banner = page.locator('.floating-cta');
+    const scrollTo = id => page.locator('#' + id).evaluate(section => {
+      const scroller = document.documentElement.classList.contains('contained-scroll') ? document.querySelector('.page-viewport') : window;
+      const top = (scroller === window ? scrollY : scroller.scrollTop) + section.getBoundingClientRect().top;
+      scroller.scrollTo({ top, behavior: 'instant' });
+    });
+    await scrollTo('founder');
+    await expect(banner).toHaveAttribute('data-visible', 'true');
+    await expect.poll(() => banner.evaluate(el => el.getAnimations().length)).toBe(0);
+    const restingTop = await banner.evaluate(el => el.getBoundingClientRect().top);
+    await scrollTo('top');
+    await expect(banner).toHaveAttribute('data-visible', 'false');
+    const exiting = await banner.evaluate(el => {
+      const animation = el.getAnimations().find(animation => animation.transitionProperty === 'transform');
+      if (!animation) throw new Error('The exit must animate its transform');
+      animation.pause();
+      animation.currentTime = 32;
+      return { top: el.getBoundingClientRect().top, visibility: getComputedStyle(el).visibility, opacity: getComputedStyle(el).opacity, inert: el.inert, viewport: innerHeight };
+    });
+    expect(exiting.top).toBeGreaterThan(restingTop);
+    expect(exiting.top).toBeLessThan(exiting.viewport);
+    expect(exiting.visibility).toBe('visible');
+    expect(exiting.opacity).toBe('1');
+    expect(exiting.inert).toBe(true);
+    await page.waitForTimeout(120);
+    await expect(banner).toHaveCSS('visibility', 'visible');
+    // Finish the actual movement before the banner becomes visibility:hidden.
+    await banner.evaluate(el => el.getAnimations().forEach(animation => animation.finish()));
+    await expect(banner).toBeHidden();
+    expect(await banner.evaluate(el => el.getBoundingClientRect().top >= innerHeight)).toBe(true);
+    await scrollTo('founder');
+    await expect(banner).toHaveAttribute('data-visible', 'true');
+    await expect.poll(() => banner.evaluate(el => el.getAnimations().length)).toBe(0);
+    await scrollTo('top');
+    await expect(banner).toHaveAttribute('data-visible', 'false');
+    await scrollTo('founder');
+    await expect(banner).toHaveAttribute('data-visible', 'true');
+    await page.waitForTimeout(450); // Outlast the canceled exit's cleanup timer.
+    await expect(banner).toBeVisible();
+    expect(await banner.evaluate(el => el.inert)).toBe(false);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await scrollTo('top');
+    await expect(banner).toBeHidden();
+    expect(await banner.evaluate(el => el.getAnimations().length)).toBe(0);
+  } finally { await context.close(); }
+});
+
 test('hero fonts start loading before the stylesheet arrives and are reused', async ({ page, browser, baseURL }) => {
   const context = await browser.newContext({ viewport: page.viewportSize() });
   const fresh = await context.newPage();

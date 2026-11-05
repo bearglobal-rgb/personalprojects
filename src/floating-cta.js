@@ -7,7 +7,41 @@ export function initFloatingCta() {
   const heroButtons = [...document.querySelectorAll('#top [data-free-system], #top [data-black-application]')];
   const offerButtons = [...offersSection.querySelectorAll('[data-free-system], [data-black-application]')];
   const finalButtons = [...finalSection.querySelectorAll('[data-free-system], [data-black-application]')];
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let pending = false;
+  let exitTimer;
+
+  function finishExit() {
+    if (banner.dataset.visible === 'false') banner.removeAttribute('data-rendered');
+    clearTimeout(exitTimer);
+  }
+
+  function setVisible(visible) {
+    if (banner.dataset.visible === String(visible)) return;
+    clearTimeout(exitTimer);
+    if (visible) banner.dataset.rendered = 'true';
+    banner.dataset.visible = String(visible);
+    banner.inert = !visible;
+    banner.setAttribute('aria-hidden', String(!visible));
+    if (!visible) {
+      if (reducedMotion.matches) finishExit();
+      else {
+        // Keep painting the glass until its transform finishes. A delayed
+        // visibility transition can cut the exit short in mobile browsers.
+        const cssDuration = getComputedStyle(banner).getPropertyValue('--floating-cta-duration').trim();
+        const duration = parseFloat(cssDuration) * (cssDuration.endsWith('ms') ? 1 : 1000);
+        exitTimer = setTimeout(finishExit, duration + 80);
+      }
+    }
+  }
+
+  banner.addEventListener('transitionend', event => {
+    if (event.target === banner && event.propertyName === 'transform'
+      && banner.getBoundingClientRect().top >= innerHeight) finishExit();
+  });
+  reducedMotion.addEventListener('change', () => {
+    if (reducedMotion.matches) finishExit();
+  });
 
   function update() {
     pending = false;
@@ -29,9 +63,7 @@ export function initFloatingCta() {
     const final = buttonsReachBanner(finalButtons);
     const atBottom = getPageScrollTop() + innerHeight >= getPageScrollHeight() - 2;
     const visible = buttonsPassed(heroButtons) && !final && !atBottom && (!offers || buttonsPassed(offerButtons));
-    banner.dataset.visible = String(visible);
-    banner.inert = !visible;
-    banner.setAttribute('aria-hidden', String(!visible));
+    setVisible(visible);
   }
 
   function schedule() {
