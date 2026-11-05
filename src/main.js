@@ -6,6 +6,7 @@ const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const system = document.querySelector('[data-timeline="system"]');
 const origin = document.querySelector('[data-timeline="origin"]');
+const originFill = origin.querySelector('[data-progress]');
 const originChapters = Array.from(origin.querySelectorAll('.origin-chapter'));
 const compactOrigin = window.matchMedia('(max-width: 1023px)');
 const protocols = Array.from(system.querySelectorAll(':scope > ol > li'));
@@ -18,6 +19,27 @@ let activePhase = null;
 // A return to the mobile phase list is a selection, not a reading position.
 let returnedPhase = null;
 let framePending = false;
+let originTarget = 0;
+let originDisplayed = null;
+let originTrackLength = 1;
+let originMotionFrame = 0;
+let originLastPaint = 0;
+
+function paintOrigin(timestamp = performance.now()) {
+  originMotionFrame = 0;
+  const elapsed = originLastPaint ? Math.max(0, timestamp - originLastPaint) : 16;
+  originLastPaint = timestamp;
+  // A short, frame-rate-independent ease with at most 20 screen pixels of
+  // trailing distance. Fast swipes cannot accumulate an animation backlog.
+  const maxGap = 20 / originTrackLength;
+  originDisplayed = clamp(originDisplayed ?? originTarget, originTarget - maxGap, originTarget + maxGap);
+  originDisplayed += (originTarget - originDisplayed) * (1 - Math.exp(-elapsed / 55));
+  if (reduceMotion.matches || Math.abs(originTarget - originDisplayed) * originTrackLength < .25) {
+    originDisplayed = originTarget;
+  }
+  originFill.style.transform = `scaleY(${originDisplayed})`;
+  if (originDisplayed !== originTarget) originMotionFrame = requestAnimationFrame(paintOrigin);
+}
 
 function setActive(index, phase = phases.findLastIndex(start => index >= start)) {
   if (index === activeIndex && phase === activePhase) return;
@@ -37,18 +59,24 @@ function setActive(index, phase = phases.findLastIndex(start => index >= start))
   });
 }
 
-function updateTimeline(container, inset, activationY) {
-  const rect = container.getBoundingClientRect();
-  const progress = clamp((activationY - rect.top - inset) / Math.max(1, rect.height - inset * 2));
-  container.querySelector('[data-progress]').style.transform = `scaleY(${progress})`;
-  container.dataset.progress = progress.toFixed(4);
+function updateOrigin(inset, activationY) {
+  const rect = origin.getBoundingClientRect();
+  originTrackLength = Math.max(1, rect.height - inset * 2);
+  originTarget = clamp((activationY - rect.top - inset) / originTrackLength);
+  origin.dataset.progress = originTarget.toFixed(4);
+  // Scroll/layout updates take precedence over any pending settling frame.
+  // Restart gently after an idle period instead of treating it as animation time.
+  if (!originMotionFrame) originLastPaint = performance.now() - 16;
+  cancelAnimationFrame(originMotionFrame);
+  if (rect.bottom <= 0 || rect.top >= innerHeight) originDisplayed = originTarget;
+  paintOrigin();
 }
 
 function update() {
   framePending = false;
   const activationY = window.innerHeight * .5;
   const originInset = compactOrigin.matches ? 16 : 32;
-  updateTimeline(origin, originInset, activationY);
+  updateOrigin(originInset, activationY);
   originChapters.forEach(chapter => {
     chapter.dataset.reached = String(chapter.getBoundingClientRect().top + originInset <= activationY);
   });

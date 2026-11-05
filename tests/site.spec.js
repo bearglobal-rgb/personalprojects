@@ -139,40 +139,58 @@ test('the Origin timeline line follows scrolling in both directions', async ({ p
   expect(reverse).toBeLessThan(second);
 });
 
-test('Founder line tracks mobile scroll frames while retaining desktop easing', async ({ page, browser, baseURL }, testInfo) => {
+test('Founder line eases gently with bounded trailing distance and settles after scrolling', async ({ page, browser, baseURL }, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
-  if (testInfo.project.name === 'desktop') {
-    await expect(page.locator('.origin-rail [data-progress]')).toHaveCSS('transition-duration', '0.5s');
-    return;
-  }
   const context = await browser.newContext({ ...devices['iPhone 11'], reducedMotion: 'no-preference' });
   try {
-    const iphone = await context.newPage();
-    await iphone.goto(baseURL);
-    await iphone.evaluate(() => document.fonts.ready);
-    // Cover document scrolling as well as the native iPhone scroll container.
-    for (const mobilePage of [page, iphone]) {
-      const errors = await mobilePage.evaluate(async () => {
-        const timeline = document.querySelector('.origin-timeline');
-        const rail = timeline.querySelector('.origin-rail');
-        const fill = rail.querySelector('[data-progress]');
-        const scroller = document.documentElement.classList.contains('contained-scroll') ? document.querySelector('.page-viewport') : window;
-        const nextUpdate = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-        const box = timeline.getBoundingClientRect();
-        const top = (scroller === window ? scrollY : scroller.scrollTop) + box.top + box.height * .35 - innerHeight / 2;
-        scroller.scrollTo({ top, behavior: 'instant' });
-        await nextUpdate();
-        const errors = [];
-        for (const delta of [50, 50, 50, 50, 50, 50, -50, -50, -50, -50, -50, -50]) {
-          scroller.scrollBy({ top: delta, behavior: 'instant' });
-          await nextUpdate();
-          const bounds = rail.getBoundingClientRect();
-          const target = Math.max(bounds.top, Math.min(bounds.bottom, innerHeight / 2));
-          errors.push(Math.abs(target - fill.getBoundingClientRect().bottom));
-        }
-        return errors;
+    const pages = [page];
+    if (testInfo.project.name === 'mobile') {
+      const iphone = await context.newPage();
+      await iphone.goto(baseURL);
+      await iphone.evaluate(() => document.fonts.ready);
+      pages.push(iphone);
+    }
+    for (const timelinePage of pages) {
+      await timelinePage.bringToFront();
+      // Control animation time so browser-worker load cannot turn an
+      // intermediate sample into a settled frame or throttle a background tab.
+      await timelinePage.clock.install();
+      await timelinePage.clock.pauseAt(new Date());
+      const scroll = async (delta, initial = false) => {
+        await timelinePage.evaluate(({ delta, initial }) => {
+          const scroller = document.documentElement.classList.contains('contained-scroll') ? document.querySelector('.page-viewport') : window;
+          if (initial) {
+            const box = document.querySelector('.origin-timeline').getBoundingClientRect();
+            const top = (scroller === window ? scrollY : scroller.scrollTop) + box.top + box.height * .35 - innerHeight / 2;
+            scroller.scrollTo({ top, behavior: 'instant' });
+          } else scroller.scrollBy({ top: delta, behavior: 'instant' });
+          scroller.dispatchEvent(new Event('scroll'));
+        }, { delta, initial });
+        await timelinePage.clock.runFor(32);
+      };
+      const remainingGap = () => timelinePage.locator('.origin-rail').evaluate(rail => {
+        const bounds = rail.getBoundingClientRect();
+        const target = Math.max(bounds.top, Math.min(bounds.bottom, innerHeight / 2));
+        return Math.abs(target - rail.querySelector('[data-progress]').getBoundingClientRect().bottom);
       });
-      expect(Math.max(...errors)).toBeLessThan(2);
+      await scroll(0, true);
+      const errors = [];
+      for (const delta of [12, 12, 50, 120, 50, 12, -12, -12, -50, -120, -50, -12]) {
+        await scroll(delta);
+        errors.push(await remainingGap());
+      }
+      expect(Math.max(...errors)).toBeGreaterThan(.5);
+      expect(Math.max(...errors)).toBeLessThan(21);
+      await timelinePage.clock.runFor(300);
+      expect(await remainingGap()).toBeLessThan(.5);
+      await timelinePage.clock.runFor(1000);
+      await scroll(20);
+      expect(await remainingGap()).toBeGreaterThan(.25);
+      await timelinePage.clock.runFor(300);
+      expect(await remainingGap()).toBeLessThan(.5);
+      await timelinePage.emulateMedia({ reducedMotion: 'reduce' });
+      await scroll(80);
+      expect(await remainingGap()).toBeLessThan(.5);
     }
   } finally { await context.close(); }
 });
@@ -848,18 +866,18 @@ test('floating banner stays painted through its exit and survives a reversed exi
       const animation = el.getAnimations().find(animation => animation.transitionProperty === 'transform');
       if (!animation) throw new Error('The exit must animate its transform');
       animation.pause();
-      animation.currentTime = 32;
-      return { top: el.getBoundingClientRect().top, visibility: getComputedStyle(el).visibility, opacity: getComputedStyle(el).opacity, inert: el.inert, viewport: innerHeight };
+      animation.currentTime = 160;
+      const midway = { top: el.getBoundingClientRect().top, visibility: getComputedStyle(el).visibility, opacity: getComputedStyle(el).opacity, inert: el.inert, viewport: innerHeight };
+      // Sample and finish atomically: a paused test animation must not race
+      // the real-time cleanup fallback on a busy browser worker.
+      animation.finish();
+      return midway;
     });
     expect(exiting.top).toBeGreaterThan(restingTop);
     expect(exiting.top).toBeLessThan(exiting.viewport);
     expect(exiting.visibility).toBe('visible');
     expect(exiting.opacity).toBe('1');
     expect(exiting.inert).toBe(true);
-    await page.waitForTimeout(120);
-    await expect(banner).toHaveCSS('visibility', 'visible');
-    // Finish the actual movement before the banner becomes visibility:hidden.
-    await banner.evaluate(el => el.getAnimations().forEach(animation => animation.finish()));
     await expect(banner).toBeHidden();
     expect(await banner.evaluate(el => el.getBoundingClientRect().top >= innerHeight)).toBe(true);
     await scrollTo('founder');
