@@ -139,6 +139,44 @@ test('the Origin timeline line follows scrolling in both directions', async ({ p
   expect(reverse).toBeLessThan(second);
 });
 
+test('Founder line tracks mobile scroll frames while retaining desktop easing', async ({ page, browser, baseURL }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  if (testInfo.project.name === 'desktop') {
+    await expect(page.locator('.origin-rail [data-progress]')).toHaveCSS('transition-duration', '0.5s');
+    return;
+  }
+  const context = await browser.newContext({ ...devices['iPhone 11'], reducedMotion: 'no-preference' });
+  try {
+    const iphone = await context.newPage();
+    await iphone.goto(baseURL);
+    await iphone.evaluate(() => document.fonts.ready);
+    // Cover document scrolling as well as the native iPhone scroll container.
+    for (const mobilePage of [page, iphone]) {
+      const errors = await mobilePage.evaluate(async () => {
+        const timeline = document.querySelector('.origin-timeline');
+        const rail = timeline.querySelector('.origin-rail');
+        const fill = rail.querySelector('[data-progress]');
+        const scroller = document.documentElement.classList.contains('contained-scroll') ? document.querySelector('.page-viewport') : window;
+        const nextUpdate = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        const box = timeline.getBoundingClientRect();
+        const top = (scroller === window ? scrollY : scroller.scrollTop) + box.top + box.height * .35 - innerHeight / 2;
+        scroller.scrollTo({ top, behavior: 'instant' });
+        await nextUpdate();
+        const errors = [];
+        for (const delta of [50, 50, 50, 50, 50, 50, -50, -50, -50, -50, -50, -50]) {
+          scroller.scrollBy({ top: delta, behavior: 'instant' });
+          await nextUpdate();
+          const bounds = rail.getBoundingClientRect();
+          const target = Math.max(bounds.top, Math.min(bounds.bottom, innerHeight / 2));
+          errors.push(Math.abs(target - fill.getBoundingClientRect().bottom));
+        }
+        return errors;
+      });
+      expect(Math.max(...errors)).toBeLessThan(2);
+    }
+  } finally { await context.close(); }
+});
+
 test('System numbers and cards light up in both scroll directions without a line', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(page.locator('.system-timeline > div[aria-hidden="true"]')).toHaveCount(0);

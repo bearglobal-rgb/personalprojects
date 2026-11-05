@@ -393,6 +393,9 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
     left: 4px;
     translate: none;
   }
+  /* Scroll updates already arrive once per frame. Interpolating each one for
+     another 500ms makes the fill trail behind touch/momentum scrolling. */
+  .origin-timeline .origin-rail [data-progress] { transition: none; }
   .origin-chapters > .origin-chapter {
     gap: 1.25rem;
     padding-left: 1.75rem;

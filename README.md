@@ -20,6 +20,9 @@ size (40px desktop, 32px phone), with no wordmark, navigation links, menu, or he
 Swan Academy wordmark and its original layout: a desktop row and a centered phone
 stack, with 32px gaps and 48px vertical padding.
 The Founder and What’s Inside section labels remain in place.
+The Founder line follows each scroll update directly below 1024px, avoiding a
+restarted half-second transition during touch scrolling. Desktop retains its
+existing 500ms easing; chapter-marker styling and activation points are unchanged.
 A fixed glass-style banner holds Free System and Apply Black, using a 16px radius,
 backdrop blur, and safe-area spacing. It slides up from below the viewport once 80% of both hero buttons
 have scrolled behind the header. At every screen width, it hides when the first
