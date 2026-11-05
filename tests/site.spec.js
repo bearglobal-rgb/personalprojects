@@ -685,7 +685,7 @@ test('compact monogram header stays sticky with glass and rounded bottom corners
     const css = getComputedStyle(document.body, '::before');
     return { height: css.height, background: css.backgroundImage, mask: css.maskImage, filter: css.backdropFilter, pointerEvents: css.pointerEvents };
   });
-  expect(fade.height).toBe('140px');
+  expect(fade.height).toBe('172px');
   expect(fade.background).toContain('linear-gradient');
   expect(fade.mask).toBe('none');
   expect(fade.filter).toBe('none');

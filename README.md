@@ -21,13 +21,14 @@ Swan Academy wordmark and its original layout: a desktop row and a centered phon
 stack, with 32px gaps and 48px vertical padding.
 The Founder and What’s Inside section labels remain in place.
 A fixed glass-style banner holds Free System and Apply Black, using a 16px radius,
-backdrop blur, and safe-area spacing. It fades in once 80% of both hero buttons
+backdrop blur, and safe-area spacing. It slides up from below the viewport once 80% of both hero buttons
 have scrolled behind the header. At every screen width, it hides when the first
 button in either Choose Your Next Step or the final CTA touches the banner’s
 bottom edge (the Free System button reaches it first on mobile). It returns once
 80% of both offer buttons have passed the header, but stays hidden after the
 final CTA and through the footer. Contact allows one pixel for scroll rounding.
-Scrolling upward reverses these states. Hidden actions
+The banner slides down fully out of view when hidden, using a 320ms eased
+translation without an opacity fade. Scrolling upward reverses these states. Hidden actions
 are inert and excluded from accessibility navigation; reduced motion removes
 transitions, and without JavaScript the banner stays hidden while page CTAs work.
 
@@ -53,7 +54,9 @@ padding, 24px backdrop blur, and 16px bottom corners. Its top corners stay squar
 On phones, the painted glass surface extends a full viewport height above the
 header, independently of the safe-area value; its monogram and rounded bottom
 retain their positions. A pointer-transparent background gradient fades content
-out, and a separate opaque cover extends above the viewport.
+out across an 80px transition with eased opacity stops, and a separate opaque
+cover extends above the viewport. The fade remains fully opaque through the
+native clipping boundary and gradually becomes transparent at 128px plus the safe area.
 On iOS phones, the root canvas and the cover above viewport zero also paint an
 82px strip matching the panel's fill and side borders. This supplies a matching
 background for Safari's status-bar extension instead of relying solely on a

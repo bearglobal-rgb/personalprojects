@@ -67,9 +67,21 @@ body::before {
   position: fixed;
   z-index: 45;
   inset: 0 0 auto;
-  height: calc(96px + var(--safe-area-top));
+  height: calc(128px + var(--safe-area-top));
   pointer-events: none;
-  background: linear-gradient(to bottom, var(--color-void) 0, var(--color-void) calc(48px + var(--safe-area-top)), rgb(5 5 5 / .95) calc(64px + var(--safe-area-top)), rgb(5 5 5 / .5) calc(80px + var(--safe-area-top)), rgb(5 5 5 / 0) 100%);
+  /* Ease both ends of the fade so bright photos do not reveal a hard band.
+     Keep the native iOS clipping boundary inside the fully opaque region. */
+  background: linear-gradient(to bottom,
+    var(--color-void) 0,
+    var(--color-void) calc(48px + var(--safe-area-top)),
+    rgb(5 5 5 / .97) calc(58px + var(--safe-area-top)),
+    rgb(5 5 5 / .88) calc(68px + var(--safe-area-top)),
+    rgb(5 5 5 / .71) calc(78px + var(--safe-area-top)),
+    rgb(5 5 5 / .5) calc(88px + var(--safe-area-top)),
+    rgb(5 5 5 / .29) calc(98px + var(--safe-area-top)),
+    rgb(5 5 5 / .12) calc(108px + var(--safe-area-top)),
+    rgb(5 5 5 / .03) calc(118px + var(--safe-area-top)),
+    rgb(5 5 5 / 0) 100%);
 }
 /* Overscan above the viewport as Safari expands/collapses its browser chrome. */
 body::after {
@@ -121,10 +133,11 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
 .site-header-inner { display: flex; min-height: 72px; padding-inline: 24px; align-items: center; justify-content: center; }
 .site-header-inner .brand { min-height: 44px; }
 .floating-cta {
+  --floating-cta-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   position: fixed;
   z-index: 40;
   left: 50%;
-  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  bottom: var(--floating-cta-bottom);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
@@ -136,13 +149,12 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
   -webkit-backdrop-filter: blur(24px) saturate(130%);
   backdrop-filter: blur(24px) saturate(130%);
   box-shadow: inset 0 1px 0 rgb(244 239 230 / .1), 0 12px 40px rgb(0 0 0 / .35);
-  opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translate(-50%, 12px);
-  transition: opacity 240ms ease, transform 240ms ease, visibility 240ms;
+  transform: translate(-50%, calc(100% + var(--floating-cta-bottom) + 40px));
+  transition: transform 320ms cubic-bezier(.22, 1, .36, 1), visibility 0s linear 320ms;
 }
-.floating-cta[data-visible="true"] { opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%, 0); }
+.floating-cta[data-visible="true"] { visibility: visible; pointer-events: auto; transform: translate(-50%, 0); transition-delay: 0s; }
 .floating-cta > * { display: flex; min-height: 48px; align-items: center; justify-content: center; padding: 12px 8px; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; }
 .floating-cta-free { border: 1px solid rgb(244 239 230 / .32); color: var(--color-ink); transition: border-color 180ms ease, background 180ms ease; }
 .floating-cta-free:hover { border-color: var(--color-ink); background: rgb(244 239 230 / .06); }
@@ -193,7 +205,7 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
     pointer-events: none;
   }
   .site-header-inner { min-height: calc(72px + var(--safe-area-top)); padding-top: var(--safe-area-top); }
-  .floating-cta { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); padding: 10px; gap: 10px; }
+  .floating-cta { --floating-cta-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); padding: 10px; gap: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .floating-cta { transition: none; }
