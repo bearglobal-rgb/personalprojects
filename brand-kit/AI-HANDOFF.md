@@ -1,5 +1,5 @@
 # Swan Academy — AI handoff
-Source baseline: 849b2af16cdbe400eb904d0332f4257056ff193c
+Source baseline: 0e1d6975b7efa1fcdcbf1a062c771238d37d38b3
 Read this first; load BRAND-GUIDELINES.md only as needed, then inspect relevant source.
 
 ## Project and source of truth
@@ -73,6 +73,8 @@ iOS contained scrolling can keep browser controls visible. Physical Safari verif
 - Do not invent testimonials, proof, seat availability, delivered emails or payment success.
 
 ## Assets
+Header loading: inline the original monogram master in the shared CSS with Vite's ?inline flag. The SVG exceeds the default automatic-inlining limit. All four website pages must render the mark without a separate SVG request or JavaScript. Preserve the original paths, currentColor mask, size and placement.
+
 Preserve the original SVG masters. Header/footer/site marks use a CSS mask tinted to ink.
 Do not alter the Founder immersion photo outside the approved laptop-screen composite. Original, screen layer,
 composite and exact transform reference are included. Other original photographs still have remote URLs.

@@ -1,5 +1,5 @@
 # Swan Academy — Brand & Interface Blueprint
-Version 1.2 · Source baseline: 849b2af16cdbe400eb904d0332f4257056ff193c
+Version 1.3 · Source baseline: 0e1d6975b7efa1fcdcbf1a062c771238d37d38b3
 
 This is an audited specification of the existing Swan Academy website, not a redesign.
 It combines current source values, browser measurements, and the latest decisions in this project.
@@ -40,6 +40,9 @@ add an outline, or replace it with an AI-generated imitation.
 
 Monogram viewBox: 0 0 623.0459 556. Full banner viewBox: 0 0 1538.1343 223.46167.
 The square CSS monogram box uses contain sizing; the artwork itself is not stretched to a square.
+
+**Loading requirement**
+Header loading: inline the original monogram master in the shared CSS with Vite's ?inline flag. The SVG exceeds the default automatic-inlining limit. All four website pages must render the mark without a separate SVG request or JavaScript. Preserve the original paths, currentColor mask, size and placement.
 
 **Current placements**
 - Header, every page: monogram only, centered. 40×40px at widths ≥640; 32×32px below 640.
@@ -497,7 +500,7 @@ and physical iPhone Safari when a browser-chrome or touch-scroll issue is involv
 | Accepted copy revisions | source-snapshot/reference/free-system-copy-changes.json |
 | Future backend work | source-snapshot/reference/black-application-integration.md |
 
-Source baseline: 849b2af16cdbe400eb904d0332f4257056ff193c. Website: https://bearglobal-rgb.github.io/personalprojects/
+Source baseline: 0e1d6975b7efa1fcdcbf1a062c771238d37d38b3. Website: https://bearglobal-rgb.github.io/personalprojects/
 Repository: https://github.com/bearglobal-rgb/personalprojects
 
 If extending the project, work from the current repository, not an old exported copy, unless this snapshot is intentionally
