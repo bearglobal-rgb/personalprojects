@@ -9,10 +9,8 @@ const origin = document.querySelector('[data-timeline="origin"]');
 const originFill = origin.querySelector('[data-progress]');
 const originChapters = Array.from(origin.querySelectorAll('.origin-chapter'));
 const compactOrigin = window.matchMedia('(max-width: 1023px)');
-const nativeOriginProgress = CSS.supports('animation-timeline: view()')
-  && CSS.supports('view-timeline-inset: 50%')
-  && CSS.supports('animation-range: cover 0% cover 100%');
-origin.dataset.nativeProgress = String(nativeOriginProgress);
+const stickyOriginProgress = CSS.supports('position: sticky') && CSS.supports('overflow: clip');
+origin.dataset.stickyProgress = String(stickyOriginProgress);
 const protocols = Array.from(system.querySelectorAll(':scope > ol > li'));
 const phaseLinks = Array.from(document.querySelectorAll('.phase-link'));
 const phases = [0, 3, 5, 6, 8];
@@ -69,13 +67,15 @@ function updateOrigin(inset, activationY) {
   originTarget = clamp((activationY - rect.top - inset) / originTrackLength);
   origin.dataset.progress = originTarget.toFixed(4);
   if (compactOrigin.matches) {
-    // Let the browser synchronize the mobile fill with native scrolling.
-    // Older browsers and reduced motion track directly, without a settling loop.
+    // A clipped sticky tip follows native scrolling without sampling a scroll
+    // animation or waiting for this handler, including when a swipe restarts.
     cancelAnimationFrame(originMotionFrame);
     originMotionFrame = 0;
     originDisplayed = originTarget;
     originLastPaint = 0;
-    if (!nativeOriginProgress || reduceMotion.matches) {
+    if (stickyOriginProgress) {
+      originFill.style.removeProperty('transform');
+    } else {
       originFill.style.transform = `scaleY(${originTarget})`;
     }
     return;

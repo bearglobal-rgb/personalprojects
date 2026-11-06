@@ -152,18 +152,17 @@ test('Founder line tracks mobile scrolling directly and retains gentle desktop e
       const fallback = await context.newPage();
       await fallback.addInitScript(() => {
         const supports = CSS.supports.bind(CSS);
-        CSS.supports = (...args) => args.some(value => String(value).includes('animation-timeline')) ? false : supports(...args);
+        CSS.supports = (...args) => args.some(value => String(value).includes('overflow: clip')) ? false : supports(...args);
       });
       await fallback.goto(baseURL);
       await fallback.evaluate(() => document.fonts.ready);
-      await expect(fallback.locator('.origin-timeline')).toHaveAttribute('data-native-progress', 'false');
+      await expect(fallback.locator('.origin-timeline')).toHaveAttribute('data-sticky-progress', 'false');
       pages.push(fallback);
     }
     for (const timelinePage of pages) {
       await timelinePage.bringToFront();
       if (testInfo.project.name === 'mobile') {
-        // Test native timelines and the older-browser fallback with actual
-        // render frames; clock-driven JS alone cannot advance a CSS scroll timeline.
+        // Check native sticky geometry and the older-browser direct fallback.
         const track = () => timelinePage.evaluate(async () => {
           const rail = document.querySelector('.origin-rail');
           const fill = rail.querySelector('[data-progress]');
@@ -174,20 +173,26 @@ test('Founder line tracks mobile scrolling directly and retains gentle desktop e
           scroller.scrollTo({ top, behavior: 'instant' });
           await frames();
           const errors = [];
+          const immediateErrors = [];
+          const sticky = getComputedStyle(fill).position === 'sticky';
           for (const delta of [4, 12, 30, 50, 180, 250, -4, -12, -30, -50, -180, -250]) {
             scroller.scrollBy({ top: delta, behavior: 'instant' });
+            // Read before any animation frame: sticky must never need to catch up.
+            const immediate = rail.getBoundingClientRect();
+            immediateErrors.push(Math.abs(Math.max(immediate.top, Math.min(immediate.bottom, innerHeight / 2)) - fill.getBoundingClientRect().bottom));
             await frames();
             const r = rail.getBoundingClientRect();
             errors.push(Math.abs(Math.max(r.top, Math.min(r.bottom, innerHeight / 2)) - fill.getBoundingClientRect().bottom));
           }
           const end = fill.getBoundingClientRect().bottom;
           await new Promise(resolve => setTimeout(resolve, 250));
-          return { errors, driftAfterStop: Math.abs(fill.getBoundingClientRect().bottom - end) };
+          return { errors, immediateErrors, sticky, driftAfterStop: Math.abs(fill.getBoundingClientRect().bottom - end) };
         });
         for (const preference of ['no-preference', 'reduce']) {
           await timelinePage.emulateMedia({ reducedMotion: preference });
           const result = await track();
           expect(Math.max(...result.errors)).toBeLessThan(1.5);
+          if (result.sticky) expect(Math.max(...result.immediateErrors)).toBeLessThan(1.5);
           expect(result.driftAfterStop).toBeLessThan(.5);
         }
         continue;
@@ -231,6 +236,45 @@ test('Founder line tracks mobile scrolling directly and retains gentle desktop e
       await timelinePage.emulateMedia({ reducedMotion: 'reduce' });
       await scroll(80);
       expect(await remainingGap()).toBeLessThan(.5);
+    }
+  } finally { await context.close(); }
+});
+
+test('mobile Founder tip stays anchored through touch restarts with animation frames paused', async ({ browser, baseURL }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', 'Mobile compositor regression');
+  const context = await browser.newContext(devices['iPhone 11']);
+  try {
+    const page = await context.newPage();
+    await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
+    await page.evaluate(() => document.fonts.ready);
+    await expect(page.locator('.origin-timeline')).toHaveAttribute('data-sticky-progress', 'true');
+    await page.evaluate(() => {
+      const scroller = document.querySelector('.page-viewport');
+      const rail = document.querySelector('.origin-rail').getBoundingClientRect();
+      scroller.scrollTo({ top: scroller.scrollTop + rail.top + rail.height * .45 - innerHeight / 2, behavior: 'instant' });
+    });
+    await page.clock.install();
+    await page.clock.pauseAt(new Date());
+    const session = await context.newCDPSession(page);
+    const viewport = page.viewportSize();
+    const x = Math.round(viewport.width * .7);
+    const startY = Math.round(viewport.height * .6);
+    const scrollTop = () => page.locator('.page-viewport').evaluate(el => el.scrollTop);
+    const tipError = () => page.locator('.origin-rail').evaluate(rail => {
+      const r = rail.getBoundingClientRect();
+      return Math.abs(Math.max(r.top, Math.min(r.bottom, innerHeight / 2)) - rail.querySelector('[data-progress]').getBoundingClientRect().bottom);
+    });
+    for (const direction of [-1, 1, -1, 1]) {
+      const before = await scrollTop();
+      await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y: startY }] });
+      expect(await tipError()).toBeLessThan(1.5);
+      for (const distance of [12, 40, 80, 120]) {
+        await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: startY + distance * direction }] });
+        expect(await tipError()).toBeLessThan(1.5);
+      }
+      await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      await expect.poll(async () => Math.abs(await scrollTop() - before)).toBeGreaterThan(20);
+      expect(await tipError()).toBeLessThan(1.5);
     }
   } finally { await context.close(); }
 });
