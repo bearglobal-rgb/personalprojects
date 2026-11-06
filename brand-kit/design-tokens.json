@@ -1,6 +1,6 @@
 {
-  "format": "Swan Academy design specification v1.1 (plain JSON; not a Figma import schema)",
-  "sourceCommit": "827a4d0f77d453ae55a1891917445db7997afd67",
+  "format": "Swan Academy design specification v1.2 (plain JSON; not a Figma import schema)",
+  "sourceCommit": "849b2af16cdbe400eb904d0332f4257056ff193c",
   "rootFontSize": "16px",
   "measurementUnit": "CSS px at 100% zoom",
   "colors": {
@@ -143,11 +143,7 @@
   },
   "motion": {
     "founderMobile": "Zero-height position:sticky tip at 50dvh; upward 100vh pseudo-element clipped by rail overflow:clip. Subtract contained scrollport top padding on iOS. Same geometry with reduced motion; direct JS fallback when unsupported. No sampled scroll timeline or time-based settling.",
-    "founderDesktop": {
-      "timeConstantMs": 55,
-      "maxTrailingPx": 20,
-      "snapThresholdPx": 0.25
-    },
+    "founderDesktop": "Zero-height position:sticky tip at 50dvh; upward 100vh pseudo-element clipped by rail overflow:clip. Subtract contained scrollport top padding on iOS. Same geometry with reduced motion; direct JS fallback when unsupported. No sampled scroll timeline or time-based settling.",
     "founderDotTransition": "background-color 300ms ease, border-color 300ms ease",
     "systemCards": "opacity/border-color/background-color 500ms",
     "reviewBadge": "2.8s ease-in-out infinite; opacity .5\u21921\u2192.5",
