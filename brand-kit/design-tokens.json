@@ -1,0 +1,190 @@
+{
+  "format": "Swan Academy design specification v1.1 (plain JSON; not a Figma import schema)",
+  "sourceCommit": "827a4d0f77d453ae55a1891917445db7997afd67",
+  "rootFontSize": "16px",
+  "measurementUnit": "CSS px at 100% zoom",
+  "colors": {
+    "void": "#050505",
+    "panel": "#0D0D0C",
+    "line": "#272522",
+    "heading": "#F8F5EF",
+    "ink": "#F4EFE6",
+    "body": "#B2ABA0",
+    "mute": "#9A9286",
+    "label": "#A8A094",
+    "positive": "#8FAE96",
+    "negative": "#C28B86"
+  },
+  "fonts": {
+    "sans": "\"Inter Variable\", Inter, ui-sans-serif, system-ui, sans-serif",
+    "serif": "\"Playfair Display Variable\", \"Playfair Display\", ui-serif, Georgia, \"Times New Roman\", serif",
+    "defaultWeight": 400,
+    "italic": "Use the real Playfair Display italic font file, not a simulated slant."
+  },
+  "breakpoints": {
+    "sm": 640,
+    "md": 768,
+    "lg": 1024,
+    "note": "Phone-specific header/forms below 640; compact Founder/System/Rooms and single-column application/checkout below 1024."
+  },
+  "radii": {
+    "largeCardPhotoGlass": "16px",
+    "innerFramePreview": "12px",
+    "buttonInputStatusBadge": "0px",
+    "avatarDot": "50%",
+    "header": "0 0 16px 16px"
+  },
+  "layout": {
+    "wideMax": "1152px",
+    "heroMax": "896px",
+    "finalMax": "768px",
+    "bodyCopyMax": "576px",
+    "pageGutterBelow640": "20px",
+    "pageGutterFrom640": "32px",
+    "sectionPaddingYBelow640": "96px",
+    "sectionPaddingYFrom640": "128px",
+    "heroPaddingAt1024": "152px 32px 88px",
+    "heroMinHeight": "calc(100svh - 74px - var(--safe-area-top))",
+    "compactFounderMax": "608px",
+    "compactFlowMax": "700px"
+  },
+  "header": {
+    "monogramDesktop": "40px",
+    "monogramPhone": "32px",
+    "panelWidthDesktop": "90px",
+    "panelWidthPhone": "82px",
+    "innerMinHeight": "72px",
+    "sidePadding": "24px",
+    "border": "1px solid rgb(244 239 230 / .22); border-top: 0",
+    "background": "linear-gradient(135deg, rgb(244 239 230 / .08), transparent 65%), rgb(13 13 12 / .8)",
+    "backdropFilter": "blur(24px) saturate(130%)",
+    "boxShadow": "inset 0 -1px 0 rgb(244 239 230 / .05), 0 8px 24px rgb(0 0 0 / .2)",
+    "phonePaint": "Use the ::before recipe in source-snapshot/src/styles.css. It differs from desktop and extends above the viewport.",
+    "statusBarBoundary": "Physical Safari status-bar extension was unsuccessful; full extension remains unresolved. Do not promise full-screen glass continuation."
+  },
+  "floatingCTA": {
+    "width": "min(420px, calc(100% - 32px))",
+    "bottom": "calc(24px + env(safe-area-inset-bottom, 0px))",
+    "phoneBottom": "calc(12px + env(safe-area-inset-bottom, 0px))",
+    "padding": "12px",
+    "phonePadding": "10px",
+    "gap": "12px",
+    "phoneGap": "10px",
+    "columns": "1fr 1fr",
+    "buttonMinHeight": "48px",
+    "buttonFont": "11px / 1.5 Inter Variable 400",
+    "buttonTracking": ".16em",
+    "radius": "16px",
+    "border": "1px solid rgb(244 239 230 / .22)",
+    "background": "linear-gradient(135deg, rgb(244 239 230 / .08), transparent 65%), rgb(13 13 12 / .8)",
+    "backdropFilter": "blur(24px) saturate(130%)",
+    "boxShadow": "inset 0 1px 0 rgb(244 239 230 / .1), 0 12px 40px rgb(0 0 0 / .35)",
+    "enterCurve": "cubic-bezier(.4, 0, .6, 1)",
+    "exitCurve": "cubic-bezier(.4, 0, 1, 1)",
+    "duration": "320ms",
+    "exitTransform": "translate(-50%, calc(100% + var(--floating-cta-bottom) + 40px))",
+    "enterTransform": "translate(-50%, 0)",
+    "opacityFade": false,
+    "heroAndOfferRelease": ".8 of each button height passes header bottom",
+    "hideOnContact": "first section button top <= resting banner bottom + 1px",
+    "finalRule": "Remain hidden after final CTA and through footer; reverse behavior when scrolling upward."
+  },
+  "topFade": {
+    "color": "#050505",
+    "height": "calc(128px + var(--safe-area-top))",
+    "stopsPxAndOpacity": [
+      [
+        0,
+        1
+      ],
+      [
+        48,
+        1
+      ],
+      [
+        58,
+        0.97
+      ],
+      [
+        68,
+        0.88
+      ],
+      [
+        78,
+        0.71
+      ],
+      [
+        88,
+        0.5
+      ],
+      [
+        98,
+        0.29
+      ],
+      [
+        108,
+        0.12
+      ],
+      [
+        118,
+        0.03
+      ],
+      [
+        128,
+        0
+      ]
+    ],
+    "note": "Add safe-area-top to the 48\u2013128px stops. Background overlay, not a blur filter; no particles."
+  },
+  "blur": {
+    "headerAndFloatingCTA": "24px; saturation 130%",
+    "signupBackdrop": "4px",
+    "coursePreview": "8px (Tailwind 4 backdrop-blur-sm)"
+  },
+  "motion": {
+    "founderMobile": "Zero-height position:sticky tip at 50dvh; upward 100vh pseudo-element clipped by rail overflow:clip. Subtract contained scrollport top padding on iOS. Same geometry with reduced motion; direct JS fallback when unsupported. No sampled scroll timeline or time-based settling.",
+    "founderDesktop": {
+      "timeConstantMs": 55,
+      "maxTrailingPx": 20,
+      "snapThresholdPx": 0.25
+    },
+    "founderDotTransition": "background-color 300ms ease, border-color 300ms ease",
+    "systemCards": "opacity/border-color/background-color 500ms",
+    "reviewBadge": "2.8s ease-in-out infinite; opacity .5\u21921\u2192.5",
+    "caret": "1.1s step-end infinite",
+    "reducedMotion": "Disable nonessential animation; direct progress tracking; instant banner state."
+  },
+  "componentState": {
+    "systemInactiveOpacity": 0.38,
+    "systemActiveOpacity": 1,
+    "systemInactivePanel": "panel at 40%",
+    "systemActiveBorder": "ink at 35%",
+    "disabledSubmitOpacity": 0.55,
+    "filledCTAHoverOpacity": 0.85,
+    "floatingFreeBorder": "ink at 32%",
+    "floatingFreeHoverBackground": "ink at 6%",
+    "focus": "1px solid ink; outline-offset:5px (application fields 3px)"
+  },
+  "zIndex": {
+    "skipLink": 100,
+    "header": 50,
+    "topCap": 46,
+    "topFade": 45,
+    "floatingCTA": 40,
+    "dialog": "native top layer"
+  },
+  "status": {
+    "badgePositive": "#8FAE96",
+    "badgeNegative": "#C28B86",
+    "dot": "9px",
+    "badgeDot": "6px",
+    "stageGroupWidth": "72px",
+    "mobileGrid": "2 columns; 24px gap; groups centered, content left-aligned",
+    "desktop": "4 columns; groups left-aligned; connectors visible",
+    "mobileBadge": "Separate row below Application \u00b7 Black"
+  },
+  "checkout": {
+    "summaryMonogram": "32px square; upper-right; center aligned to Your enrollment",
+    "priceStatus": "US$350 is an illustrative one-time preview, not final pricing."
+  }
+}
