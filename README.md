@@ -64,6 +64,10 @@ use a brighter warm white (`#F8F5EF`), reading text uses `#B2ABA0`, and secondar
 text retains `#9A9286`. Homepage section labels, offer labels, and the founder
 credit use a slightly brighter `#A8A094` for legibility. Header, footer, and signup monograms use the original SVG
 as a CSS mask to match the ivory wordmarks exactly without altering the artwork.
+The mask references the original master with Vite's `?inline` flag, embedding it
+in the shared stylesheet on all four pages. This removes the separate image fetch
+that could leave the header mark briefly blank on cold loads or page navigation.
+Keep the explicit flag: the SVG exceeds Vite's default automatic-inlining limit.
 The sticky header is a compact glass panel around the monogram, with 24px side
 padding, 24px backdrop blur, and 16px bottom corners. Its top corners stay square.
 On phones, the painted glass surface extends a full viewport height above the

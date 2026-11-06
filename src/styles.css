@@ -218,8 +218,10 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
   display: inline-block;
   flex-shrink: 0;
   background-color: currentColor;
-  -webkit-mask: url('/assets/Swan-Academy-Monogram-White-Master.svg') center / contain no-repeat;
-  mask: url('/assets/Swan-Academy-Monogram-White-Master.svg') center / contain no-repeat;
+  /* Bundle the original master into the critical CSS; no late SVG request on
+     first visits or navigation. Keep ?inline: the master exceeds Vite's default limit. */
+  -webkit-mask: url('../public/assets/Swan-Academy-Monogram-White-Master.svg?inline') center / contain no-repeat;
+  mask: url('../public/assets/Swan-Academy-Monogram-White-Master.svg?inline') center / contain no-repeat;
 }
 .site-header nav a[href^="#"]:hover { color: var(--color-ink); }
 @media (hover: hover) {

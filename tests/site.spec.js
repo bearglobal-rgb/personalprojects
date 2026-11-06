@@ -866,7 +866,7 @@ test('tab uses the framed vector favicon and site monograms match their ivory wo
     }));
     expect(logo.color).toBe('rgb(244, 239, 230)');
     if (logo.wordmark) expect(logo.color).toBe(logo.wordmark);
-    expect(logo.mask).toContain('Swan-Academy-Monogram-White-Master.svg');
+    expect(logo.mask).toContain('data:image/svg+xml,');
   }
   await expect(page.locator('#top h1')).toHaveCSS('color', 'rgb(248, 245, 239)');
   await expect(page.locator('#top .text-body')).toHaveCSS('color', 'rgb(178, 171, 160)');
@@ -1003,6 +1003,62 @@ test('hero fonts start loading before the stylesheet arrives and are reused', as
   } finally {
     await context.close();
   }
+});
+
+test('header monograms render on cold visits and navigation without an SVG request or JavaScript', async ({ browser, baseURL }, testInfo) => {
+  const context = await browser.newContext({ viewport: testInfo.project.use.viewport, javaScriptEnabled: false });
+  try {
+    const requests = [];
+    // Routing disables HTTP cache, so a warm logo cache cannot conceal a late fetch.
+    await context.route('**/*', route => {
+      if (route.request().url().includes('Swan-Academy-Monogram-White-Master.svg')) {
+        requests.push(route.request().url());
+        return route.abort();
+      }
+      return route.continue();
+    });
+    const page = await context.newPage();
+    const master = readFileSync(new URL('../public/assets/Swan-Academy-Monogram-White-Master.svg', import.meta.url), 'utf8');
+    const verifyMark = async () => {
+      const result = await page.locator('header .brand-monogram').evaluate(async (el, master) => {
+        const css = getComputedStyle(el);
+        const url = css.maskImage.slice(5, -2);
+        const image = new Image();
+        image.src = url;
+        await image.decode();
+        const shape = text => {
+          const svg = new DOMParser().parseFromString(text, 'image/svg+xml');
+          return {
+            viewBox: svg.documentElement.getAttribute('viewBox'),
+            paths: [...svg.querySelectorAll('path')].map(p => p.getAttribute('d')),
+            transforms: [...svg.querySelectorAll('[transform]')].map(p => p.getAttribute('transform')),
+          };
+        };
+        return {
+          inline: url.startsWith('data:image/svg+xml,'),
+          artworkMatches: JSON.stringify(shape(decodeURIComponent(url.slice(url.indexOf(',') + 1)))) === JSON.stringify(shape(master)),
+          imageWidth: image.naturalWidth,
+          width: el.getBoundingClientRect().width,
+          color: css.backgroundColor,
+        };
+      }, master);
+      expect(result.inline).toBe(true);
+      expect(result.artworkMatches).toBe(true);
+      expect(result.imageWidth).toBeGreaterThan(0);
+      expect(result.width).toBe(testInfo.project.name === 'mobile' ? 32 : 40);
+      expect(result.color).toBe('rgb(244, 239, 230)');
+    };
+    await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
+    await verifyMark();
+    await page.locator('#top a[href="./apply/"]').click();
+    await page.waitForURL('**/apply/');
+    await verifyMark();
+    for (const route of ['status/', 'checkout/', 'apply/']) {
+      await page.goto(new URL(route, baseURL.endsWith('/') ? baseURL : baseURL + '/').href, { waitUntil: 'domcontentloaded' });
+      await verifyMark();
+    }
+    expect(requests).toEqual([]);
+  } finally { await context.close(); }
 });
 
 test('local branding and both fonts load without JavaScript errors', async ({ page }) => {
