@@ -1,5 +1,5 @@
 # Swan Academy — AI handoff
-Source baseline: 827a4d0f77d453ae55a1891917445db7997afd67
+Source baseline: 849b2af16cdbe400eb904d0332f4257056ff193c
 Read this first; load BRAND-GUIDELINES.md only as needed, then inspect relevant source.
 
 ## Project and source of truth
@@ -38,13 +38,14 @@ Keep it rendered until the exit finishes; disable interaction immediately; cance
 Hero/offer release: 80% of BOTH page buttons passes header bottom. Hide when a section's first CTA touches the resting
 bottom of the banner. Return after offers clear; hide through the final CTA/footer. Same rule desktop/mobile.
 
-Founder mobile priority was explicitly changed to STABILITY OVER EASING.
-Current implementation below 1024 uses a zero-height sticky tip at the viewport center and an upward-painted fill
-clipped to the rail. There is no mobile scroll timeline, scale animation or settling loop. On iOS, the sticky top offset
-subtracts --page-scroll-padding-top. Reduced motion retains sticky geometry; unsupported browsers use direct JS tracking.
-Do not restore the earlier mobile easing or sampled view-timeline implementation. Desktop retains 55ms easing with at
-most 20px trailing distance. Touch restarts and reversals passed with animation frames paused; Chromium and WebKit
-geometry checks passed. Physical iPhone confirmation of this latest revision is still needed.
+Founder priority: STABILITY OVER EASING on both mobile and desktop.
+The owner confirmed the mobile sticky implementation has zero lag on their phone and requested the same behavior on desktop.
+All widths now use a zero-height sticky tip at the viewport center and an upward-painted fill clipped to the rail.
+There is no scroll timeline, scale animation, easing or settling loop. On iOS the sticky offset subtracts
+--page-scroll-padding-top. Reduced motion retains sticky geometry; unsupported browsers use direct JS tracking.
+Do not restore the previous 55ms desktop easing or the sampled view-timeline implementation.
+Desktop upward wheel reversals from the rail end and mobile touch restarts passed with animation frames paused.
+Marker appearance and activation points are unchanged. Physical desktop feedback on this latest revision is still pending.
 
 System: no vertical line; inactive cards .38 opacity. Compact active phase labels return to the phase list; a deliberate
 swipe/wheel/key resumes reading. Programmatic scrolling and resize must not reset that selected phase.

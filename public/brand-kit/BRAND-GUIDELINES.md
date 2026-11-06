@@ -1,5 +1,5 @@
 # Swan Academy — Brand & Interface Blueprint
-Version 1.1 · Source baseline: 827a4d0f77d453ae55a1891917445db7997afd67
+Version 1.2 · Source baseline: 849b2af16cdbe400eb904d0332f4257056ff193c
 
 This is an audited specification of the existing Swan Academy website, not a redesign.
 It combines current source values, browser measurements, and the latest decisions in this project.
@@ -378,19 +378,19 @@ Reversing an exit cancels its old cleanup. Reduced motion removes the animated t
 Use the resting banner edge rather than the moving animation rectangle; allow 1px for subpixel rounding.
 
 ### Founder line
-Current priority: stability over softness on mobile. Do not restore the removed mobile easing.
-- Below 1024: a zero-height native sticky tip at 50dvh, with a 100vh upward-painted pseudo-element.
+Current priority: stability over softness on mobile AND desktop. Do not restore the removed easing.
+- All widths: a zero-height native sticky tip at 50dvh, with a 100vh upward-painted pseudo-element.
   The rail uses overflow: clip, keeping the fill inside its endpoints without introducing a nested scroller.
-  No scale animation, scroll timeline, or time-based settling is used on mobile.
+  No scale animation, scroll timeline, or time-based settling is used.
 - On iOS, subtract --page-scroll-padding-top from the sticky top offset to account for the padded contained scrollport.
 - Reduced motion uses the same direct sticky geometry. Without sticky/overflow-clip support, use direct JS tracking.
 - Touch-start and direction-reversal regression tests keep animation frames paused to verify the tip does not need JS to catch up.
-- Desktop: 55ms exponential easing; maximum trailing distance 20px; snap within .25px; stops animating when settled.
+- Desktop now uses the same native sticky geometry as mobile: no easing, trailing distance or settling loop.
 - Desktop and compact lines end at the current viewport-center reading position, clamped to the rail endpoints.
 - Marker dots: 9px, fill/unfill when the chapter marker crosses the viewport center; color/border transition 300ms ease.
 - Desktop rail: centered, 32px top/bottom inset. Compact rail: left 4px, 16px inset.
-- Latest mobile implementation was tested in Chromium and WebKit. Physical iPhone confirmation after this latest change
-  has not yet been supplied in the conversation.
+- The owner has confirmed zero lag on mobile. The desktop extension passed upward wheel reversals from the rail end
+  with animation frames paused, plus mobile touch, reduced-motion and fallback checks.
 
 ### System
 No vertical line. Active card opacity 1; inactive .38; inactive panel/40; active panel; active ink/35 border.
@@ -497,7 +497,7 @@ and physical iPhone Safari when a browser-chrome or touch-scroll issue is involv
 | Accepted copy revisions | source-snapshot/reference/free-system-copy-changes.json |
 | Future backend work | source-snapshot/reference/black-application-integration.md |
 
-Source baseline: 827a4d0f77d453ae55a1891917445db7997afd67. Website: https://bearglobal-rgb.github.io/personalprojects/
+Source baseline: 849b2af16cdbe400eb904d0332f4257056ff193c. Website: https://bearglobal-rgb.github.io/personalprojects/
 Repository: https://github.com/bearglobal-rgb/personalprojects
 
 If extending the project, work from the current repository, not an old exported copy, unless this snapshot is intentionally
