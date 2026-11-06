@@ -1,6 +1,6 @@
 {
-  "format": "Swan Academy design specification v1.2 (plain JSON; not a Figma import schema)",
-  "sourceCommit": "849b2af16cdbe400eb904d0332f4257056ff193c",
+  "format": "Swan Academy design specification v1.3 (plain JSON; not a Figma import schema)",
+  "sourceCommit": "0e1d6975b7efa1fcdcbf1a062c771238d37d38b3",
   "rootFontSize": "16px",
   "measurementUnit": "CSS px at 100% zoom",
   "colors": {
@@ -60,7 +60,8 @@
     "backdropFilter": "blur(24px) saturate(130%)",
     "boxShadow": "inset 0 -1px 0 rgb(244 239 230 / .05), 0 8px 24px rgb(0 0 0 / .2)",
     "phonePaint": "Use the ::before recipe in source-snapshot/src/styles.css. It differs from desktop and extends above the viewport.",
-    "statusBarBoundary": "Physical Safari status-bar extension was unsuccessful; full extension remains unresolved. Do not promise full-screen glass continuation."
+    "statusBarBoundary": "Physical Safari status-bar extension was unsuccessful; full extension remains unresolved. Do not promise full-screen glass continuation.",
+    "assetLoading": "Original master SVG embedded in the shared CSS with Vite ?inline; no separate SVG fetch or JavaScript needed. Original artwork, currentColor tint and dimensions preserved."
   },
   "floatingCTA": {
     "width": "min(420px, calc(100% - 32px))",
