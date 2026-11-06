@@ -20,13 +20,15 @@ size (40px desktop, 32px phone), with no wordmark, navigation links, menu, or he
 Swan Academy wordmark and its original layout: a desktop row and a centered phone
 stack, with 32px gaps and 48px vertical padding.
 The Founder and What’s Inside section labels remain in place.
-On mobile, the Founder line uses a zero-height sticky tip at the viewport center,
+On every screen size, the Founder line uses a zero-height sticky tip at the viewport center,
 with its upward-painted fill clipped to the rail. This avoids both scroll-animation
 sampling and JavaScript frame delays when a finger starts or reverses a swipe.
 The iOS sticky offset accounts for the contained scrollport's top padding. Reduced
 motion uses the same direct sticky geometry; browsers without sticky/overflow-clip
-support use direct JavaScript tracking. Desktop retains its 55ms easing and 20px
-trailing limit. Chapter-marker styling and activation points are unchanged.
+support use direct JavaScript tracking. Desktop now uses the same native geometry
+as mobile, with no easing or trailing distance when scrolling reverses. The owner
+has confirmed the mobile behavior on their phone. Chapter-marker styling and
+activation points are unchanged.
 A fixed glass-style banner holds Free System and Apply Black, using a 16px radius,
 backdrop blur, and safe-area spacing. It slides up from below the viewport once 80% of both hero buttons
 have scrolled behind the header. At every screen width, it hides when the first

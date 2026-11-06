@@ -21,28 +21,6 @@ let activePhase = null;
 // A return to the mobile phase list is a selection, not a reading position.
 let returnedPhase = null;
 let framePending = false;
-let originTarget = 0;
-let originDisplayed = null;
-let originTrackLength = 1;
-let originMotionFrame = 0;
-let originLastPaint = 0;
-
-function paintOrigin(timestamp = performance.now()) {
-  originMotionFrame = 0;
-  const elapsed = originLastPaint ? Math.max(0, timestamp - originLastPaint) : 16;
-  originLastPaint = timestamp;
-  // A short, frame-rate-independent ease with at most 20 screen pixels of
-  // trailing distance. Fast swipes cannot accumulate an animation backlog.
-  const maxGap = 20 / originTrackLength;
-  originDisplayed = clamp(originDisplayed ?? originTarget, originTarget - maxGap, originTarget + maxGap);
-  originDisplayed += (originTarget - originDisplayed) * (1 - Math.exp(-elapsed / 55));
-  if (reduceMotion.matches || Math.abs(originTarget - originDisplayed) * originTrackLength < .25) {
-    originDisplayed = originTarget;
-  }
-  originFill.style.transform = `scaleY(${originDisplayed})`;
-  if (originDisplayed !== originTarget) originMotionFrame = requestAnimationFrame(paintOrigin);
-}
-
 function setActive(index, phase = phases.findLastIndex(start => index >= start)) {
   if (index === activeIndex && phase === activePhase) return;
   activeIndex = index;
@@ -63,29 +41,12 @@ function setActive(index, phase = phases.findLastIndex(start => index >= start))
 
 function updateOrigin(inset, activationY) {
   const rect = origin.getBoundingClientRect();
-  originTrackLength = Math.max(1, rect.height - inset * 2);
-  originTarget = clamp((activationY - rect.top - inset) / originTrackLength);
-  origin.dataset.progress = originTarget.toFixed(4);
-  if (compactOrigin.matches) {
-    // A clipped sticky tip follows native scrolling without sampling a scroll
-    // animation or waiting for this handler, including when a swipe restarts.
-    cancelAnimationFrame(originMotionFrame);
-    originMotionFrame = 0;
-    originDisplayed = originTarget;
-    originLastPaint = 0;
-    if (stickyOriginProgress) {
-      originFill.style.removeProperty('transform');
-    } else {
-      originFill.style.transform = `scaleY(${originTarget})`;
-    }
-    return;
-  }
-  // Scroll/layout updates take precedence over any pending settling frame.
-  // Restart gently after an idle period instead of treating it as animation time.
-  if (!originMotionFrame) originLastPaint = performance.now() - 16;
-  cancelAnimationFrame(originMotionFrame);
-  if (rect.bottom <= 0 || rect.top >= innerHeight) originDisplayed = originTarget;
-  paintOrigin();
+  const trackLength = Math.max(1, rect.height - inset * 2);
+  const target = clamp((activationY - rect.top - inset) / trackLength);
+  origin.dataset.progress = target.toFixed(4);
+  // Native sticky geometry paints the line on every screen size, independent
+  // of animation-frame timing. Older browsers track directly without easing.
+  if (!stickyOriginProgress) originFill.style.transform = `scaleY(${target})`;
 }
 
 function update() {

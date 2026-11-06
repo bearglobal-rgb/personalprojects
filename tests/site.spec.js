@@ -139,9 +139,9 @@ test('the Origin timeline line follows scrolling in both directions', async ({ p
   expect(reverse).toBeLessThan(second);
 });
 
-test('Founder line tracks mobile scrolling directly and retains gentle desktop easing', async ({ page, browser, baseURL }, testInfo) => {
+test('Founder line tracks both directions immediately on desktop and mobile', async ({ page, browser, baseURL }, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
-  const context = await browser.newContext({ ...devices['iPhone 11'], reducedMotion: 'no-preference' });
+  const context = await browser.newContext({ ...(testInfo.project.name === 'mobile' ? devices['iPhone 11'] : { viewport: { width: 1920, height: 1080 } }), reducedMotion: 'no-preference' });
   try {
     const pages = [page];
     if (testInfo.project.name === 'mobile') {
@@ -149,95 +149,83 @@ test('Founder line tracks mobile scrolling directly and retains gentle desktop e
       await iphone.goto(baseURL);
       await iphone.evaluate(() => document.fonts.ready);
       pages.push(iphone);
-      const fallback = await context.newPage();
-      await fallback.addInitScript(() => {
-        const supports = CSS.supports.bind(CSS);
-        CSS.supports = (...args) => args.some(value => String(value).includes('overflow: clip')) ? false : supports(...args);
-      });
-      await fallback.goto(baseURL);
-      await fallback.evaluate(() => document.fonts.ready);
-      await expect(fallback.locator('.origin-timeline')).toHaveAttribute('data-sticky-progress', 'false');
-      pages.push(fallback);
     }
+    const fallback = await context.newPage();
+    await fallback.addInitScript(() => {
+      const supports = CSS.supports.bind(CSS);
+      CSS.supports = (...args) => args.some(value => String(value).includes('overflow: clip')) ? false : supports(...args);
+    });
+    await fallback.goto(baseURL);
+    await fallback.evaluate(() => document.fonts.ready);
+    await expect(fallback.locator('.origin-timeline')).toHaveAttribute('data-sticky-progress', 'false');
+    pages.push(fallback);
     for (const timelinePage of pages) {
       await timelinePage.bringToFront();
-      if (testInfo.project.name === 'mobile') {
-        // Check native sticky geometry and the older-browser direct fallback.
-        const track = () => timelinePage.evaluate(async () => {
-          const rail = document.querySelector('.origin-rail');
-          const fill = rail.querySelector('[data-progress]');
-          const scroller = document.documentElement.classList.contains('contained-scroll') ? document.querySelector('.page-viewport') : window;
-          const frames = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-          const box = rail.getBoundingClientRect();
-          const top = (scroller === window ? scrollY : scroller.scrollTop) + box.top + box.height * .35 - innerHeight / 2;
-          scroller.scrollTo({ top, behavior: 'instant' });
+      // Check native sticky geometry and the older-browser direct fallback.
+      const track = () => timelinePage.evaluate(async () => {
+        const rail = document.querySelector('.origin-rail');
+        const fill = rail.querySelector('[data-progress]');
+        const scroller = document.documentElement.classList.contains('contained-scroll') ? document.querySelector('.page-viewport') : window;
+        const frames = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        const box = rail.getBoundingClientRect();
+        const top = (scroller === window ? scrollY : scroller.scrollTop) + box.top + box.height * .35 - innerHeight / 2;
+        scroller.scrollTo({ top, behavior: 'instant' });
+        await frames();
+        const errors = [];
+        const immediateErrors = [];
+        const sticky = getComputedStyle(fill).position === 'sticky';
+        for (const delta of [4, 12, 30, 50, 180, 250, -4, -12, -30, -50, -180, -250]) {
+          scroller.scrollBy({ top: delta, behavior: 'instant' });
+          // Read before any animation frame: sticky must never need to catch up.
+          const immediate = rail.getBoundingClientRect();
+          immediateErrors.push(Math.abs(Math.max(immediate.top, Math.min(immediate.bottom, innerHeight / 2)) - fill.getBoundingClientRect().bottom));
           await frames();
-          const errors = [];
-          const immediateErrors = [];
-          const sticky = getComputedStyle(fill).position === 'sticky';
-          for (const delta of [4, 12, 30, 50, 180, 250, -4, -12, -30, -50, -180, -250]) {
-            scroller.scrollBy({ top: delta, behavior: 'instant' });
-            // Read before any animation frame: sticky must never need to catch up.
-            const immediate = rail.getBoundingClientRect();
-            immediateErrors.push(Math.abs(Math.max(immediate.top, Math.min(immediate.bottom, innerHeight / 2)) - fill.getBoundingClientRect().bottom));
-            await frames();
-            const r = rail.getBoundingClientRect();
-            errors.push(Math.abs(Math.max(r.top, Math.min(r.bottom, innerHeight / 2)) - fill.getBoundingClientRect().bottom));
-          }
-          const end = fill.getBoundingClientRect().bottom;
-          await new Promise(resolve => setTimeout(resolve, 250));
-          return { errors, immediateErrors, sticky, driftAfterStop: Math.abs(fill.getBoundingClientRect().bottom - end) };
-        });
-        for (const preference of ['no-preference', 'reduce']) {
-          await timelinePage.emulateMedia({ reducedMotion: preference });
-          const result = await track();
-          expect(Math.max(...result.errors)).toBeLessThan(1.5);
-          if (result.sticky) expect(Math.max(...result.immediateErrors)).toBeLessThan(1.5);
-          expect(result.driftAfterStop).toBeLessThan(.5);
+          const r = rail.getBoundingClientRect();
+          errors.push(Math.abs(Math.max(r.top, Math.min(r.bottom, innerHeight / 2)) - fill.getBoundingClientRect().bottom));
         }
-        continue;
-      }
-      // Control animation time so browser-worker load cannot turn an
-      // intermediate sample into a settled frame or throttle a background tab.
-      await timelinePage.clock.install();
-      await timelinePage.clock.pauseAt(new Date());
-      const scroll = async (delta, initial = false) => {
-        await timelinePage.evaluate(({ delta, initial }) => {
-          const scroller = document.documentElement.classList.contains('contained-scroll') ? document.querySelector('.page-viewport') : window;
-          if (initial) {
-            const box = document.querySelector('.origin-timeline').getBoundingClientRect();
-            const top = (scroller === window ? scrollY : scroller.scrollTop) + box.top + box.height * .35 - innerHeight / 2;
-            scroller.scrollTo({ top, behavior: 'instant' });
-          } else scroller.scrollBy({ top: delta, behavior: 'instant' });
-          scroller.dispatchEvent(new Event('scroll'));
-        }, { delta, initial });
-        await timelinePage.clock.runFor(32);
-      };
-      const remainingGap = () => timelinePage.locator('.origin-rail').evaluate(rail => {
-        const bounds = rail.getBoundingClientRect();
-        const target = Math.max(bounds.top, Math.min(bounds.bottom, innerHeight / 2));
-        return Math.abs(target - rail.querySelector('[data-progress]').getBoundingClientRect().bottom);
+        for (const fraction of [1.1, 1, .98, .9, .7, .1, 0, -.1, .2]) {
+          const r = rail.getBoundingClientRect();
+          scroller.scrollTo({ top: (scroller === window ? scrollY : scroller.scrollTop) + r.top + r.height * fraction - innerHeight / 2, behavior: 'instant' });
+          const immediate = rail.getBoundingClientRect();
+          immediateErrors.push(Math.abs(Math.max(immediate.top, Math.min(immediate.bottom, innerHeight / 2)) - fill.getBoundingClientRect().bottom));
+          await frames();
+          const after = rail.getBoundingClientRect();
+          errors.push(Math.abs(Math.max(after.top, Math.min(after.bottom, innerHeight / 2)) - fill.getBoundingClientRect().bottom));
+        }
+        const end = fill.getBoundingClientRect().bottom;
+        await new Promise(resolve => setTimeout(resolve, 250));
+        return { errors, immediateErrors, sticky, driftAfterStop: Math.abs(fill.getBoundingClientRect().bottom - end) };
       });
-      await scroll(0, true);
-      const errors = [];
-      for (const delta of [12, 12, 50, 120, 50, 12, -12, -12, -50, -120, -50, -12]) {
-        await scroll(delta);
-        errors.push(await remainingGap());
+      for (const preference of ['no-preference', 'reduce']) {
+        await timelinePage.emulateMedia({ reducedMotion: preference });
+        const result = await track();
+        expect(Math.max(...result.errors)).toBeLessThan(1.5);
+        if (result.sticky) expect(Math.max(...result.immediateErrors)).toBeLessThan(1.5);
+        expect(result.driftAfterStop).toBeLessThan(.5);
       }
-      expect(Math.max(...errors)).toBeGreaterThan(.5);
-      expect(Math.max(...errors)).toBeLessThan(21);
-      await timelinePage.clock.runFor(300);
-      expect(await remainingGap()).toBeLessThan(.5);
-      await timelinePage.clock.runFor(1000);
-      await scroll(20);
-      expect(await remainingGap()).toBeGreaterThan(.25);
-      await timelinePage.clock.runFor(300);
-      expect(await remainingGap()).toBeLessThan(.5);
-      await timelinePage.emulateMedia({ reducedMotion: 'reduce' });
-      await scroll(80);
-      expect(await remainingGap()).toBeLessThan(.5);
     }
   } finally { await context.close(); }
+});
+
+test('desktop Founder tip remains anchored when wheeling upward from the rail end without animation frames', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'Desktop wheel regression');
+  await page.evaluate(() => {
+    const rail = document.querySelector('.origin-rail').getBoundingClientRect();
+    window.scrollTo({ top: scrollY + rail.bottom - innerHeight / 2 + 30, behavior: 'instant' });
+  });
+  await page.clock.install();
+  await page.clock.pauseAt(new Date());
+  await page.mouse.move(600, 400);
+  for (const delta of [-60, -120, -400, 120, 400, -80, -12]) {
+    const before = await page.evaluate(() => scrollY);
+    await page.mouse.wheel(0, delta);
+    await expect.poll(async () => (await page.evaluate(() => scrollY) - before) * Math.sign(delta)).toBeGreaterThan(Math.abs(delta) * .8);
+    const error = await page.locator('.origin-rail').evaluate(rail => {
+      const r = rail.getBoundingClientRect();
+      return Math.abs(Math.max(r.top, Math.min(r.bottom, innerHeight / 2)) - rail.querySelector('[data-progress]').getBoundingClientRect().bottom);
+    });
+    expect(error).toBeLessThan(1.5);
+  }
 });
 
 test('mobile Founder tip stays anchored through touch restarts with animation frames paused', async ({ browser, baseURL }, testInfo) => {
