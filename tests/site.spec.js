@@ -139,7 +139,7 @@ test('the Origin timeline line follows scrolling in both directions', async ({ p
   expect(reverse).toBeLessThan(second);
 });
 
-test('Founder line eases gently with bounded trailing distance and settles after scrolling', async ({ page, browser, baseURL }, testInfo) => {
+test('Founder line tracks mobile scrolling directly and retains gentle desktop easing', async ({ page, browser, baseURL }, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   const context = await browser.newContext({ ...devices['iPhone 11'], reducedMotion: 'no-preference' });
   try {
@@ -149,9 +149,49 @@ test('Founder line eases gently with bounded trailing distance and settles after
       await iphone.goto(baseURL);
       await iphone.evaluate(() => document.fonts.ready);
       pages.push(iphone);
+      const fallback = await context.newPage();
+      await fallback.addInitScript(() => {
+        const supports = CSS.supports.bind(CSS);
+        CSS.supports = (...args) => args.some(value => String(value).includes('animation-timeline')) ? false : supports(...args);
+      });
+      await fallback.goto(baseURL);
+      await fallback.evaluate(() => document.fonts.ready);
+      await expect(fallback.locator('.origin-timeline')).toHaveAttribute('data-native-progress', 'false');
+      pages.push(fallback);
     }
     for (const timelinePage of pages) {
       await timelinePage.bringToFront();
+      if (testInfo.project.name === 'mobile') {
+        // Test native timelines and the older-browser fallback with actual
+        // render frames; clock-driven JS alone cannot advance a CSS scroll timeline.
+        const track = () => timelinePage.evaluate(async () => {
+          const rail = document.querySelector('.origin-rail');
+          const fill = rail.querySelector('[data-progress]');
+          const scroller = document.documentElement.classList.contains('contained-scroll') ? document.querySelector('.page-viewport') : window;
+          const frames = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          const box = rail.getBoundingClientRect();
+          const top = (scroller === window ? scrollY : scroller.scrollTop) + box.top + box.height * .35 - innerHeight / 2;
+          scroller.scrollTo({ top, behavior: 'instant' });
+          await frames();
+          const errors = [];
+          for (const delta of [4, 12, 30, 50, 180, 250, -4, -12, -30, -50, -180, -250]) {
+            scroller.scrollBy({ top: delta, behavior: 'instant' });
+            await frames();
+            const r = rail.getBoundingClientRect();
+            errors.push(Math.abs(Math.max(r.top, Math.min(r.bottom, innerHeight / 2)) - fill.getBoundingClientRect().bottom));
+          }
+          const end = fill.getBoundingClientRect().bottom;
+          await new Promise(resolve => setTimeout(resolve, 250));
+          return { errors, driftAfterStop: Math.abs(fill.getBoundingClientRect().bottom - end) };
+        });
+        for (const preference of ['no-preference', 'reduce']) {
+          await timelinePage.emulateMedia({ reducedMotion: preference });
+          const result = await track();
+          expect(Math.max(...result.errors)).toBeLessThan(1.5);
+          expect(result.driftAfterStop).toBeLessThan(.5);
+        }
+        continue;
+      }
       // Control animation time so browser-worker load cannot turn an
       // intermediate sample into a settled frame or throttle a background tab.
       await timelinePage.clock.install();

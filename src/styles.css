@@ -334,6 +334,24 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
   background: var(--color-ink);
 }
 
+@keyframes founder-scroll-fill {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+  .origin-timeline[data-native-progress="true"] .origin-rail {
+    view-timeline-name: --founder-progress;
+    view-timeline-axis: block;
+    /* The fill begins/ends as the rail's endpoints cross the viewport center. */
+    view-timeline-inset: 50% 50%;
+  }
+  .origin-timeline[data-native-progress="true"] .origin-rail [data-progress] {
+    animation: founder-scroll-fill 1s linear both;
+    animation-timeline: --founder-progress;
+    animation-range: cover 0% cover 100%;
+  }
+}
+
 @media (max-width: 1023px) {
   .rooms-carousel {
     display: flex;

@@ -9,6 +9,10 @@ const origin = document.querySelector('[data-timeline="origin"]');
 const originFill = origin.querySelector('[data-progress]');
 const originChapters = Array.from(origin.querySelectorAll('.origin-chapter'));
 const compactOrigin = window.matchMedia('(max-width: 1023px)');
+const nativeOriginProgress = CSS.supports('animation-timeline: view()')
+  && CSS.supports('view-timeline-inset: 50%')
+  && CSS.supports('animation-range: cover 0% cover 100%');
+origin.dataset.nativeProgress = String(nativeOriginProgress);
 const protocols = Array.from(system.querySelectorAll(':scope > ol > li'));
 const phaseLinks = Array.from(document.querySelectorAll('.phase-link'));
 const phases = [0, 3, 5, 6, 8];
@@ -64,6 +68,18 @@ function updateOrigin(inset, activationY) {
   originTrackLength = Math.max(1, rect.height - inset * 2);
   originTarget = clamp((activationY - rect.top - inset) / originTrackLength);
   origin.dataset.progress = originTarget.toFixed(4);
+  if (compactOrigin.matches) {
+    // Let the browser synchronize the mobile fill with native scrolling.
+    // Older browsers and reduced motion track directly, without a settling loop.
+    cancelAnimationFrame(originMotionFrame);
+    originMotionFrame = 0;
+    originDisplayed = originTarget;
+    originLastPaint = 0;
+    if (!nativeOriginProgress || reduceMotion.matches) {
+      originFill.style.transform = `scaleY(${originTarget})`;
+    }
+    return;
+  }
   // Scroll/layout updates take precedence over any pending settling frame.
   // Restart gently after an idle period instead of treating it as animation time.
   if (!originMotionFrame) originLastPaint = performance.now() - 16;
@@ -177,6 +193,7 @@ compactSystem.addEventListener('change', () => {
 pageScroller.addEventListener('scroll', scheduleUpdate, { passive: true });
 window.addEventListener('resize', scheduleUpdate);
 window.addEventListener('pageshow', scheduleUpdate);
+reduceMotion.addEventListener('change', scheduleUpdate);
 document.fonts.ready.then(scheduleUpdate);
 const resizeObserver = new ResizeObserver(scheduleUpdate);
 resizeObserver.observe(system);
