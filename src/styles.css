@@ -223,6 +223,9 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
   -webkit-mask: url('../public/assets/Swan-Academy-Monogram-White-Master.svg?inline') center / contain no-repeat;
   mask: url('../public/assets/Swan-Academy-Monogram-White-Master.svg?inline') center / contain no-repeat;
 }
+.cohort-beta-label { color: var(--color-label); font-size: 11px; line-height: 1.5; letter-spacing: .28em; text-transform: uppercase; }
+.cohort-beta-note { margin-top: 24px; }
+.cohort-beta-note > p + p { margin-top: 10px; color: var(--color-body); font-size: 13px; line-height: 1.7; }
 .site-header nav a[href^="#"]:hover { color: var(--color-ink); }
 @media (hover: hover) {
   .phase-link:hover { color: var(--color-ink); }

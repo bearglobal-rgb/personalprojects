@@ -9,6 +9,12 @@ The section order is Hero → The Founder → Failure → System → What’s In
 Next Step → FAQ → Final CTA → Footer. A future Proof/Testimonials section belongs
 between What’s Inside and Choose Your Next Step; it is omitted until real material is supplied.
 Black CTAs lead to the branded `/apply/` application preview instead of checkout.
+Black's early cohorts are in beta. A quiet “Beta cohort” label sits above the Black
+offer-card CTA; the application explains the established core offer and the session
+format/resources that may evolve. Checkout repeats the disclosure before payment
+details. Repeated hero/final CTAs and the floating banner stay uncluttered. No fixed
+number of beta cohorts or beta-specific discount is promised; preview submission
+and payment restrictions still apply.
 Original corner treatments are restored:
 rounded cards and photographs, smaller rounded inner frames, and circular avatars
 and badges. Buttons retain their original rectangular shape. The Origin timeline has

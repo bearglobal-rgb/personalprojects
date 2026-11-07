@@ -17,6 +17,9 @@ test('preserves the original content apart from approved copy and section-label 
     original.querySelector('#inside p').textContent = 'What’s inside';
     original.querySelector('#top + div').remove();
     original.querySelector('#top').after(original.querySelector('#founder'));
+    const betaLabel = original.createElement('p');
+    betaLabel.textContent = ' Beta cohort ';
+    original.querySelector('#offers article:last-child a').before(betaLabel);
     const rebuilt = document.querySelector('main').cloneNode(true);
     rebuilt.querySelector('.system-intro').remove();
     const normalize = (text) => text.replace(/\s+/g, ' ').trim();
