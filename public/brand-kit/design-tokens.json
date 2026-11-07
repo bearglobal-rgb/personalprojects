@@ -1,6 +1,6 @@
 {
-  "format": "Swan Academy design specification v1.3 (plain JSON; not a Figma import schema)",
-  "sourceCommit": "0e1d6975b7efa1fcdcbf1a062c771238d37d38b3",
+  "format": "Swan Academy design specification v1.4 (plain JSON; not a Figma import schema)",
+  "sourceCommit": "c9ec308d59a5bae6b9fa40e5886d19bb0d335b09",
   "rootFontSize": "16px",
   "measurementUnit": "CSS px at 100% zoom",
   "colors": {
@@ -183,5 +183,23 @@
   "checkout": {
     "summaryMonogram": "32px square; upper-right; center aligned to Your enrollment",
     "priceStatus": "US$350 is an illustrative one-time preview, not final pricing."
+  },
+  "betaDisclosure": {
+    "label": "Beta cohort",
+    "labelFont": "Inter 400, 11px / 1.5",
+    "labelTracking": ".28em",
+    "labelColor": "#A8A094",
+    "noteFont": "Inter 400, 13px / 1.7",
+    "noteColor": "#B2ABA0",
+    "noteMarginTop": "24px",
+    "labelToNoteGap": "10px",
+    "offerSpacing": "40px after inclusion list; 12px before CTA",
+    "placements": [
+      "Black offer-card CTA",
+      "Application before fields",
+      "Checkout before payment details"
+    ],
+    "cohortCount": "Not fixed",
+    "floatingBanner": "No beta badge"
   }
 }

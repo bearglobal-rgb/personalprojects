@@ -1,5 +1,5 @@
 # Swan Academy — Brand & Interface Blueprint
-Version 1.3 · Source baseline: 0e1d6975b7efa1fcdcbf1a062c771238d37d38b3
+Version 1.4 · Source baseline: c9ec308d59a5bae6b9fa40e5886d19bb0d335b09
 
 This is an audited specification of the existing Swan Academy website, not a redesign.
 It combines current source values, browser measurements, and the latest decisions in this project.
@@ -409,6 +409,17 @@ Left/Right, Home/End, arrows and dots must work. Reduced motion disables animate
 
 ## 10. Application, status and checkout
 
+### Beta disclosure
+Black’s early cohorts are beta cohorts. Show a discreet BETA COHORT label above the Black offer-card CTA; explain the core offer and what may evolve before the application form and checkout payment details. The core offer is the 10-Step System, weekly live walkthroughs and personal feedback; session format and supporting resources may be refined. Keep existing CTA wording and the floating banner clean. Do not promise a fixed number of beta cohorts, a special discount or additional obligations.
+
+- Label: Inter 400, 11px / 16.5px, .28em tracking, uppercase, label #A8A094. Plain text without a pill, sticker or decorative background.
+- Offer card: centered label 40px after the inclusion list, 12px before the existing CTA. Do not add the label to the free offer, repeated hero/final buttons or floating banner.
+- Application: explain beta in the application panel before the preview notice and fields; keep it distinct from the preview-only submission notice.
+- Checkout: repeat the explanation before payment details; retain the existing product caption and preview restrictions.
+- Explanatory notes: 24px top margin; 10px between label and copy; body #B2ABA0 at 13px / 22.1px. Match the left alignment of form/payment content, including mobile.
+- Associate the offer link, application form and payment action with their disclosures using aria-describedby.
+
+
 **Application**
 Desktop: max 1152px; columns .85fr / 1.15fr; gap 72px; padding 88px 32px 112px.
 Intro is sticky at 120px. At <1024: max 700px; one column; gap 40px; padding top/bottom 56/72px.
@@ -500,7 +511,7 @@ and physical iPhone Safari when a browser-chrome or touch-scroll issue is involv
 | Accepted copy revisions | source-snapshot/reference/free-system-copy-changes.json |
 | Future backend work | source-snapshot/reference/black-application-integration.md |
 
-Source baseline: 0e1d6975b7efa1fcdcbf1a062c771238d37d38b3. Website: https://bearglobal-rgb.github.io/personalprojects/
+Source baseline: c9ec308d59a5bae6b9fa40e5886d19bb0d335b09. Website: https://bearglobal-rgb.github.io/personalprojects/
 Repository: https://github.com/bearglobal-rgb/personalprojects
 
 If extending the project, work from the current repository, not an old exported copy, unless this snapshot is intentionally

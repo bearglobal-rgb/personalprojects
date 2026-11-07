@@ -1,5 +1,5 @@
 # Swan Academy — AI handoff
-Source baseline: 0e1d6975b7efa1fcdcbf1a062c771238d37d38b3
+Source baseline: c9ec308d59a5bae6b9fa40e5886d19bb0d335b09
 Read this first; load BRAND-GUIDELINES.md only as needed, then inspect relevant source.
 
 ## Project and source of truth
@@ -63,6 +63,8 @@ Root canvas/glass continuation rules remain in code; they are not proof of physi
 iOS contained scrolling can keep browser controls visible. Physical Safari verification is still required for changes here.
 
 ## Product state: all previews
+Black’s early cohorts are beta cohorts. Show a discreet BETA COHORT label above the Black offer-card CTA; explain the core offer and what may evolve before the application form and checkout payment details. The core offer is the 10-Step System, weekly live walkthroughs and personal feedback; session format and supporting resources may be refined. Keep existing CTA wording and the floating banner clean. Do not promise a fixed number of beta cohorts, a special discount or additional obligations.
+
 - Free System is an emailed roadmap, not free community/academy membership.
 - Signup does not send/store email; application does not submit/store answers.
 - Status query states are examples, not real decisions or authorization.
