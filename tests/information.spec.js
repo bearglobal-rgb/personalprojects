@@ -42,14 +42,18 @@ test('information pages load directly, preserve the brand and fit narrow screens
   expect(external).toEqual([]);
 });
 
-test('all website footers expose the four information routes', async ({ page }) => {
-  for (const route of ['', 'apply', 'status', 'checkout', ...routes.map(([route]) => route)]) {
+test('information links appear in public footers and stay out of enrollment flow footers', async ({ page }) => {
+  for (const route of ['', ...routes.map(([route]) => route)]) {
     await page.goto(route ? `/${route}/` : '/');
     const links = page.locator('footer .information-links a');
     expect(await links.evaluateAll(nodes => nodes.map(node => new URL(node.href).pathname)))
       .toEqual(routes.map(([route]) => `/${route}/`));
     await links.first().click();
     await expect(page).toHaveURL(/\/contact\/$/);
+  }
+  for (const route of ['apply', 'status', 'checkout']) {
+    await page.goto(`/${route}/`);
+    await expect(page.locator('footer .information-links')).toHaveCount(0);
   }
 });
 

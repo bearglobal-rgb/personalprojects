@@ -22,7 +22,9 @@ Inter/Playfair, existing neutral palette, 16px cards and square controls. Policy
 content has a 700px reading measure and a desktop contents sidebar. Mobile stacks
 the contents above the article; anchors respect the iOS contained scroller.
 The original homepage footer row remains intact, with information links below it.
-All eight website routes link to these pages. New draft pages are `noindex`.
+Only the homepage and information-page footers show these links. Application,
+status and checkout omit the footer navigation; contextual privacy/terms links
+within forms remain. New draft pages are `noindex`.
 
 ## Consent behavior
 
@@ -65,7 +67,7 @@ from application and support communication.
 
 ## Verification
 
-`tests/information.spec.js` covers route loading, footer navigation, branding,
+`tests/information.spec.js` covers route loading, footer navigation and its absence on enrollment-flow pages, branding,
 320–1440px layout, zero external resource requests, contact non-submission,
 consent persistence/reset/cross-tab sync, corrupt/blocked storage, no-JavaScript
 behavior and iPhone-user-agent contained-scroll anchors. Chromium mobile emulation
