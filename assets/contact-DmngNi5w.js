@@ -1,1 +1,0 @@
-import"./page-scroll-cEwkdOoM.js";/* empty css                    */var e=document.querySelector(`#contact-form`);e.addEventListener(`submit`,e=>e.preventDefault());var t=new URLSearchParams(location.search).get(`topic`);[`free-system`,`black`,`technical`,`privacy`,`other`].includes(t)&&(e.elements.topic.value=t);

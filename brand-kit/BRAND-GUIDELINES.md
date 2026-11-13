@@ -1,5 +1,5 @@
 # Swan Academy — Brand & Interface Blueprint
-Version 1.6 · Source baseline: 75a4f2090ebf4e73766ba8b8b469f1d7c96c3073
+Version 1.6 · Source baseline: 739526cea8ca6ce9b061ec22253ab44c4f040e6a
 
 This is an audited specification of the existing Swan Academy website, not a redesign.
 It combines current source values, browser measurements, and the latest decisions in this project.
@@ -511,7 +511,7 @@ and physical iPhone Safari when a browser-chrome or touch-scroll issue is involv
 | Accepted copy revisions | source-snapshot/reference/free-system-copy-changes.json |
 | Future backend work | source-snapshot/reference/black-application-integration.md |
 
-Source baseline: 75a4f2090ebf4e73766ba8b8b469f1d7c96c3073. Website: https://bearglobal-rgb.github.io/personalprojects/
+Source baseline: 739526cea8ca6ce9b061ec22253ab44c4f040e6a. Website: https://bearglobal-rgb.github.io/personalprojects/
 Repository: https://github.com/bearglobal-rgb/personalprojects
 
 If extending the project, work from the current repository, not an old exported copy, unless this snapshot is intentionally
@@ -536,8 +536,8 @@ Contact card: panel background, line border, radius 16px; padding 32px desktop a
 
 The homepage's original footer row is unchanged. A separate row adds Contact, Terms
 of use, Privacy and Consent preferences: 12px mute text, 44px minimum touch height,
-24px horizontal gap, centered wrapping. The application/status/checkout add this
-information row below their content. New informational pages use the same link row
+24px horizontal gap, centered wrapping. Application, Status and Checkout omit this footer navigation. Contextual privacy/terms
+links within their forms remain. New informational pages use the same link row
 and copyright below a divider.
 
 Policies are working drafts describing current preview behavior. Contact submission
