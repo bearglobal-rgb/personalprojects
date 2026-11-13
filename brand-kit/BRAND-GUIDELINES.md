@@ -1,5 +1,5 @@
 # Swan Academy — Brand & Interface Blueprint
-Version 1.5 · Source baseline: db59e0bcd99846ad287f9a12bd19e5f3078f1ee6
+Version 1.6 · Source baseline: 75a4f2090ebf4e73766ba8b8b469f1d7c96c3073
 
 This is an audited specification of the existing Swan Academy website, not a redesign.
 It combines current source values, browser measurements, and the latest decisions in this project.
@@ -511,7 +511,7 @@ and physical iPhone Safari when a browser-chrome or touch-scroll issue is involv
 | Accepted copy revisions | source-snapshot/reference/free-system-copy-changes.json |
 | Future backend work | source-snapshot/reference/black-application-integration.md |
 
-Source baseline: db59e0bcd99846ad287f9a12bd19e5f3078f1ee6. Website: https://bearglobal-rgb.github.io/personalprojects/
+Source baseline: 75a4f2090ebf4e73766ba8b8b469f1d7c96c3073. Website: https://bearglobal-rgb.github.io/personalprojects/
 Repository: https://github.com/bearglobal-rgb/personalprojects
 
 If extending the project, work from the current repository, not an old exported copy, unless this snapshot is intentionally
@@ -521,3 +521,27 @@ together. Record the new commit. An AI's memory is not the canonical design spec
 Some statements in the snapshot README refer to earlier environment limitations or reconstructed source areas.
 The audited values and current-decision notes in this guide are more specific; do not treat historical README notes as
 evidence that a completed deployment is still pending or that a failed physical Safari experiment is solved.
+
+## Information-page extension · v1.6
+
+Contact, Terms of use, Privacy and Consent preferences use the existing shared header,
+fonts, colors and native iOS scroller. Main width: 1152px including 32px desktop gutters;
+mobile gutters: 20px. Consent width: 896px. Title: Playfair 400, clamp(36px, 4vw, 52px),
+line-height 1.15, tracking -.025em. Lead: Inter 16px/1.7. Section headings: Playfair
+26px/1.3, tracking -.015em. Policy body: Inter 15px/1.8, maximum 700px reading measure.
+Desktop contents sidebar: 220px with 64px gap. Below 768px it stacks above the article.
+Contact card: panel background, line border, radius 16px; padding 32px desktop and
+24px 20px mobile. Fields: square, 16px Inter, minimum 48px height. Buttons: square,
+11px uppercase with .16em tracking. No new accent colors or decorative effects.
+
+The homepage's original footer row is unchanged. A separate row adds Contact, Terms
+of use, Privacy and Consent preferences: 12px mute text, 44px minimum touch height,
+24px horizontal gap, centered wrapping. The application/status/checkout add this
+information row below their content. New informational pages use the same link row
+and copyright below a divider.
+
+Policies are working drafts describing current preview behavior. Contact submission
+stays disabled until delivery is connected. Consent preferences store/reset only a
+local essential-only record; optional analytics/advertising remain off and unavailable.
+Operator identity, support email and enrollment/refund terms are not invented. Full
+implementation details and launch inputs: source-snapshot/reference/information-pages.md.

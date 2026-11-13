@@ -1,5 +1,5 @@
 # Swan Academy — AI handoff
-Source baseline: db59e0bcd99846ad287f9a12bd19e5f3078f1ee6
+Source baseline: 75a4f2090ebf4e73766ba8b8b469f1d7c96c3073
 Read this first; load BRAND-GUIDELINES.md only as needed, then inspect relevant source.
 
 ## Project and source of truth
@@ -7,7 +7,7 @@ Read this first; load BRAND-GUIDELINES.md only as needed, then inspect relevant 
 - GitHub repository: bearglobal-rgb/personalprojects; source on main; compiled site on gh-pages.
 - Existing workspace path: /workspace/personalprojects. A new environment may use a different path.
 - Vite 8 / Tailwind 4 / Node 24 / static multi-entry HTML / vanilla JavaScript / Playwright.
-- Routes: /, /apply/, /status/, /checkout/. All four must load directly under the /personalprojects/ base path.
+- Routes: /, /apply/, /status/, /checkout/, /contact/, /terms/, /privacy/, /consent-preferences/. All eight must load directly under the /personalprojects/ base path.
 - This kit includes exact source, original local assets, fonts, licenses, design tokens and measured styles.
 - Use the user's current request and latest source over this frozen snapshot. Avoid loading the entire old chat.
 
@@ -74,8 +74,22 @@ Black’s early cohorts are beta cohorts. Show a discreet BETA COHORT label abov
   See reference/black-application-integration.md before implementation.
 - Do not invent testimonials, proof, seat availability, delivered emails or payment success.
 
+## Information pages and consent
+Contact, Terms of use, Privacy and Consent preferences are linked from every website footer.
+The homepage keeps its original logo/social/copyright row; legal/support links sit below it.
+Read reference/information-pages.md and src/information.css before editing these pages.
+The policies are original working drafts for the current preview. Operator identity, business
+address/country, support/privacy email and final enrollment/refund terms still need owner input.
+Contact uses the official Instagram profile for now; its form cannot send or store messages.
+Consent saves only an essential-only local browser record under swan-academy:consent:v1;
+reset removes only that record. No optional analytics/ad tools are installed. Controls for those
+categories stay disabled/off. This is not consent for future tracking or email subscriptions.
+Implement actual script gating and update the policies/choices before adding optional services.
+Use the existing inline monogram, native iOS scroller, Inter/Playfair, palette, 16px panels and
+square controls. Policy reading measure is 700px, with a desktop contents sidebar and mobile stack.
+
 ## Assets
-Header loading: inline the original monogram master in the shared CSS with Vite's ?inline flag. The SVG exceeds the default automatic-inlining limit. All four website pages must render the mark without a separate SVG request or JavaScript. Preserve the original paths, currentColor mask, size and placement.
+Header loading: inline the original monogram master in the shared CSS with Vite's ?inline flag. The SVG exceeds the default automatic-inlining limit. All eight website pages must render the mark without a separate SVG request or JavaScript. Preserve the original paths, currentColor mask, size and placement.
 
 Preserve the original SVG masters. Header/footer/site marks use a CSS mask tinted to ink.
 Do not alter the Founder immersion photo outside the approved laptop-screen composite. Original, screen layer,
