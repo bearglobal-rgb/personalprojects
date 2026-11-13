@@ -7,6 +7,10 @@
 @source "../apply/index.html";
 @source "../status/index.html";
 @source "../checkout/index.html";
+@source "../contact/index.html";
+@source "../terms/index.html";
+@source "../privacy/index.html";
+@source "../consent-preferences/index.html";
 @source "./main.js";
 
 @theme {
@@ -47,6 +51,33 @@
   color: var(--color-void);
 }
 .skip-link:focus { transform: translateY(0); }
+
+.information-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0 1.5rem;
+}
+.information-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-mute);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.information-links a:hover, .information-links a[aria-current="page"] { color: var(--color-ink); }
+.site-information-links { padding: 0 1.25rem 2rem; margin-top: -1rem; }
+.flow-information-footer {
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+  border-top: 1px solid var(--color-line);
+}
+.form-information-link { margin-top: 1rem; color: var(--color-mute); font-size: 12px; line-height: 1.7; }
+.form-information-link a { text-decoration: underline; text-underline-offset: 3px; }
+.form-information-link a:hover { color: var(--color-ink); }
 .hero-content {
   /* Allow for the 72px header, its border, and the hero's bottom divider. */
   min-height: calc(100vh - 74px - var(--safe-area-top));

@@ -741,7 +741,7 @@ test('footer retains its original responsive layout and wordmark', async ({ page
   await expect(footer.getByText('English mastery', { exact: true })).toHaveCount(0);
   await expect(footer.getByRole('link', { name: 'Swan Academy — back to top' })).toHaveText('Swan Academy');
   await expect(footer.getByText('© 2026 Swan Academy', { exact: true })).toBeVisible();
-  expect(await footer.locator('nav a').evaluateAll(links => links.map(link => ({ text: link.textContent, href: link.href })))).toEqual([
+  expect(await footer.locator('nav').first().locator('a').evaluateAll(links => links.map(link => ({ text: link.textContent, href: link.href })))).toEqual([
     { text: 'X', href: 'https://x.com/jotaswan' },
     { text: 'Instagram', href: 'https://www.instagram.com/jotaswan/' },
     { text: 'YouTube', href: 'https://www.youtube.com/@JotaSwan' },
@@ -751,7 +751,7 @@ test('footer retains its original responsive layout and wordmark', async ({ page
     const brand = row.firstElementChild;
     const style = getComputedStyle(row);
     return {
-      height: el.getBoundingClientRect().height,
+      height: row.getBoundingClientRect().height,
       padding: [style.paddingTop, style.paddingBottom],
       logo: [brand.querySelector('.brand-monogram').getBoundingClientRect().width, brand.querySelector('.brand-monogram').getBoundingClientRect().height],
       name: getComputedStyle(brand.querySelector('.font-serif')).fontSize,

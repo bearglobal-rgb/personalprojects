@@ -201,6 +201,14 @@ The approved immersion/laptop-screen composite remains unchanged.
 
 ## Validation
 
+The website now includes `/contact/`, `/terms/`, `/privacy/` and
+`/consent-preferences/`, linked from every site footer. The policies are working
+drafts for the current preview. Contact currently uses the official Instagram
+profile; its form cannot send messages. Consent preferences save/reset a local
+essential-only record; no optional analytics or advertising tools are installed.
+See `reference/information-pages.md` for the implementation and remaining operator,
+support and enrollment details needed before live services open.
+
 ```sh
 npm run build
 npm test

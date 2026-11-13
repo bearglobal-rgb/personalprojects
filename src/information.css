@@ -1,0 +1,130 @@
+/* Informational pages share the main site's type, colors and header treatment. */
+.information-layout {
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 64px 32px 88px;
+}
+.information-intro { max-width: 720px; margin: 0 auto 48px; text-align: center; }
+.information-eyebrow { color: var(--color-label); font-size: 11px; line-height: 1.7; letter-spacing: .28em; text-transform: uppercase; }
+.information-intro h1 {
+  margin-top: 20px;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(36px, 4vw, 52px);
+  line-height: 1.15;
+  letter-spacing: -.025em;
+  text-wrap: balance;
+}
+.information-lead { max-width: 600px; margin: 24px auto 0; color: var(--color-body); font-size: 16px; line-height: 1.7; }
+.information-meta { margin-top: 20px; color: var(--color-mute); font-size: 12px; line-height: 1.7; }
+.information-draft {
+  padding: 20px 24px;
+  margin-bottom: 48px;
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  background: var(--color-panel);
+  color: var(--color-body);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.policy-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 64px; align-items: start; }
+.policy-contents { position: sticky; top: calc(128px + var(--safe-area-top)); }
+.policy-contents > p { margin-bottom: 16px; }
+.policy-contents a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 0;
+  color: var(--color-mute);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.policy-contents a:hover { color: var(--color-ink); }
+.policy-copy { max-width: 700px; min-width: 0; }
+.policy-copy section { scroll-margin-top: calc(128px + var(--safe-area-top)); }
+.policy-copy section + section { margin-top: 36px; padding-top: 32px; border-top: 1px solid var(--color-line); }
+.policy-copy h2, .contact-details h2, .information-card h2, .consent-category h2 {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -.015em;
+  text-wrap: balance;
+}
+.policy-copy p, .contact-details > p, .consent-category > p { margin-top: 16px; color: var(--color-body); font-size: 15px; line-height: 1.8; }
+.policy-copy a, .information-small a { color: var(--color-ink); text-decoration: underline; text-underline-offset: 4px; }
+.policy-copy a:hover, .information-small a:hover { text-decoration-thickness: 2px; }
+.contact-columns { display: grid; grid-template-columns: .85fr 1.15fr; align-items: start; gap: 64px; }
+.contact-details { padding-top: 24px; }
+.contact-details > .information-button { margin-top: 28px; }
+.contact-topics { margin: 40px 0 24px; }
+.contact-topics > div { padding: 20px 0; border-top: 1px solid var(--color-line); }
+.contact-topics dt { font-size: 14px; line-height: 1.6; }
+.contact-topics dd { margin: 8px 0 0; color: var(--color-body); font-size: 13px; line-height: 1.8; }
+.information-card { padding: 32px; background: var(--color-panel); border: 1px solid var(--color-line); border-radius: 16px; }
+.information-card > .information-eyebrow { margin-bottom: 16px; }
+.information-small, .contact-details > .information-small { margin-top: 16px; color: var(--color-body); font-size: 13px; line-height: 1.8; }
+.information-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 16px 20px;
+  border: 1px solid var(--color-ink);
+  border-radius: 0;
+  background: var(--color-ink);
+  color: var(--color-void);
+  font-size: 11px;
+  line-height: 1.6;
+  letter-spacing: .16em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.information-button-secondary { background: transparent; color: var(--color-ink); border-color: var(--color-mute); }
+.information-button:hover:not(:disabled) { border-color: var(--color-heading); background: var(--color-heading); color: var(--color-void); }
+.information-button:disabled { opacity: .55; cursor: default; }
+.information-field { margin: 24px 0; }
+.information-field label { display: block; margin-bottom: 10px; color: var(--color-ink); font-size: 14px; line-height: 1.6; }
+.information-field input, .information-field select, .information-field textarea {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px;
+  border: 1px solid var(--color-mute);
+  border-radius: 0;
+  background: var(--color-void);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  color-scheme: dark;
+}
+.information-field textarea { min-height: 132px; resize: vertical; }
+.information-field .information-small { margin-top: 8px; }
+#contact-form > .information-button { width: 100%; }
+.consent-layout { max-width: 896px; }
+.consent-category { padding: 28px 0; border-bottom: 1px solid var(--color-line); }
+.consent-category:first-child { padding-top: 0; }
+.consent-category-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.information-state { padding: 6px 10px; border: 1px solid var(--color-line); color: var(--color-label); font-size: 10px; line-height: 1.6; letter-spacing: .12em; text-transform: uppercase; }
+.consent-control { display: flex; align-items: center; gap: 10px; color: var(--color-mute); font-size: 13px; }
+.consent-control input { width: 16px; height: 16px; accent-color: var(--color-ink); }
+.consent-form > .information-small { margin-top: 24px; }
+.consent-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 32px; }
+.consent-privacy-link { margin-top: 32px; }
+.information-footer { max-width: 1088px; margin: 0 auto; padding: 24px 20px 40px; border-top: 1px solid var(--color-line); text-align: center; }
+.information-footer > p { margin-top: 16px; color: var(--color-mute); font-size: 12px; line-height: 1.7; }
+@media (max-width: 767px) {
+  .information-layout { padding: 40px 20px 64px; }
+  .information-intro { margin-bottom: 32px; }
+  .information-draft { padding: 20px; margin-bottom: 32px; }
+  .policy-layout, .contact-columns { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .policy-contents { position: static; padding-bottom: 24px; border-bottom: 1px solid var(--color-line); }
+  .policy-contents > p { margin-bottom: 8px; }
+  .policy-contents a { min-height: 44px; }
+  .contact-details { padding-top: 0; }
+  .information-card { padding: 24px 20px; }
+  .consent-actions { grid-template-columns: minmax(0, 1fr); }
+  .information-footer { margin-inline: 20px; padding-inline: 0; }
+}
