@@ -1,5 +1,5 @@
 # Swan Academy — AI handoff
-Source baseline: 75a4f2090ebf4e73766ba8b8b469f1d7c96c3073
+Source baseline: 739526cea8ca6ce9b061ec22253ab44c4f040e6a
 Read this first; load BRAND-GUIDELINES.md only as needed, then inspect relevant source.
 
 ## Project and source of truth
@@ -75,7 +75,7 @@ Black’s early cohorts are beta cohorts. Show a discreet BETA COHORT label abov
 - Do not invent testimonials, proof, seat availability, delivered emails or payment success.
 
 ## Information pages and consent
-Contact, Terms of use, Privacy and Consent preferences are linked from every website footer.
+Contact, Terms of use, Privacy and Consent preferences appear in the homepage and information-page footers only. Application, Status and Checkout omit this footer navigation; contextual privacy/terms links within the forms remain.
 The homepage keeps its original logo/social/copyright row; legal/support links sit below it.
 Read reference/information-pages.md and src/information.css before editing these pages.
 The policies are original working drafts for the current preview. Operator identity, business
