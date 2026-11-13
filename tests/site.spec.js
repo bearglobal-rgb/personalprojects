@@ -1064,6 +1064,23 @@ test('header monograms render on cold visits and navigation without an SVG reque
   } finally { await context.close(); }
 });
 
+test('every website photo decodes locally with the Whop host unavailable', async ({ page }) => {
+  const externalPhotoRequests = [];
+  await page.route('https://swanacademy.whop.site/**', route => {
+    externalPhotoRequests.push(route.request().url());
+    return route.abort();
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  const photos = await page.locator('img').evaluateAll(async images => {
+    images.forEach(image => { image.loading = 'eager'; });
+    await Promise.all(images.map(image => image.decode()));
+    return images.map(image => ({ local: new URL(image.currentSrc).origin === location.origin, width: image.naturalWidth, height: image.naturalHeight }));
+  });
+  expect(photos.length).toBeGreaterThan(0);
+  expect(photos.every(photo => photo.local && photo.width > 0 && photo.height > 0)).toBe(true);
+  expect(externalPhotoRequests).toEqual([]);
+});
+
 test('local branding and both fonts load without JavaScript errors', async ({ page }) => {
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));

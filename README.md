@@ -193,9 +193,11 @@ https://github.com/bearglobal-rgb/personalprojects/settings/pages:
    shown by GitHub. Publication is not confirmed until that deployment succeeds.
 
 GitHub Pages serves the compiled site independently of the Codex environment.
-Most photograph URLs still point to the original site; the Origin immersion
-photograph and its screen replacement are bundled locally. Browser image loading
-and the remaining fidelity checks below must be verified on the published page.
+All photographs are now bundled locally; no live page image depends on Whop.
+The served source copies were preserved without re-encoding. Scene photos are
+1200 × 896 and the portrait is 800 × 800; these are not native 4K masters.
+`reference/photo-assets.json` records source URLs, dimensions and SHA-256 hashes.
+The approved immersion/laptop-screen composite remains unchanged.
 
 ## Validation
 
@@ -211,12 +213,11 @@ selection, FAQs, navigation, application links and preview behavior, local SVGs,
 
 ## Outstanding source verification
 
-- GitHub Pages is the selected preview host. The GitHub settings API was blocked
-  in this environment, so Pages activation must be completed in the repository
-  settings if it is not already enabled.
-- The environment proxy blocks `swanacademy.whop.site` with HTTP 403. All five
-  original photograph URLs remain in the markup, but their loading could not be
-  validated in this environment. No substitute photographs were used.
+- Source image access succeeded with an ordinary browser-style request. The earlier
+  403 responses did not establish an ownership problem or a permanent outage.
+- The public page and referenced JavaScript expose no higher-resolution image
+  variants. True 4K replacements require the original high-resolution files;
+  upscaling these copies would not restore original detail.
 - The HTML exports omit the header, footer, and system introduction/sidebar.
   Those areas are provisional reconstructions from the screenshot. Sidebar
   supporting text reuses supplied copy, and must be compared against the live
@@ -224,25 +225,18 @@ selection, FAQs, navigation, application links and preview behavior, local SVGs,
 - Panel and divider colors and interaction timing are reconstructed from the
   reference. Pixel-for-pixel comparison with the full live page remains pending.
 
-The environment configuration draft includes `swanacademy.whop.site` as a custom
-allowed domain. Review and save the environment settings, then publish the
-environment. Once source access works, run:
-
-```sh
-python scripts/fetch_original_assets.py
-npm run build
-```
-
-The helper keeps TLS verification enabled, validates image signatures, preserves
-conflicting local files, and changes image references only after downloading the
-complete original set. Inspect the live page to verify the three reconstructed
-areas and the scroll timing, then repeat browser and image-readiness checks.
+To re-fetch the same source copies, use `python scripts/fetch_original_assets.py`.
+The helper keeps TLS verification enabled, checks JPEG signatures (the source's
+.png paths actually serve JPEG data), and refuses to overwrite differing local
+files. It fetches the complete set before updating references, and never replaces
+the approved composite. Run `npm run build` after any asset changes.
 
 ## Source provenance
 
 `reference/original.html` is the supplied HTML, retained for content-parity tests.
 The four `Swan-Academy-*-Master.svg` assets are the supplied originals. Photographs
-retain the supplied Swan Academy URLs until downloaded. Inter and Playfair
+are preserved locally from the supplied Swan Academy URLs; source URLs are kept
+in the provenance manifest. Downloading a file does not establish copyright ownership. Inter and Playfair
 Display are installed from Fontsource with their original font licenses.
 
 The Origin immersion photograph is preserved byte-for-byte in

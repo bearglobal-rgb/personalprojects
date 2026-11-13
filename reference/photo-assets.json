@@ -1,0 +1,55 @@
+{
+  "note": "These are the public website files, not verified original high-resolution masters. Hosting copies does not determine copyright ownership. The approved immersion composite remains separate and unchanged.",
+  "photos": [
+    {
+      "source": "https://swanacademy.whop.site/origin-bahia.png",
+      "local": "public/assets/origin-bahia.jpg",
+      "format": "JPEG",
+      "width": 1200,
+      "height": 896,
+      "bytes": 162228,
+      "sha256": "2d179de9816eb6824d982afd51d008e44c1302710cfa024a02788c8be759a357",
+      "processing": "Original downloaded bytes; no re-encoding or upscaling"
+    },
+    {
+      "source": "https://swanacademy.whop.site/origin-school.png",
+      "local": "public/assets/origin-school.jpg",
+      "format": "JPEG",
+      "width": 1200,
+      "height": 896,
+      "bytes": 116724,
+      "sha256": "33526c68fd775a7adbc68ebc5a6d7d3ffb794287c422a33aca92cc083be00534",
+      "processing": "Original downloaded bytes; no re-encoding or upscaling"
+    },
+    {
+      "source": "https://swanacademy.whop.site/origin-cave.png",
+      "local": "public/assets/origin-cave.jpg",
+      "format": "JPEG",
+      "width": 1200,
+      "height": 896,
+      "bytes": 63340,
+      "sha256": "85494eeff8d54f9821e1b20adabe0b5d2a0c8e40b0c6678e11330c7ddc943c66",
+      "processing": "Original downloaded bytes; no re-encoding or upscaling"
+    },
+    {
+      "source": "https://swanacademy.whop.site/origin-immersion.png",
+      "local": "public/assets/origin-immersion-original.jpg",
+      "format": "JPEG",
+      "width": 1200,
+      "height": 896,
+      "bytes": 65659,
+      "sha256": "66a96f9115f0f78341d76e9c2262686e82469cd1ec9fdc80d49ea3e1b6602fc3",
+      "processing": "Original downloaded bytes; no re-encoding or upscaling"
+    },
+    {
+      "source": "https://swanacademy.whop.site/jota.jpg",
+      "local": "public/assets/jota.jpg",
+      "format": "JPEG",
+      "width": 800,
+      "height": 800,
+      "bytes": 134639,
+      "sha256": "b86e0690013d712ad70f7eabd6c84889f7b741d0d4bbd2f7b536d6a0d735fb03",
+      "processing": "Original downloaded bytes; no re-encoding or upscaling"
+    }
+  ]
+}
