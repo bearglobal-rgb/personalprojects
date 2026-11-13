@@ -1,6 +1,6 @@
 {
-  "format": "Swan Academy design specification v1.4 (plain JSON; not a Figma import schema)",
-  "sourceCommit": "c9ec308d59a5bae6b9fa40e5886d19bb0d335b09",
+  "format": "Swan Academy design specification v1.5 (plain JSON; not a Figma import schema)",
+  "sourceCommit": "db59e0bcd99846ad287f9a12bd19e5f3078f1ee6",
   "rootFontSize": "16px",
   "measurementUnit": "CSS px at 100% zoom",
   "colors": {
@@ -201,5 +201,13 @@
     ],
     "cohortCount": "Not fixed",
     "floatingBanner": "No beta badge"
+  },
+  "photography": {
+    "hosting": "All website images local; no Whop dependency",
+    "sceneFiles": "1200 x 896 JPEG, source bytes preserved",
+    "portrait": "800 x 800 JPEG, source bytes preserved",
+    "approvedComposite": "1200 x 896 PNG, unchanged",
+    "native4K": "Not available from public source; original high-resolution exports still needed",
+    "provenance": "source-snapshot/reference/photo-assets.json"
   }
 }

@@ -1,5 +1,5 @@
 # Swan Academy — Brand & Interface Blueprint
-Version 1.4 · Source baseline: c9ec308d59a5bae6b9fa40e5886d19bb0d335b09
+Version 1.5 · Source baseline: db59e0bcd99846ad287f9a12bd19e5f3078f1ee6
 
 This is an audited specification of the existing Swan Academy website, not a redesign.
 It combines current source values, browser measurements, and the latest decisions in this project.
@@ -233,7 +233,7 @@ Compact photo width 88%, maximum 320px; alternate left/right while text remains 
 Large photos/cards use 16px corners. Founder portrait is grayscale.
 Do not regenerate or edit the Founder immersion photograph outside the already approved laptop-screen composite.
 The exact original, screen layer, composite and transform reference are in the snapshot.
-Some other photos remain external URLs; the kit is not a complete offline photograph archive.
+All website photographs are now served locally, with no Whop image dependency. The downloaded scene copies are 1200 × 896 and the portrait is 800 × 800; these are not native 4K masters. The existing immersion composite remains unchanged. reference/photo-assets.json records original URLs, pixel dimensions and file hashes. Higher-resolution originals are still needed to meet the owner’s 4K goal; do not call upscaled copies native 4K. Hosting a file does not establish copyright ownership.
 
 ## 6. Components and states
 
@@ -511,7 +511,7 @@ and physical iPhone Safari when a browser-chrome or touch-scroll issue is involv
 | Accepted copy revisions | source-snapshot/reference/free-system-copy-changes.json |
 | Future backend work | source-snapshot/reference/black-application-integration.md |
 
-Source baseline: c9ec308d59a5bae6b9fa40e5886d19bb0d335b09. Website: https://bearglobal-rgb.github.io/personalprojects/
+Source baseline: db59e0bcd99846ad287f9a12bd19e5f3078f1ee6. Website: https://bearglobal-rgb.github.io/personalprojects/
 Repository: https://github.com/bearglobal-rgb/personalprojects
 
 If extending the project, work from the current repository, not an old exported copy, unless this snapshot is intentionally

@@ -1,5 +1,5 @@
 # Swan Academy — AI handoff
-Source baseline: c9ec308d59a5bae6b9fa40e5886d19bb0d335b09
+Source baseline: db59e0bcd99846ad287f9a12bd19e5f3078f1ee6
 Read this first; load BRAND-GUIDELINES.md only as needed, then inspect relevant source.
 
 ## Project and source of truth
@@ -79,8 +79,7 @@ Header loading: inline the original monogram master in the shared CSS with Vite'
 
 Preserve the original SVG masters. Header/footer/site marks use a CSS mask tinted to ink.
 Do not alter the Founder immersion photo outside the approved laptop-screen composite. Original, screen layer,
-composite and exact transform reference are included. Other original photographs still have remote URLs.
-The full kit is portable source, not a complete offline archive of those remote photos.
+composite and exact transform reference are included. All website photographs are now served locally, with no Whop image dependency. The downloaded scene copies are 1200 × 896 and the portrait is 800 × 800; these are not native 4K masters. The existing immersion composite remains unchanged. reference/photo-assets.json records original URLs, pixel dimensions and file hashes. Higher-resolution originals are still needed to meet the owner’s 4K goal; do not call upscaled copies native 4K. Hosting a file does not establish copyright ownership.
 
 ## Working and verification
 1. Check git status and current revision before edits. Preserve existing work.
