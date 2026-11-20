@@ -22,7 +22,6 @@ test('preserves the original content apart from approved copy and section-label 
     original.querySelector('#offers article:last-child a').before(betaLabel);
     const rebuilt = document.querySelector('main').cloneNode(true);
     original.querySelector('#inside article:last-child p.font-serif').textContent = 'Step 06 of 10';
-    rebuilt.querySelector('.course-dashboard').remove(); // New decorative course illustration.
     rebuilt.querySelector('.system-intro').remove();
     const normalize = (text) => text.replace(/\s+/g, ' ').trim();
     return { expected: normalize(original.body.textContent), actual: normalize(rebuilt.textContent) };
