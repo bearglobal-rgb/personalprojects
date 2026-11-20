@@ -248,6 +248,44 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
   -webkit-mask: url('../public/assets/Swan-Academy-Monogram-White-Master.svg?inline') center / contain no-repeat;
   mask: url('../public/assets/Swan-Academy-Monogram-White-Master.svg?inline') center / contain no-repeat;
 }
+/* Static course overview behind the English Mastery lesson panel. */
+.course-dashboard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid var(--color-line);
+  background: radial-gradient(ellipse at 20% 35%, #282622, transparent 70%), var(--color-panel);
+  pointer-events: none;
+}
+.course-dashboard-header {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 38px;
+  padding: 0 13px;
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-panel);
+}
+.course-dashboard-title { display: flex; align-items: center; gap: 8px; font: 14px/1.2 var(--font-serif); }
+.course-dashboard-title .brand-monogram { width: 16px; height: 16px; }
+.course-dashboard-count { color: var(--color-label); font-size: 10px; }
+.course-dashboard-index {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 3px;
+  margin: 0 12px 9px;
+  color: var(--color-mute);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  line-height: 17px;
+  text-align: center;
+}
+.course-dashboard-index li { border-top: 2px solid var(--color-line); padding-top: 2px; }
+.course-dashboard-index li:nth-child(-n+5) { border-color: var(--color-mute); }
+.course-dashboard-index .current-step { border-color: var(--color-ink); background: #272522; color: var(--color-ink); }
+
 .cohort-beta-label { color: var(--color-label); font-size: 11px; line-height: 1.5; letter-spacing: .28em; text-transform: uppercase; }
 .cohort-beta-note { margin-top: 24px; }
 .cohort-beta-note > p + p { margin-top: 10px; color: var(--color-body); font-size: 13px; line-height: 1.7; }
