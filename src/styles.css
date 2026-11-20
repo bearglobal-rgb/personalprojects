@@ -259,7 +259,7 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
   inset: 0;
   display: grid;
   grid-template: 32px 1fr / clamp(56px, 23%, 98px) minmax(0, 1fr);
-  filter: blur(2.5px);
+  filter: blur(0.85px);
   opacity: .72;
   background: #22211e;
   font: 10px/1.4 var(--font-sans);

@@ -88,7 +88,7 @@ Implement actual script gating and update the policies/choices before adding opt
 Use the existing inline monogram, native iOS scroller, Inter/Playfair, palette, 16px panels and
 square controls. Policy reading measure is 700px, with a desktop contents sidebar and mobile stack.
 
-The English Mastery card in What’s Inside uses the original compact container. Its background is a softly blurred Swan Academy dashboard with a top-left logo and Voice Room, System, Resources, Calendar and Chat in the sidebar. Keep the dashboard structure visible and its small text indistinct. Preserve the centered lesson panel and its “Step 06 of 10” label.
+The English Mastery card in What’s Inside uses the original compact container. Its background is a softly blurred Swan Academy dashboard with a top-left logo and Voice Room, System, Resources, Calendar and Chat in the sidebar. Use a light 0.85px backdrop illustration blur so the dashboard labels are faintly readable. Preserve the centered lesson panel and its “Step 06 of 10” label.
 
 ## Assets
 Header loading: inline the original monogram master in the shared CSS with Vite's ?inline flag. The SVG exceeds the default automatic-inlining limit. All eight website pages must render the mark without a separate SVG request or JavaScript. Preserve the original paths, currentColor mask, size and placement.
