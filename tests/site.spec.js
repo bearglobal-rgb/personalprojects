@@ -610,7 +610,8 @@ test('rooms carousel exposes every card without overflowing the mobile page', as
   await expect(cards.locator('h3')).toHaveText(['The map', 'Live walkthroughs', 'The sequence', 'The hub', 'English Mastery']);
   for (const width of [320, 390, 414, 768, 1023]) {
     await page.setViewportSize({ width, height: 896 });
-    await track.scrollIntoViewIfNeeded();
+    // Frame the cards and their controls together before checking horizontal navigation.
+    await track.evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }));
     await dots.first().click();
     await expect(dots.first()).toHaveAttribute('aria-current', 'true');
     await expect(page.getByRole('button', { name: 'Previous room', exact: true })).toBeDisabled();

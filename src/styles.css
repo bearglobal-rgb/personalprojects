@@ -248,43 +248,128 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
   -webkit-mask: url('../public/assets/Swan-Academy-Monogram-White-Master.svg?inline') center / contain no-repeat;
   mask: url('../public/assets/Swan-Academy-Monogram-White-Master.svg?inline') center / contain no-repeat;
 }
-/* Static course overview behind the English Mastery lesson panel. */
+/* This non-interactive classroom illustration frames the existing lesson panel. */
+.classroom-preview { min-height: 432px; }
 .course-dashboard {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border: 1px solid var(--color-line);
-  background: radial-gradient(ellipse at 20% 35%, #282622, transparent 70%), var(--color-panel);
+  container-type: inline-size;
+  border: 1px solid #45403a;
+  background: #201e1b;
+  color: var(--color-body);
+  font-size: 10px;
   pointer-events: none;
 }
-.course-dashboard-header {
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  height: 38px;
-  padding: 0 13px;
-  border-bottom: 1px solid var(--color-line);
-  background: var(--color-panel);
+.course-dashboard small {
+  display: block;
+  font: 500 9px/1.3 var(--font-sans);
+  letter-spacing: .1em;
+  text-transform: uppercase;
 }
-.course-dashboard-title { display: flex; align-items: center; gap: 8px; font: 14px/1.2 var(--font-serif); }
-.course-dashboard-title .brand-monogram { width: 16px; height: 16px; }
-.course-dashboard-count { color: var(--color-label); font-size: 10px; }
-.course-dashboard-index {
-  display: grid;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 3px;
-  margin: 0 12px 9px;
-  color: var(--color-mute);
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-  line-height: 17px;
+.classroom-bar, .classroom-brand, .classroom-menu { display: flex; align-items: center; }
+.classroom-bar {
+  height: 32px;
+  padding-inline: 12px;
+  justify-content: space-between;
+  background: var(--color-panel);
+  border-bottom: 1px solid var(--color-line);
+}
+.classroom-brand { white-space: nowrap; gap: 6px; color: var(--color-ink); font: 14px var(--font-serif); }
+.classroom-brand .brand-monogram { width: 17px; height: 17px; }
+.classroom-menu { gap: 15px; height: 25px; padding-inline: 12px; background: #171614; }
+.classroom-menu .selected { color: var(--color-ink); border-bottom: 1px solid currentColor; }
+.classroom-cover {
+  position: relative;
+  overflow: hidden;
+  margin: 8px 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: linear-gradient(110deg, #e7dfd1, #c6bca8);
+  color: #332e27;
+}
+.classroom-cover strong { font: 22px/1.2 var(--font-serif); }
+.classroom-book {
+  position: absolute;
+  top: 3px; right: 7%;
+  width: 43px; height: 59px;
+  transform: rotate(17deg);
+  border: 3px double #aaa08e;
+  border-left: 4px solid #544f45;
+  background: #393931;
+  box-shadow: 2px 2px #e2d9c8, 4px 4px #726c5e, 7px 8px 9px #342f2640;
+  color: #ece1c9;
+  font: italic 22px/46px var(--font-serif);
   text-align: center;
 }
-.course-dashboard-index li { border-top: 2px solid var(--color-line); padding-top: 2px; }
-.course-dashboard-index li:nth-child(-n+5) { border-color: var(--color-mute); }
-.course-dashboard-index .current-step { border-color: var(--color-ink); background: #272522; color: var(--color-ink); }
+.classroom-outline, .classroom-progress { display: none; }
+.classroom-library {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 9px 11px 11px;
+  background: #181715;
+  border-top: 1px solid #393630;
+}
+.classroom-library > small { margin-bottom: 6px; color: var(--color-ink); }
+.classroom-library ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
+.classroom-library li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  border: 1px solid #444036;
+  border-radius: 5px;
+  background: #262420;
+  color: var(--color-ink);
+  font: 12px/1.2 var(--font-serif);
+}
+.classroom-library li small { color: var(--color-label); font-size: 8px; margin-bottom: 3px; }
+.lesson-cover {
+  flex: 0 0 26px;
+  border-left: 3px solid #ffffff26;
+  border-radius: 1px 3px 3px 1px;
+  text-align: center;
+  font: italic 13px/36px var(--font-serif);
+}
+.lesson-flow { background: #545a50; color: #f3efda; }
+.lesson-reading { background: #d1c3a9; color: #423a2d; }
+.lesson-sparring { background: #645550; color: #f1e4d7; }
+@container (min-width: 470px) {
+  .classroom-menu, .classroom-outline { position: absolute; left: 0; width: 18%; padding-inline: 8px; }
+  .classroom-menu {
+    top: 32px; bottom: 0; height: auto; padding-top: 12px;
+    flex-direction: column; align-items: stretch; gap: 3px;
+    border-right: 1px solid #393630;
+  }
+  .classroom-menu span, .classroom-outline li { padding: 4px 6px; }
+  .classroom-menu .selected { border: 0; border-radius: 4px; background: #37332d; }
+  .classroom-outline { display: block; top: 139px; }
+  .classroom-outline small { margin: 0 0 5px 5px; font-size: 8px; }
+  .classroom-outline li.selected { color: var(--color-ink); border-left: 2px solid currentColor; }
+  .classroom-cover { margin-left: calc(18% + 9px); padding: 11px 16px; }
+  .classroom-progress {
+    display: grid; justify-items: center; gap: 7px; position: absolute;
+    right: 0; top: 50%; transform: translateY(-50%); width: 18%; font-size: 9px;
+  }
+  .classroom-ring {
+    display: grid; place-content: center; width: 45px; aspect-ratio: 1; border-radius: 50%;
+    background: radial-gradient(closest-side, #201e1b 84%, transparent 86%),
+                conic-gradient(#d1c3a9 50%, #48433b 0);
+    font: 15px var(--font-serif); color: var(--color-ink);
+  }
+  .classroom-library { left: 18%; }
+}
+@container (max-width: 360px) {
+  .classroom-library ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .classroom-library li:first-child { display: none; }
+  .classroom-library li { font-size: 11px; }
+  .lesson-cover { flex-basis: 19px; font-size: 11px; }
+}
+@container (max-width: 245px) {
+  .classroom-bar > span:last-child { display: none; }
+  .classroom-book { right: 5px; width: 33px; }
+  .classroom-cover strong { font-size: 20px; }
+}
+@media (max-width: 360px) {
+  .classroom-preview { min-height: 460px; }
+}
 
 .cohort-beta-label { color: var(--color-label); font-size: 11px; line-height: 1.5; letter-spacing: .28em; text-transform: uppercase; }
 .cohort-beta-note { margin-top: 24px; }
