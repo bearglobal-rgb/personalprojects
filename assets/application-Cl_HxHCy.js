@@ -1,1 +1,0 @@
-import"./page-scroll-COcIY66A.js";/* empty css                    */document.querySelector(`#black-application-form`).addEventListener(`submit`,e=>e.preventDefault());
