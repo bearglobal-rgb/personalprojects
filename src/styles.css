@@ -569,6 +569,3 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
   .walkthrough-event .uppercase { letter-spacing: .09em; font-size: .625rem; }
   .walkthrough-event p.flex { font-size: .6875rem; }
 }
-@container walkthrough (max-width: 12rem) {
-  .walkthrough-header { flex-direction: column; align-items: center; }
-}
