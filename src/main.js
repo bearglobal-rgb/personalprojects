@@ -168,18 +168,22 @@ const roomDots = Array.from(roomControls.querySelectorAll('[data-rooms-slide]'))
 const previousRoom = roomControls.querySelector('[data-rooms-prev]');
 const nextRoom = roomControls.querySelector('[data-rooms-next]');
 const compactRooms = window.matchMedia('(max-width: 1023px)');
-let currentRoom = 0;
+const roomPortrait = rooms.querySelector('img');
+let currentRoom = null;
 let roomFramePending = false;
 
 function updateRoomControls() {
   roomFramePending = false;
-  const maxScroll = rooms.scrollWidth - rooms.clientWidth;
-  const trackLeft = rooms.getBoundingClientRect().left;
-  currentRoom = maxScroll > 0 && rooms.scrollLeft >= maxScroll - 1
-    ? roomCards.length - 1
-    : roomCards.reduce((nearest, card, index) =>
-      Math.abs(card.getBoundingClientRect().left - trackLeft) <
-      Math.abs(roomCards[nearest].getBoundingClientRect().left - trackLeft) ? index : nearest, 0);
+  if (!compactRooms.matches) return;
+  const left = rooms.scrollLeft;
+  const stride = roomCards[1].offsetLeft - roomCards[0].offsetLeft;
+  if (!stride) return;
+  const last = roomCards.length - 1;
+  const nearest = left >= rooms.scrollWidth - rooms.clientWidth - 1
+    ? last
+    : clamp(Math.round(left / stride), 0, last);
+  if (nearest === currentRoom) return;
+  currentRoom = nearest;
   roomDots.forEach((dot, index) => {
     if (index === currentRoom) dot.setAttribute('aria-current', 'true');
     else dot.removeAttribute('aria-current');
@@ -205,6 +209,9 @@ function showRoom(index) {
 function syncRoomLayout() {
   roomControls.hidden = !compactRooms.matches;
   if (compactRooms.matches) {
+    // The portrait is shared with the Founder section. Fetch it before the first swipe.
+    roomPortrait.decoding = 'sync';
+    roomPortrait.loading = 'eager';
     rooms.tabIndex = 0;
     rooms.setAttribute('role', 'region');
     rooms.setAttribute('aria-roledescription', 'carousel');

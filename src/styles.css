@@ -408,6 +408,9 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
   .rooms-carousel::-webkit-scrollbar { display: none; }
   .rooms-carousel > article {
     flex: 0 0 88%;
+    /* Keep adjacent snap positions on whole CSS pixels. */
+    flex-basis: round(88%, 1px);
+    overflow: clip;
     min-width: 0;
     max-width: 22rem;
     scroll-snap-align: start;

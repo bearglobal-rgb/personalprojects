@@ -622,6 +622,9 @@ test('rooms carousel exposes every card without overflowing the mobile page', as
   await expect(steps.last()).toHaveCSS('color', 'rgb(154, 146, 134)');
   for (const width of [320, 390, 414, 768, 1023]) {
     await page.setViewportSize({ width, height: 896 });
+    await expect(cards.first().locator('img')).toHaveJSProperty('loading', 'eager');
+    const cardWidth = await cards.first().evaluate(el => el.getBoundingClientRect().width);
+    expect(cardWidth).toBe(Math.round(cardWidth));
     // Frame the cards and their controls together before checking horizontal navigation.
     await track.evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }));
     await dots.first().click();
