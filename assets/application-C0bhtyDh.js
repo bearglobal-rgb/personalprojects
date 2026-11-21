@@ -1,1 +1,0 @@
-import"./page-scroll-CSv11T07.js";/* empty css                    */document.querySelector(`#black-application-form`).addEventListener(`submit`,e=>e.preventDefault());
