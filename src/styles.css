@@ -546,7 +546,20 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
 .walkthrough-header { display: flex; align-items: center; justify-content: space-between; gap: .5rem; font-size: .75rem; }
 .walkthrough-header > :first-child { display: inline-flex; align-items: center; gap: .375rem; }
 .walkthrough-header > :first-child::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: currentColor; flex: none; }
+/* Offset the tile visually to preserve the event text column's position. */
+.walkthrough-date { position: relative; inset-inline-start: -.25rem; }
+.walkthrough-date::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  inset-inline-start: calc(100% + .5rem);
+  width: 1px;
+  height: 2.25rem;
+  transform: translateY(-50%);
+  background: var(--color-line);
+}
 @container walkthrough (max-width: 14.5rem) {
+  .walkthrough-date::after { inset-inline-start: calc(100% + .375rem); }
   .walkthrough-header { gap: .375rem; font-size: .6875rem; }
   .walkthrough-event { gap: .5rem; }
   .walkthrough-event > :first-child { padding-inline: .375rem; }
