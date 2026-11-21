@@ -546,21 +546,24 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
 .walkthrough-header { display: flex; align-items: center; justify-content: space-between; gap: .5rem; font-size: .75rem; }
 .walkthrough-header > :first-child { display: inline-flex; align-items: center; gap: .375rem; }
 .walkthrough-header > :first-child::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: currentColor; flex: none; }
-.walkthrough-date { position: relative; }
-.walkthrough-date::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  inset-inline-start: calc(100% + .5rem);
-  width: 1px;
-  height: 2.25rem;
-  transform: translateY(-50%);
-  background: color-mix(in srgb, var(--color-line) 80%, var(--color-mute));
+.walkthrough-event { --event-gap: 1.25rem; gap: var(--event-gap); }
+@media (min-width: 1024px) {
+  .walkthrough-event { --divider-offset: .75rem; gap: calc(var(--event-gap) + .25rem); }
+  .walkthrough-date { position: relative; }
+  .walkthrough-date::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    inset-inline-start: calc(100% + var(--divider-offset));
+    width: 1px;
+    height: 2.25rem;
+    transform: translateY(-50%);
+    background: color-mix(in srgb, var(--color-line) 80%, var(--color-mute));
+  }
 }
 @container walkthrough (max-width: 14.5rem) {
-  .walkthrough-date::after { inset-inline-start: calc(100% + .375rem); }
   .walkthrough-header { gap: .375rem; font-size: .6875rem; }
-  .walkthrough-event { gap: 1rem; }
+  .walkthrough-event { --event-gap: 1rem; --divider-offset: .625rem; }
   .walkthrough-event > :first-child { padding-inline: .375rem; }
   .walkthrough-event .font-serif.text-lg { font-size: 1rem; }
   .walkthrough-event .uppercase { letter-spacing: .09em; font-size: .625rem; }
