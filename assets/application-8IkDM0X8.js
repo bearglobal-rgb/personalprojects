@@ -1,0 +1,1 @@
+import"./page-scroll-vusp_i_m.js";/* empty css                    */document.querySelector(`#black-application-form`).addEventListener(`submit`,e=>e.preventDefault());
