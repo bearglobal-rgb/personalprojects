@@ -1,0 +1,1 @@
+import"./page-scroll-B7Yt6pfc.js";/* empty css                    */document.querySelector(`#black-application-form`).addEventListener(`submit`,e=>e.preventDefault());
