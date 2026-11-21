@@ -88,7 +88,7 @@ Implement actual script gating and update the policies/choices before adding opt
 Use the existing inline monogram, native iOS scroller, Inter/Playfair, palette, 16px panels and
 square controls. Policy reading measure is 700px, with a desktop contents sidebar and mobile stack.
 
-What’s Inside uses five cohort previews in this order: The Library, Live Walkthroughs, Personal Feedback, The Black Club, and English Mastery. The Library search shows “Step 04” with the blinking caret. English Mastery pairs a warm monochrome landscape thumbnail with Step 06 of 10, a 60% progress line, a bright Reading Out Loud / Current row, and a muted AI Sparring Partner / Next row. Calendar, audio, feedback, and club controls are illustrative. Keep the desktop grid and manual compact carousel.
+What’s Inside uses five cohort previews in this order: The Library, Live Walkthroughs, Personal Feedback, The Black Club, and English Mastery. The Library search shows “Step 04” with the blinking caret. English Mastery pairs a warm monochrome landscape thumbnail with Step 06 of 10, a 60% progress line, a bright Reading Out Loud / Current row, and a muted AI Sparring Partner / Next row. Calendar, audio, feedback, and club controls are illustrative. The Live Walkthroughs date uses mute for the month and weekday and body for the numeral. The “Live with Jota” label and camera icon use body over a 10% ink background. Keep the desktop grid and manual compact carousel.
 
 ## Assets
 Header loading: inline the original monogram master in the shared CSS with Vite's ?inline flag. The SVG exceeds the default automatic-inlining limit. All eight website pages must render the mark without a separate SVG request or JavaScript. Preserve the original paths, currentColor mask, size and placement.
