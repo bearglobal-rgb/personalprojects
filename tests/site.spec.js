@@ -608,8 +608,10 @@ test('rooms carousel exposes every card without overflowing the mobile page', as
   const cards = track.locator(':scope > article');
   const dots = page.locator('[data-rooms-slide]');
   await expect(cards.locator('h3')).toHaveText(['The Library', 'Live Walkthroughs', 'Personal Feedback', 'The Black Club', 'English Mastery']);
-  await expect(cards.first().locator('.caret').locator('..')).toHaveText('Step 04');
-  await expect(cards.first().locator('li')).toHaveCount(3);
+  await expect(cards.first().locator('.caret').locator('..')).toHaveText('Step 4');
+  await expect(cards.first().getByText('Step 4', { exact: true })).toHaveCount(2);
+  await expect(cards.first().locator('img')).toHaveAttribute('src', /jota\.jpg$/);
+  await expect(cards.nth(1).getByText('Mar 12, 7:00 PM (UTC+0)', { exact: true })).toBeVisible();
   const progress = cards.last().getByRole('progressbar');
   await expect(progress).toHaveAttribute('aria-valuenow', '60');
   expect(await progress.evaluate(el => el.firstElementChild.offsetWidth / el.offsetWidth)).toBeCloseTo(.6, 2);
