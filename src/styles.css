@@ -541,3 +541,10 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
   .room-club > div > svg { grid-row: span 2; }
   .room-club p { margin: 0; }
 }
+
+.walkthrough-header { display: flex; align-items: center; justify-content: space-between; gap: .5rem; font-size: .75rem; }
+.walkthrough-header > :first-child { display: inline-flex; align-items: center; gap: .375rem; }
+.walkthrough-header > :first-child::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: currentColor; flex: none; }
+@container (max-width: 14.5rem) {
+  .walkthrough-header { gap: .375rem; font-size: .6875rem; }
+}
