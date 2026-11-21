@@ -14,14 +14,14 @@ test('preserves the original content apart from approved copy and section-label 
   const result = await page.evaluate((html) => {
     const original = new DOMParser().parseFromString(html, 'text/html');
     original.querySelector('#founder p').textContent = 'The founder';
-    original.querySelector('#inside p').textContent = 'What’s inside';
+    original.querySelector('#inside').remove();
     original.querySelector('#top + div').remove();
     original.querySelector('#top').after(original.querySelector('#founder'));
     const betaLabel = original.createElement('p');
     betaLabel.textContent = ' Beta cohort ';
     original.querySelector('#offers article:last-child a').before(betaLabel);
     const rebuilt = document.querySelector('main').cloneNode(true);
-    original.querySelector('#inside article:last-child p.font-serif').textContent = 'Step 06 of 10';
+    rebuilt.querySelector('#inside').remove();
     rebuilt.querySelector('.system-intro').remove();
     const normalize = (text) => text.replace(/\s+/g, ' ').trim();
     return { expected: normalize(original.body.textContent), actual: normalize(rebuilt.textContent) };
@@ -36,6 +36,7 @@ test('corner treatments match the original and the layout fits the viewport', as
   const result = await page.evaluate((html) => {
     const source = new DOMParser().parseFromString(html, 'text/html');
     source.querySelector('#top').after(source.querySelector('#founder'));
+    source.querySelector('#inside').remove();
     const signature = (el) => ({ tag: el.tagName, radius: Array.from(el.classList).find(c => c.startsWith('rounded-')) });
     const elements = Array.from(document.querySelectorAll('main [class*="rounded-"]'));
     const incorrectRadii = elements.filter((el) => {
@@ -49,10 +50,10 @@ test('corner treatments match the original and the layout fits the viewport', as
     });
     return {
       expected: Array.from(source.querySelectorAll('[class*="rounded-"]')).map(signature),
-      actual: elements.map(signature),
+      actual: elements.filter(el => !el.closest('#inside')).map(signature),
       incorrectRadii: incorrectRadii.map(signature),
       expectedIcons: Array.from(source.querySelectorAll('rect[rx]')).map(el => el.getAttribute('rx')),
-      actualIcons: Array.from(document.querySelectorAll('main rect[rx]')).map(el => el.getAttribute('rx')),
+      actualIcons: Array.from(document.querySelectorAll('main rect[rx]:not(#inside *)')).map(el => el.getAttribute('rx')),
       overflow: document.documentElement.scrollWidth > window.innerWidth,
     };
   }, original);
@@ -606,7 +607,17 @@ test('rooms carousel exposes every card without overflowing the mobile page', as
   const track = page.locator('.rooms-carousel');
   const cards = track.locator(':scope > article');
   const dots = page.locator('[data-rooms-slide]');
-  await expect(cards.locator('h3')).toHaveText(['The map', 'Live walkthroughs', 'The sequence', 'The hub', 'English Mastery']);
+  await expect(cards.locator('h3')).toHaveText(['The Library', 'Live Walkthroughs', 'Personal Feedback', 'The Black Club', 'English Mastery']);
+  await expect(cards.first().locator('.caret').locator('..')).toHaveText('Step 04');
+  await expect(cards.first().locator('li')).toHaveCount(3);
+  const progress = cards.last().getByRole('progressbar');
+  await expect(progress).toHaveAttribute('aria-valuenow', '60');
+  expect(await progress.evaluate(el => el.firstElementChild.offsetWidth / el.offsetWidth)).toBeCloseTo(.6, 2);
+  const steps = cards.last().locator('.room-step');
+  await expect(steps.first()).toHaveText('Reading Out LoudCurrent');
+  await expect(steps.first()).toHaveCSS('color', 'rgb(244, 239, 230)');
+  await expect(steps.last()).toHaveText('AI Sparring PartnerNext');
+  await expect(steps.last()).toHaveCSS('color', 'rgb(154, 146, 134)');
   for (const width of [320, 390, 414, 768, 1023]) {
     await page.setViewportSize({ width, height: 896 });
     // Frame the cards and their controls together before checking horizontal navigation.

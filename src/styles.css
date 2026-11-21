@@ -501,3 +501,44 @@ html.contained-scroll, .contained-scroll body { height: 100%; overflow: hidden; 
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition-duration: 0s !important; }
 }
+
+/* Static cohort previews in What’s Inside. */
+.room-eyebrow { display: flex; align-items: center; justify-content: center; gap: 1rem; }
+.room-eyebrow::before, .room-eyebrow::after { content: ""; width: 2.5rem; height: 1px; background: var(--color-mute); }
+.room-card { container-type: inline-size; }
+.room-preview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  flex: 1;
+  min-height: 12rem;
+  padding: 1.25rem;
+  font-size: 0.8125rem;
+  color: var(--color-ink);
+}
+.room-club { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; }
+.room-club > div { display: flex; flex-direction: column; justify-content: center; min-height: 7.75rem; }
+.room-club > div:nth-child(2) { background: color-mix(in srgb, var(--color-ink) 6%, var(--color-panel)); }
+.room-lesson { display: grid; align-items: center; grid-template-columns: minmax(0, 28%) minmax(0, 1fr); gap: 1rem; }
+.room-cover { width: 100%; height: 7.5rem; }
+.room-step { display: flex; justify-content: space-between; align-items: baseline; gap: .4rem; }
+.room-step small { font-size: .625rem; letter-spacing: .12em; text-transform: uppercase; }
+@container (max-width: 23rem) {
+  .room-preview { padding: .9rem; }
+  .room-club { gap: .3rem; }
+  .room-club > div { padding: .55rem; }
+  .room-club p svg { display: none; }
+  .room-lesson { grid-template-columns: minmax(0, 20%) minmax(0, 1fr); gap: .55rem; }
+}
+@container (max-width: 19rem) {
+  .room-club { grid-template-columns: 1fr; }
+  .room-club > div {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr;
+    align-items: center;
+    column-gap: .75rem;
+    min-height: 0;
+  }
+  .room-club > div > svg { grid-row: span 2; }
+  .room-club p { margin: 0; }
+}
