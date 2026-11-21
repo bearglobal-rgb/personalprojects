@@ -60,7 +60,7 @@ Content fades into black near the top using a gradient, not visible cloud blur o
 Attempts to extend the narrow header glass into physical Safari clock/status-bar chrome were unsuccessful.
 The current implementation retains this visible boundary; full extension remains unresolved. Do not claim this has been solved.
 Root canvas/glass continuation rules remain in code; they are not proof of physical browser-chrome coverage.
-iOS contained scrolling can keep browser controls visible. Physical Safari verification is still required for changes here.
+Reloading on iOS restores the vertical position inside the page viewport, including the bottom of the page. Fresh visits follow their requested destination. iOS contained scrolling can keep browser controls visible. Physical Safari verification is still required for changes here.
 
 ## Product state: all previews
 Black’s early cohorts are beta cohorts. Show a discreet BETA COHORT label above the Black offer-card CTA; explain the core offer and what may evolve before the application form and checkout payment details. The core offer is the 10-Step System, weekly live walkthroughs and personal feedback; session format and supporting resources may be refined. Keep existing CTA wording and the floating banner clean. Do not promise a fixed number of beta cohorts, a special discount or additional obligations.

@@ -841,6 +841,32 @@ test('compact monogram header stays sticky with glass and rounded bottom corners
   expect(fade.pointerEvents).toBe('none');
 });
 
+test('iOS restores its contained scroll position on reload and respects fresh visits', async ({ browser, baseURL }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', 'iOS scroll container regression');
+  const context = await browser.newContext(devices['iPhone 11']);
+  try {
+    const page = await context.newPage();
+    const viewport = page.locator('.page-viewport');
+    await page.goto(baseURL);
+    for (const fraction of [.43, 1, 0, .67]) {
+      // A reload with an existing fragment must also keep the current reading position.
+      if (fraction === .67) await page.evaluate(() => history.replaceState(history.state, '', '#inside'));
+      const before = await viewport.evaluate(async (el, fraction) => {
+        await document.fonts.ready;
+        el.scrollTo({ top: Math.round((el.scrollHeight - el.clientHeight) * fraction), behavior: 'instant' });
+        return el.scrollTop;
+      }, fraction);
+      if (fraction > 0) expect(before).toBeGreaterThan(1000);
+      await page.reload();
+      await page.evaluate(() => document.fonts.ready);
+      await expect.poll(() => viewport.evaluate(el => el.scrollTop)).toBe(before);
+    }
+    await page.goto(baseURL + '/privacy/');
+    await page.goto(baseURL + '/');
+    await expect.poll(() => viewport.evaluate(el => el.scrollTop)).toBe(0);
+  } finally { await context.close(); }
+});
+
 test('iPhone scrolling remains natively clipped during abrupt jumps and viewport changes', async ({ browser, baseURL }) => {
   const context = await browser.newContext({ ...devices['iPhone 11'], reducedMotion: 'reduce' });
   const page = await context.newPage();
